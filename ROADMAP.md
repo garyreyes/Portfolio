@@ -98,10 +98,22 @@ outcome, demo video, honest link status.
 
 ## Phase 7 — Live proof
 
+> ⚠️ **Install Vitest before starting 7a.** This phase contains the only
+> correctness-critical logic in the project, and there is **no test runner
+> installed** (deliberately deferred on 2026-08-28 — nothing was testable
+> yet). Vitest reuses Astro's existing Vite config, so setup is minutes:
+> add a `test` script, wire it into `npm run check` and the CI workflow.
+> Do this *first*, because both sub-phases below are test-first.
+
 | | Sub-phase | Status |
 | --- | --- | --- |
-| 7a | **GitHub contribution graph** — build-time API fetch rendered as custom monochrome inline SVG. Not GitHub's green squares, not a third-party image. Build must not fail if the API does | not started |
-| 7b | **Monte Carlo simulator** inside `/work/sports-bet-tracker`. Client-side only. Sensible defaults producing a result immediately — never a blank chart. Static fallback with no JS | not started |
+| 7·0 | **Install Vitest**, add `test` script, wire into `check` + CI | not started |
+| 7a | **GitHub contribution graph** — build-time API fetch rendered as custom monochrome inline SVG. Not GitHub's green squares, not a third-party image. Build must not fail if the API does. **Correctness-critical:** week/day bucketing has one right answer; an off-by-one renders the grid wrong. Test the date bucketing first | not started |
+| 7b | **Monte Carlo simulator** inside `/work/sports-bet-tracker`. Client-side only. Sensible defaults producing a result immediately — never a blank chart. Static fallback with no JS. **Correctness-critical:** statistical maths with one right answer, and a subtly wrong variance calculation renders plausible-looking wrong numbers on a site whose whole purpose is demonstrating competence. **Write the failing test before the implementation; the test passing is the definition of done** | not started |
+
+Everything outside this phase is judgment/presentation work — layout,
+copy, motion, styling — where a test has no single correct output to
+assert and would only break on legitimate changes. No tests there.
 
 ---
 

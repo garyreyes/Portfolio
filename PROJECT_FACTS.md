@@ -151,6 +151,24 @@ present in built output — **do not move or delete it.**
   early-80s drum machine step row (competitive; lost on the loop
   metaphor fitting six unrelated projects).
 
+## Testing
+
+- **No test runner is installed, deliberately** (decided 2026-08-28).
+  Nothing in the project is testable yet: the content schema is enforced
+  by Zod failing the build, which is stronger than a test, and every
+  other surface is judgment/presentation work with no single correct
+  output to assert.
+- **Vitest gets installed at the start of Phase 7**, not before — see the
+  warning block at the top of that phase in `ROADMAP.md`. Vitest reuses
+  Astro's existing Vite config, so setup is minutes.
+- **Phase 7 holds the only correctness-critical logic in the project**,
+  and both sub-phases are test-first: the contribution graph's week/day
+  bucketing (an off-by-one renders the grid wrong) and the Monte Carlo
+  simulator's statistical maths (a subtly wrong variance calculation
+  renders plausible-looking wrong numbers on a site whose entire purpose
+  is demonstrating competence). Write the failing test before the
+  implementation; the test passing is the definition of done.
+
 ## Open
 
 - **Domain is not yet purchased** — a v1 blocker. Cloudflare Registrar
