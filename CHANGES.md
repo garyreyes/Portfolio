@@ -10,6 +10,18 @@ does that.
 
 ## Unreleased
 
+### 2026-08-28 — CI green, branch protection on
+
+- Fixed `npm ci` failing on Linux: the Windows-generated lockfile had no
+  top-level entries for `@emnapi/core` / `@emnapi/runtime` (required by
+  `@napi-rs/wasm-runtime` via Tailwind's native bindings). Regenerating
+  the lockfile from scratch produced a complete cross-platform tree.
+  **Caught by CI on its first run** — before any feature code existed.
+- Branch protection on `main`: CI must pass and be up to date before
+  merge, no force pushes, no deletions, linear history. Required
+  approvals set to 0 (diff review happens in the editor); admin
+  enforcement off so an emergency fix is still possible.
+
 ### 2026-08-28 — Project harness
 
 - Scaffolded Astro 7 + TypeScript (strict) with Tailwind v4, MDX, and
