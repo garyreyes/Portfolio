@@ -54,10 +54,29 @@ product truth (`docs/PRD.md`).
   "TypeScript everywhere; React where interactive." Static pages are
   `.astro` and ship zero JS; React is loaded only for genuine islands.
 
+## Design brief
+
+- **The anti-cluster reference is industrial / technical drawing** —
+  dimension lines, tolerance callouts, blueprint annotation, spec sheets.
+  Chosen because it sits outside the dev-portfolio category entirely and
+  is authentically Gary's own domain as an IE student. Category-external
+  references are what stop a direction converging on "minimal portfolio."
+- **`duoplex.pro` was dropped from the reference set.** It is an agency
+  *sales* site, a different job from a hiring portfolio; pinning it
+  alongside `brittanychiang.com` pulled the brief two ways.
+- **`800k.dev` was cited for minimalism, but its actual distinctive move
+  is working functionality as content** (live typing test, real-time
+  viewer count). That reading is what put the Monte Carlo simulator in
+  scope — do not re-derive it as "make it minimal."
+- **The live element is a client-side Monte Carlo simulator** from
+  `Sports-Bet-Tracker`'s maths. Should-have, never at the expense of the
+  launch date. No backend — §6 still holds.
+
 ## Open
 
 - **Domain is not yet purchased** — a v1 blocker. Cloudflare Registrar
   assumed (~$10–15/yr, sold at cost with no renewal markup).
 - **Visual direction is not yet assigned.** It must come from
   `/impeccable new-work`'s `concept-seed.mjs`, not be chosen by taste —
-  see `docs/PRD.md` §8's aesthetic-clustering warning.
+  see `docs/PRD.md` §8's aesthetic-clustering warning. Gary shapes the
+  *brief*; the seed picks the world inside it.

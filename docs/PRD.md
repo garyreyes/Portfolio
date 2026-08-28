@@ -231,17 +231,39 @@ mail provider — Zoho Mail has a free single-user tier, Google Workspace is
 - Casual but semi-professional in tone; playful is welcome, corporate is
   not.
 
-**Reference sites supplied** (as _world_, not as a template to copy):
-`800k.dev`, `brittanychiang.com`, `hampusdesign.com`, `duoplex.pro`,
-`webportfolios.dev`.
+### Reference brief
+
+Supplied as _world_, not as a template to copy. What matters is what each
+does that is **specific to it**, not what they share.
+
+| Reference | What is specific to it (the part to take) |
+| --- | --- |
+| `800k.dev` | **Working functionality as content** — an interactive typing test with live WPM, a real-time viewer count, App Store ranking badges. The site *does things* rather than describing them. Its minimalism is the least distinctive thing about it. |
+| `hampusdesign.com` | Rust-red accent on off-white; grayscale imagery with selective colour; explicitly **no parallax**. Subtle scroll-driven reveal — restraint over spectacle. |
+| `brittanychiang.com` | Inter throughout; dark navy; projects as cards; experience as a dated timeline with skill tags; a playful footer easter egg. The **navigate-away-into-detail** pattern for case studies. |
+| `webportfolios.dev` | The hover-to-preview project grid pattern only. |
+
+**Dropped:** `duoplex.pro` — it is an agency *sales* site (conversion
+narrative, stat callouts, "Digitalize, Automate & Grow Your Business"),
+which is a different job from a hiring portfolio. Pinning both pulled the
+brief in two directions.
+
+**Non-portfolio world — industrial / technical drawing.** Engineering
+drawings, tolerance callouts, dimension lines, blueprint annotation, spec
+sheets. This is the deliberate anti-cluster reference: it comes from
+outside the dev-portfolio category entirely, it is authentically Gary's
+own domain as an IE student, and its visual language is measured and
+annotated rather than decorative. No other portfolio in this category is
+pulling from it.
 
 > ⚠️ **Aesthetic-clustering warning.** "Minimal, black and white, clean"
 > is very close to a known default that AI-generated interfaces converge
-> on. The visual direction must be **assigned by `/impeccable new-work`'s
-> `concept-seed.mjs`**, from outside the model, rather than defaulted to
-> the safest common denominator of these five references. What is wanted
-> is what these sites do that is _specific to them_, not what they share
-> with every other minimal portfolio.
+> on — and it is precisely the common denominator of the references
+> above. The visual direction must be **assigned by
+> `/impeccable new-work`'s `concept-seed.mjs`**, from outside the model,
+> not chosen by taste and not defaulted to the safest rendition of these
+> references. A pinned reference pins the **world**, not its safest
+> version.
 
 ---
 
@@ -312,6 +334,16 @@ existing documents, not writing from blank.
 
 ### Should have
 
+- **Live proof element — a client-side Monte Carlo simulator.** A small
+  interactive bankroll/variance simulation lifted from
+  `Sports-Bet-Tracker`: adjust inputs, watch the outcome distribution
+  redraw. This is the `800k.dev` move — working functionality as content —
+  and it is the most direct possible expression of "show, don't tell":
+  proof that runs in the visitor's browser rather than proof asserted in
+  prose. Stochastic modelling is also authentically IE-flavoured and
+  almost unheard of on a developer portfolio.
+  **Pure client-side maths — no backend, so §6 still holds.** Should-have,
+  not Must-have: it must not put the launch date at risk.
 - Drop-in analytics (Plausible / Umami / Cloudflare)
 - Hover previews on the project index (the `webportfolios.dev` pattern)
 - Restrained scroll motion (the `hampusdesign.com` reference)
