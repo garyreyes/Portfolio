@@ -198,8 +198,8 @@ portfolio/
 │     ├─ work/
 │     │  ├─ index.astro
 │     │  └─ [slug].astro          # generates 6 case study pages
+│     ├─ services.astro           # business-owner landing page
 │     ├─ how-i-build.astro
-│     ├─ about.astro
 │     └─ 404.astro
 ├─ astro.config.mjs
 ├─ docs/PRD.md
@@ -243,6 +243,23 @@ infrastructure → `lib/`. New project → a new `.mdx` file, nothing else.
 - Videos: `preload="none"`, poster image always present, lazy-loaded.
   Never block first paint (PRD §10).
 - Every case study is independently linkable with correct OG tags.
+
+---
+
+## Route list
+
+Superseded by [`docs/user-flows.md`](docs/user-flows.md), which is
+authoritative for screens. Two corrections from the original plan:
+
+- **`/about` removed** — folded into a homepage section. Founders skim;
+  a second click most visitors never make is worse than a section they
+  cannot miss.
+- **`/services` added** — the secondary audience (small-business owners)
+  had no screen of their own. They arrive via a link Gary sends while
+  pitching, so `/services` must stand alone without homepage context.
+
+Still 11 routes total. There is no `/contact` (footer only) and no
+`/thanks` (inline success swap).
 
 ---
 

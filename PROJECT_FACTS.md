@@ -72,6 +72,40 @@ product truth (`docs/PRD.md`).
   `Sports-Bet-Tracker`'s maths. Should-have, never at the expense of the
   launch date. No backend — §6 still holds.
 
+## Flows and navigation
+
+- **No authentication anywhere.** No login, no accounts, no gated
+  screens. The auth-gate section of the flow map is empty by design.
+- **Navigation is `800k.dev`-style**: persistent bar, wordmark left
+  returning to the homepage intro, hamburger right opening a full-screen
+  overlay menu. **The menu lists all six projects directly**, which is
+  what turns it from a hidden utility list into the site's real
+  navigation surface — that mitigation is load-bearing, not decoration.
+  If it is ever reduced to a plain collapsed list, the
+  recognition-over-recall tradeoff stops being acceptable.
+- **`/about` was removed and folded into a homepage section;
+  `/services` was added** for the small-business audience. Still 11
+  routes. No `/contact` (footer only), no `/thanks` (inline success).
+- **`/services` must stand alone.** That audience arrives via a link Gary
+  sends while pitching, so it is frequently the first and only page seen.
+- **Contact is footer-only, sitewide.** One surface, both audiences.
+
+- **The GitHub contribution graph is being built against
+  recommendation.** Real data, fetched 2026-08-28: **418 contributions
+  across 23 active days out of 370** (94% empty; busiest day 53). The
+  inspiring reference (`800k.dev`) had 2,296. A sparse *monochrome* dot
+  matrix reads harsher than GitHub's green version because there is no
+  colour to soften it, and "inactive" is the one signal the footer must
+  not send. Gary chose to build it anyway with the numbers in hand.
+  **Revisit once it can be seen rendered rather than described.** The
+  alternative on the table was a spec-sheet stat block (projects shipped,
+  live in production, real clients, peak day), which fits the
+  technical-drawing world better and is flattering on every number.
+- **Not GitHub's green squares, and not a third-party image.** Green
+  would fight both the technical-drawing world and the neutrals-plus-one-
+  accent rule; image services only emit GitHub's own styling. It must be
+  build-time API data rendered as custom inline SVG.
+
 ## Open
 
 - **Domain is not yet purchased** — a v1 blocker. Cloudflare Registrar
