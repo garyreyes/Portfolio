@@ -1,0 +1,53 @@
+---
+/**
+ * Root layout. Every route renders through this.
+ *
+ * The direction contract below MUST remain the first child of <body> and
+ * MUST survive the production build — it is the auditable record of the
+ * visual world every component inherits. Do not move it into a child or
+ * slotted component; Astro strips a slot's leading comment.
+ */
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+  </head>
+  <body>
+    <!--
+    THESIS: Six shipped projects presented as consigned goods with placards,
+    each carrying its own lot code, consignee and stamped status. Refuses the
+    dark developer-portfolio card grid and its cream-editorial opposite alike.
+
+    OWN-WORLD: Kraft/manila board ground, black stencil ink, one safety accent.
+    Condensed grotesque caps; monospace reserved for real codes only. Hazard-band
+    rules, rubber-stamped status marks, lot numbers, consignee lines. One label
+    stock across all 11 routes; a single vertical registration axis everything
+    aligns to; density itself is tone, never decoration.
+
+    STORY: A founder understands this person ships real things, believes five of
+    six are genuinely live, and opens a case study.
+
+    FIRST VIEWPORT: Consignment placard top-left — GARY REYES, INDUSTRIAL
+    ENGINEERING, DLSU, MANILA — set as a shipping mark against the registration
+    axis, lot/date stamp opposite. Work begins immediately below as placarded
+    units. Primary action: the first unit.
+
+    FORM: Shipping manifest / logistics labeling; candidate 3 of 7; seed d4e5136b.
+
+    FINISH: unreviewed and undocumented is unfinished; this build ends with the
+    finish review, the verdict, and DESIGN.md
+    -->
+    <slot />
+  </body>
+</html>

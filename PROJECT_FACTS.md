@@ -106,6 +106,51 @@ product truth (`docs/PRD.md`).
   accent rule; image services only emit GitHub's own styling. It must be
   build-time API data rendered as custom inline SVG.
 
+## Visual direction — assigned 2026-08-28
+
+**Shipping manifest / logistics labeling.** Seed key `d4e5136b`, candidate
+3 of 7, mode `experience`. The full contract lives as an HTML comment at
+the top of `<body>` in `src/layouts/BaseLayout.astro` and is verified
+present in built output — **do not move or delete it.**
+
+- **The roll honored the pinned industrial world but refused its softest
+  rendition.** Not blueprint-blue with white linework — kraft ground,
+  stencil caps, lot codes, consignee lines, rubber-stamped status.
+  Materials handling is an IE subject and the world `nfc-side-hustle`
+  literally operates in.
+- **It maps onto the `Project` entity exactly:** `status` renders as a
+  stamped mark, `client` as a consignee line, `stack[]` as a contents
+  manifest. The data model and the visual world are the same shape,
+  which is why this direction is cheap to build correctly.
+- **Three raises, donated by declined challengers** — carry them or the
+  direction is weaker than the one that was chosen: one continuous label
+  stock across all 11 routes (from the orizuru crane); a single vertical
+  registration axis everything aligns to (from Versailles); density as
+  tone (from the ASCII render).
+- **The density raise solves the sparse GitHub graph.** If information
+  density is the medium everywhere, a thin field reads as data rather
+  than as absence.
+- **Guardrails, binding:** must not read as gimmicky or try-hard, and
+  must not look like every other dev portfolio. Both were named by Gary
+  as what would make a finished result feel wrong.
+- **The memorable moment is the full-screen menu opening** — built as a
+  packing list / manifest docket. This is also the mitigation that makes
+  hiding navigation behind a hamburger acceptable, so it is load-bearing
+  twice over.
+- **First viewport leads with the intro, then the work** (Gary's call,
+  against Experience mode's default of leading with the artifact).
+- **Code-led build.** No image generation was available this session, so
+  there is no approved comp; the ambition lives in the contract's
+  FIRST VIEWPORT block and the named signature interaction, which the
+  finish reviewer audits in behavior.
+- **`DESIGN.md` is written at finish, from the built world** — not
+  before. A rulebook written ahead of the build gets defended against
+  reality instead of describing it.
+- Alternates not taken, still adoptable: time-and-motion study (the
+  strongest grounded candidate, declined as too on-the-nose) and the
+  early-80s drum machine step row (competitive; lost on the loop
+  metaphor fitting six unrelated projects).
+
 ## Open
 
 - **Domain is not yet purchased** — a v1 blocker. Cloudflare Registrar
