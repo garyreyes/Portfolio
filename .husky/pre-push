@@ -1,0 +1,5 @@
+# Full gate suite before anything leaves the machine.
+# design:check builds first, so it lives here rather than in pre-commit
+# where a full build on every commit would be too slow to tolerate.
+npm run check
+npm run design:check
