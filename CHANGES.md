@@ -43,8 +43,14 @@ Two had moved significantly since planning; two claims did not survive.
   v1 scope. A client-side probabilistic-reasoning widget from UFC
   Scouting's scoring lib is a possible post-launch addition.
 - **`/work` index route dropped** — four projects do not need one; the
-  homepage work section is the full list. ~7 routes, down from 11.
+  homepage work section is the full list. 7 routes, down from 11.
 - **Résumé download deferred** — not a launch blocker.
+
+Propagated through `docs/PRD.md`, `ARCHITECTURE.md`,
+`docs/user-flows.md`, `PROJECT_FACTS.md`, `CLAUDE.md`, `PRODUCT.md`, and
+`ROADMAP.md` (re-segmented: phases 3–6 + 8, Phase 7 removed, a hard
+design checkpoint added after Phase 3, Track A shrunk to domain +
+screenshots + brief notes + repo hygiene).
 
 Full context and reasoning: `PLAN-REVIEW-BRIEF.md` (v3).
 

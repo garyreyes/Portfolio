@@ -158,7 +158,7 @@ without an explicit decision to reopen them.
 
 - **No admin dashboard.** Considered and rejected — it serves one user,
   is invisible to every visitor, and is permanent maintenance debt.
-- **No database.** Case studies live as MDX files in the repository.
+- **No database.** Project content lives as MDX files in the repository.
 - **No authentication or login of any kind.**
 - **No headless CMS** (Sanity, Contentful, Decap).
 - **No custom analytics backend** — a drop-in service only.
