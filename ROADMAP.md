@@ -1,7 +1,23 @@
 # Roadmap — Gary Reyes Portfolio
 
+> ⚠️ **SUPERSEDED 2026-09-04 — pending re-segmentation.** A scope revision
+> (see [`CHANGES.md`](CHANGES.md) and `PLAN-REVIEW-BRIEF.md`) changed the
+> roster to 3 hero briefs + 1 card, replaced demo videos with screenshots,
+> and **removed Phase 7 entirely** (GitHub graph + Monte Carlo simulator +
+> Vitest). The phase breakdown below still describes the old 6-project /
+> demo-video plan and **must not be executed as written.** The other
+> planning docs (`PRD.md`, `ARCHITECTURE.md`, `docs/user-flows.md`,
+> `PROJECT_FACTS.md`, `PRODUCT.md`) are already updated. This file gets
+> re-segmented next, before the `feature-planner` build loop starts.
+>
+> **What still holds:** the overall order (foundation/shell → work
+> surfaces → remaining pages → project content → launch), the design
+> checkpoint after the shell, the pre-committed cut list discipline, and
+> Track A starting with buying the domain.
+
 **Created:** 2026-08-28
-**Deadline:** 2–3 weeks to a live, shareable site on a custom domain
+**Deadline:** ~3 weeks from build start (no imminent application forcing it;
+the launch guardrail stands regardless — see `PROJECT_FACTS.md` › Open)
 **Reads from:** [`ARCHITECTURE.md`](ARCHITECTURE.md),
 [`docs/PRD.md`](docs/PRD.md), [`docs/user-flows.md`](docs/user-flows.md),
 [`PROJECT_FACTS.md`](PROJECT_FACTS.md)

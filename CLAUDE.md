@@ -60,12 +60,14 @@ the code.
   anywhere, which is the only reason MDX rendering arbitrary HTML is
   safe. **If user content is ever introduced, that assumption breaks and
   the XSS surface must be reconsidered.**
-- **Never commit demo videos via Git LFS.** Cloudflare Pages does not
-  fetch LFS objects at build time; the videos would silently 404 in
-  production. Commit them as normal files, under 25 MiB each.
-- **Changing `src/content/config.ts` changes the schema for all six case
-  studies at once.** Treat it as a migration: update every `.mdx` file in
-  the same change, and confirm the build passes before pushing.
+- **Media is screenshots, not video** (scope revision 2026-09-04). Commit
+  them as normal files under `public/screenshots/`. If a short Cornerman
+  clip is ever added, commit it as a normal file too — **never Git LFS**
+  (Cloudflare Pages does not fetch LFS objects at build time; it would
+  silently 404 in production).
+- **Changing `src/content/config.ts` changes the schema for all four
+  project `.mdx` files at once.** Treat it as a migration: update every
+  file in the same change, and confirm the build passes before pushing.
 - Every `target="_blank"` carries `rel="noopener noreferrer"`.
 
 ## Requires explicit human confirmation
@@ -77,8 +79,9 @@ Never do these because they seem like the obvious next step:
 - **Anything touching the domain or DNS.**
 - **Any change to Cloudflare Pages project settings or build config.**
 - **Force-push to `main`, or any history rewrite.**
-- **Deleting or replacing committed demo videos** — they are binary
-  assets that bloat history permanently and cannot be cleanly reverted.
+- **Committing any large binary** (a video clip, a raw APK) — these bloat
+  history permanently and cannot be cleanly reverted. Confirm first, and
+  keep it well under 25 MiB.
 
 ## Gates
 
@@ -131,8 +134,9 @@ Consult before working on related tasks:
 Binding regardless of the visual direction assigned by `/impeccable`:
 
 - All scroll and hover motion respects `prefers-reduced-motion`.
-- Videos use `preload="none"` with a poster image, lazy-loaded. Media
-  never blocks first paint.
+- Screenshots are `loading="lazy"` with explicit `width`/`height` to
+  reserve layout, and `alt` text on every image. Media never blocks first
+  paint.
 - One obvious primary action per screen.
 - Every state designed — empty, loading, error — not just the happy path.
 - No horizontal scroll on the body at any viewport width.

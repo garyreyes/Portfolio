@@ -2,6 +2,10 @@
 
 **Status:** Confirmed plan, pre-implementation
 **Date:** 2026-08-28
+**Amended:** 2026-09-04 — scope revision. Roster cut to 3 hero + 1 card
+(`Project` table below); `demoVideo` replaced by `media`; `tier` field
+added; `public/videos/` and the `/work` index route removed. See
+`CHANGES.md`.
 **Product truth:** [`docs/PRD.md`](docs/PRD.md) — this document never
 re-decides anything the PRD settled. This file is the **single place the
 technical stack is recorded**; no other document owns it.
@@ -10,10 +14,11 @@ technical stack is recorded**; no other document owns it.
 
 ## What this is
 
-A static portfolio site presenting six shipped projects as full case
-studies, each with a recorded demo video, plus a page explaining how Gary
-builds. Primary audience is startup hiring people; secondary is
-small-business owners who might commission a website.
+A static portfolio site presenting three shipped projects as short
+README-shaped briefs (screenshots, key decisions, honest links) plus one
+practice project as a card, and a page explaining how Gary builds.
+Primary audience is startup hiring people; secondary is small-business
+owners who might commission a website.
 
 No backend, no database, no authentication, no user accounts. Every page
 is generated at build time.
@@ -27,9 +32,9 @@ is generated at build time.
 | **Language**        | TypeScript                                                    | Locked by PRD §8                                                                                                                                                                                                        |
 | **Framework**       | **Astro**                                                     | Purpose-built for content sites. Content Collections provide typed MDX frontmatter with Zod validation out of the box, which is exactly the `Project` entity below. Per-page SEO/OG is free. Ships ~zero JS by default. |
 | **UI components**   | `.astro` components; **React islands only where interactive** | Static pages ship no JavaScript at all. React is loaded only for genuinely interactive pieces (hover previews, contact form).                                                                                           |
-| **Content**         | MDX via Astro Content Collections                             | One `.mdx` file per project — frontmatter is metadata, body is the case study                                                                                                                                           |
+| **Content**         | MDX via Astro Content Collections                             | One `.mdx` file per project — frontmatter is metadata, body is the brief (hero tier)                                                                                                                                     |
 | **Styling**         | **Tailwind v4** with `@theme` design tokens                   | Familiar from `Pahinga-Coffee` and `Sports-Bet-Tracker`; first-class Astro support. The assigned design direction lives in `@theme` as real tokens so components read from the design system, not Tailwind defaults.    |
-| **Media**           | Self-hosted MP4 in `public/videos/`                           | Six 30–60s H.264 720p recordings, ~1–3 MB each. Well under Cloudflare Pages' 25 MiB per-file cap.                                                                                                                       |
+| **Media**           | Screenshots (PNG/WebP) in `public/screenshots/`               | No recorded video (cut 2026-09-04). One cover image + a small gallery per hero project. An optional short Cornerman audio/video clip may be added later as a normal file, well under the 25 MiB cap.                       |
 | **Hosting**         | **Cloudflare Pages**                                          | Free, unlimited bandwidth, not Vercel (PRD §8)                                                                                                                                                                          |
 | **Analytics**       | Cloudflare Web Analytics                                      | Follows from the host. Cookieless — no consent banner needed.                                                                                                                                                           |
 | **Contact form**    | Web3Forms                                                     | Already proven in `Pahinga-Coffee`. Free tier ~250 submissions/mo.                                                                                                                                                      |
@@ -53,66 +58,66 @@ stay typed).
   mode, MDX + typed frontmatter is manual wiring, and it ships more JS.
 - **Vite + React Router** — an SPA; MDX loading, routing and per-page OG
   tags all hand-wired, SEO needs a prerender plugin.
-- **Cloudflare Stream** (~$5/mo) and **YouTube embeds** (third-party chrome,
-  tracking, off-brand) for video.
-- **Git LFS** for videos — Cloudflare Pages does not fetch LFS objects at
-  build time. Videos are committed as normal files.
+- **Recorded demo videos in any form** (self-hosted MP4, Cloudflare
+  Stream, YouTube embeds) — cut 2026-09-04; media is screenshots. If a
+  short clip is ever added it is a normal committed file, never Git LFS
+  (Cloudflare Pages does not fetch LFS objects at build time).
 
 ---
 
 ## Entities
 
 There is no database. The schema is **MDX frontmatter validated at build
-time** by Zod in `src/content/config.ts`. A case study that violates it
-fails the build rather than shipping broken.
+time** by Zod in `src/content/config.ts`. A project entry that violates
+it fails the build rather than shipping broken.
 
 ### `Project` — the only entity
 
-`Project` and `CaseStudy` are strictly 1:1 (PRD §9 gives all six a full case
-study), so they are **one entity in one file**. Splitting them would create
-two artifacts to keep in sync for no benefit.
+One `.mdx` file per project. Frontmatter is the metadata below; the body
+is the brief (hero tier) or is unused (card tier).
 
 ```
-Project  1───1  CaseStudy   →  merged: one .mdx file per project
-Project  1───1  DemoVideo   →  embedded frontmatter fields
-Project  *───*  TechTag     →  string array; promote to a real relation
-                               only if index filtering is built (PRD Could-have)
+Project  1───1  brief body   →  the .mdx file's Markdown content (hero only)
+Project  1───*  screenshot    →  media.gallery, string paths under public/
+Project  *───*  TechTag       →  stack[]; promote to a real relation only if
+                                 work-section filtering is built (PRD Could-have)
 ```
 
-| Field       | Type                                    | Constraint                                                                                                 |
-| ----------- | --------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `slug`      | string                                  | **Primary key.** Derived from filename, so uniqueness is enforced by the filesystem. Also the URL segment. |
-| `name`      | string                                  | required                                                                                                   |
-| `tagline`   | string                                  | required                                                                                                   |
-| `year`      | number                                  | required                                                                                                   |
-| `type`      | `'web' \| 'mobile'`                     | required                                                                                                   |
-| `status`    | `'live' \| 'android-apk' \| 'archived'` | required — drives honest link labels (PRD §10)                                                             |
-| `client`    | `'self' \| 'real-client' \| 'practice'` | required — encodes the "5 of 6 are real" argument as data, not prose                                       |
-| `stack`     | string[]                                | required, non-empty                                                                                        |
-| `liveUrl`   | string (url)                            | optional — Cornerman has none                                                                              |
-| `repoUrl`   | string (url)                            | optional                                                                                                   |
-| `demoVideo` | `{ src, poster, duration }`             | **required** — a case study without a demo silently defeats "show, don't tell"                             |
-| `order`     | number                                  | required — controls index sequence                                                                         |
-| `featured`  | boolean                                 | default `false`                                                                                            |
+| Field      | Type                                    | Constraint                                                                                                 |
+| ---------- | --------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| `slug`     | string                                  | **Primary key.** Derived from filename, so uniqueness is enforced by the filesystem. Also the URL segment. |
+| `name`     | string                                  | required                                                                                                   |
+| `tagline`  | string                                  | required                                                                                                   |
+| `year`     | number                                  | required                                                                                                   |
+| `type`     | `'web' \| 'mobile'`                     | required                                                                                                   |
+| `tier`     | `'hero' \| 'card'`                      | required — `hero` gets a `/work/[slug]` brief page; `card` renders only in the work section + `/services`  |
+| `status`   | `'live' \| 'android-apk' \| 'archived'` | required — drives honest link labels (PRD §10). Pahinga is `live`.                                          |
+| `client`   | `'self' \| 'real-client' \| 'practice'` | required — encodes "built for real use vs. practice" as data, not prose                                    |
+| `stack`    | string[]                                | required, non-empty                                                                                       |
+| `liveUrl`  | string (url)                            | optional — Cornerman has none                                                                             |
+| `repoUrl`  | string (url)                            | optional                                                                                                  |
+| `media`    | `{ cover: string, gallery?: string[] }` | **required** — `cover` for the work section and OG; `gallery` (screenshots) shown on a hero brief page    |
+| `order`    | number                                  | required — controls work-section sequence                                                                 |
+| `featured` | boolean                                 | default `false`                                                                                           |
 
-**Indexes: not applicable.** Six entries resolved at build time; there are
-no runtime queries. Recorded explicitly so this doesn't read as an
-oversight.
+**Indexes: not applicable.** Four entries resolved at build time; no
+runtime queries.
 
 **ORM / migrations: not applicable.** Astro Content Collections + Zod is
-the schema layer. "Migrating" means editing `config.ts` and the six MDX
+the schema layer. "Migrating" means editing `config.ts` and the four MDX
 files, caught immediately by a failing build.
 
-### The six projects
+### The four projects
 
-| slug                 | name               | type   | status      | client               |
-| -------------------- | ------------------ | ------ | ----------- | -------------------- |
-| `cornerman`          | Cornerman          | mobile | android-apk | self                 |
-| `nfc-side-hustle`    | NFC Review Plates  | web    | live        | self                 |
-| `saffron-web`        | Saffron            | web    | live        | real-client (unpaid) |
-| `ufc-scouting-app`   | UFC Scouting       | web    | live        | self                 |
-| `sports-bet-tracker` | Sports Bet Tracker | web    | live        | self                 |
-| `pahinga-coffee`     | Pahinga Coffee     | web    | live        | practice             |
+| slug               | name         | tier | type   | status      | client               |
+| ------------------ | ------------ | ---- | ------ | ----------- | -------------------- |
+| `cornerman`        | Cornerman    | hero | mobile | android-apk | self                 |
+| `ufc-scouting-app` | UFC Scouting | hero | web    | live        | self                 |
+| `saffron-web`      | Saffron      | hero | web    | live        | real-client (unpaid) |
+| `pahinga-coffee`   | Pahinga Coffee | card | web  | live        | practice             |
+
+`nfc-side-hustle` and `sports-bet-tracker` were cut 2026-09-04 (see
+`docs/PRD.md` §5). `nfc-side-hustle` may return later as a second card.
 
 ---
 
@@ -157,7 +162,7 @@ discipline**.
 ```
 portfolio/
 ├─ public/
-│  ├─ videos/                     # 6 MP4 demos + poster images
+│  ├─ screenshots/                # per-project cover + gallery images
 │  ├─ fonts/
 │  ├─ _headers                    # CSP + security headers (Cloudflare Pages)
 │  ├─ robots.txt
@@ -166,38 +171,36 @@ portfolio/
 │  ├─ content/
 │  │  ├─ config.ts                # Zod schema — the Project entity, enforced at build
 │  │  └─ projects/
-│  │     ├─ cornerman.mdx
-│  │     ├─ nfc-side-hustle.mdx
-│  │     ├─ saffron-web.mdx
-│  │     ├─ ufc-scouting-app.mdx
-│  │     ├─ sports-bet-tracker.mdx
-│  │     └─ pahinga-coffee.mdx
+│  │     ├─ cornerman.mdx         # hero
+│  │     ├─ ufc-scouting-app.mdx  # hero
+│  │     ├─ saffron-web.mdx       # hero
+│  │     └─ pahinga-coffee.mdx    # card (frontmatter only, body unused)
 │  ├─ features/
 │  │  ├─ projects/
 │  │  │  ├─ components/           # ProjectCard.astro, ProjectGrid.astro, HoverPreview.tsx
-│  │  │  └─ queries.ts            # getCollection wrappers, sorting, filtering
-│  │  ├─ case-study/
-│  │  │  ├─ components/           # DemoVideo.astro, StatusBadge.astro, CaseStudyHeader.astro
-│  │  │  └─ queries.ts            # single-project lookup, prev/next
+│  │  │  └─ queries.ts            # getCollection wrappers, sorting, hero/card split
+│  │  ├─ brief/
+│  │  │  ├─ components/           # ScreenshotGallery.astro, StatusBadge.astro, BriefHeader.astro
+│  │  │  └─ queries.ts            # single-project lookup, prev/next (heroes only)
 │  │  └─ contact/
 │  │     ├─ components/           # ContactForm.tsx  (React island)
 │  │     └─ service.ts            # Web3Forms submit — THE ONLY OUTBOUND CALL IN THE APP
 │  ├─ shared/
-│  │  ├─ components/              # Nav, Footer, Prose, Button, SkipLink
+│  │  ├─ components/              # Nav, Footer, StatBlock.astro, Prose, Button, SkipLink
 │  │  └─ utils/
 │  ├─ layouts/
 │  │  ├─ BaseLayout.astro         # <head>, SEO/OG, skip link
-│  │  └─ CaseStudyLayout.astro
+│  │  └─ BriefLayout.astro
 │  ├─ lib/
 │  │  ├─ seo.ts                   # OG/meta builder
-│  │  └─ site.ts                  # site constants (name, url, socials)
+│  │  ├─ site.ts                  # site constants (name, url, socials)
+│  │  └─ stats.ts                 # the footer stat-block figures (hand-maintained)
 │  ├─ styles/
 │  │  └─ global.css               # @theme design tokens — the design system
 │  └─ pages/                      # routing only — thin
-│     ├─ index.astro
+│     ├─ index.astro              # home; the work section is the full project list
 │     ├─ work/
-│     │  ├─ index.astro
-│     │  └─ [slug].astro          # generates 6 case study pages
+│     │  └─ [slug].astro          # generates 3 hero brief pages
 │     ├─ services.astro           # business-owner landing page
 │     ├─ how-i-build.astro
 │     └─ 404.astro
@@ -240,40 +243,48 @@ infrastructure → `lib/`. New project → a new `.mdx` file, nothing else.
   the smooth-navigation quality of the `hampusdesign.com` reference
   without a heavy animation library.
 - All scroll/hover motion must respect `prefers-reduced-motion` (PRD §8).
-- Videos: `preload="none"`, poster image always present, lazy-loaded.
-  Never block first paint (PRD §10).
-- Every case study is independently linkable with correct OG tags.
+- Screenshots: `loading="lazy"`, explicit `width`/`height` to reserve
+  layout, `alt` text on every image. Never block first paint (PRD §10).
+- Every hero brief is independently linkable with correct OG tags (using
+  `media.cover` as the OG image).
 
 ---
 
 ## Route list
 
 Superseded by [`docs/user-flows.md`](docs/user-flows.md), which is
-authoritative for screens. Two corrections from the original plan:
+authoritative for screens. Corrections from the original plan:
 
-- **`/about` removed** — folded into a homepage section. Founders skim;
-  a second click most visitors never make is worse than a section they
-  cannot miss.
-- **`/services` added** — the secondary audience (small-business owners)
-  had no screen of their own. They arrive via a link Gary sends while
-  pitching, so `/services` must stand alone without homepage context.
+- **`/about` removed** — folded into a homepage section.
+- **`/services` added** — the secondary audience had no screen of their
+  own; it must stand alone without homepage context.
+- **`/work` index removed** (2026-09-04) — four projects do not need an
+  index page; the homepage work section is the full list, and the menu
+  lists projects directly. `/work` redirects to `/#work`.
+- **Case-study pages down to 3** (2026-09-04) — one per hero project.
+  Pahinga (card) has no `/work/[slug]` page; its card links to its live
+  site.
 
-Still 11 routes total. There is no `/contact` (footer only) and no
-`/thanks` (inline success swap).
+**7 routes total:** `/`, `/work/cornerman`, `/work/ufc-scouting-app`,
+`/work/saffron-web`, `/services`, `/how-i-build`, `/404`. No `/contact`
+(footer only), no `/thanks` (inline success swap).
 
 ---
 
 ## Open decisions
 
-| #   | Decision                                                                                                                                                 | Owner        |
-| --- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ |
-| 1   | **Domain name and registrar** — v1 blocker; Cloudflare Registrar assumed (~$10–15/yr)                                                                    | Gary         |
-| 2   | **Visual design direction** — must be assigned by `/impeccable new-work`'s `concept-seed.mjs`, not defaulted. See PRD §8's aesthetic-clustering warning. | `impeccable` |
-| 3   | Whether index filtering ships (PRD Could-have) — if yes, `TechTag` becomes a real relation                                                               | Later        |
-| 4   | Font choice — follows from the assigned design direction                                                                                                 | `impeccable` |
+| #   | Decision                                                                                              | Owner  |
+| --- | --------------------------------------------------------------------------------------------------- | ------ |
+| 1   | **Domain name and registrar** — v1 blocker, not yet purchased; Cloudflare Registrar assumed (~$12/yr) | Gary   |
+| 2   | ~~Visual design direction~~ — **assigned** 2026-08-28 (shipping manifest / logistics labeling, seed `d4e5136b`). See `PROJECT_FACTS.md`. | done |
+| 3   | Whether work-section filtering ships (PRD Could-have) — if yes, `TechTag` becomes a real relation      | Later  |
+| 4   | ~~Font choice~~ — follows from the assigned direction; settled at Phase 3a                             | done   |
+| 5   | Whether `nfc-side-hustle` returns as a second card                                                    | Later  |
 
 ---
 
 ## Next step
 
-`harness-setup` — CI gates, `CLAUDE.md`, `CHANGES.md`, `PROJECT_FACTS.md`.
+`harness-setup`, `user-flow-mapper`, the design direction, and
+`roadmap-planner` have all run. Next: the `feature-planner` build loop,
+starting at Phase 3a (design tokens + label-stock primitives).

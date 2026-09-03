@@ -16,12 +16,20 @@ product truth (`docs/PRD.md`).
   recruiting is handled by résumé, not by this site.
 - **"Show, don't tell."** The homepage never claims Gary builds via an AI
   harness; a dedicated "How I build" page owns that honestly. Consequence:
-  the case studies carry the entire persuasive load, which is why full
-  case studies and demo videos are Must-have rather than polish.
-- **Five of six projects are real, live, or attached to real money.**
-  Only `pahinga-coffee` is a practice build. This ratio is the core
-  argument of the portfolio and should not be diluted by adding filler
-  projects.
+  the project briefs carry the persuasive load — which now rests on the
+  live links being up and the code being browsable. *(Long-form case
+  studies and recorded demo videos were cut 2026-09-04 — over-built for an
+  early-career SWE portfolio, and the video dependency was the biggest
+  schedule risk. See `CHANGES.md`.)*
+- **Roster is 3 hero briefs + 1 practice card** (2026-09-04, after
+  re-verifying every repo): Cornerman, UFC Scouting, Saffron are built for
+  real use; Pahinga is a deliberate practice build. **No revenue claim
+  anywhere.** The old "five of six are real/live/revenue" framing did not
+  survive verification. `nfc-side-hustle` (a door-to-door sales-practice
+  project, one pilot, ~3 plates sold) and `sports-bet-tracker` (gambling
+  framing, redundant with UFC Scouting) are off v1. Do not add filler to
+  pad the count; `nfc-side-hustle` is the only sanctioned add-back, as a
+  second card.
 - **`saffron-web` was real client work but unpaid** (a friend's business).
   The site may say "available for freelance"; it must **not** imply
   "trusted by businesses." Gary has had no paying client yet, and
@@ -48,8 +56,10 @@ product truth (`docs/PRD.md`).
 - **Markdown is excluded from Prettier.** Planning documents are authored
   prose; a code formatter rewrapping their tables creates churn with no
   benefit.
-- **Demo videos are committed as normal files, never Git LFS** —
-  Cloudflare Pages does not fetch LFS objects at build time.
+- **Media is screenshots, not video** (2026-09-04). Committed as normal
+  files under `public/screenshots/`. If a short Cornerman clip is ever
+  added it is a normal file too — never Git LFS (Cloudflare Pages does not
+  fetch LFS objects at build time).
 - **Astro amends the PRD's "React + TypeScript" constraint** to
   "TypeScript everywhere; React where interactive." Static pages are
   `.astro` and ship zero JS; React is loaded only for genuine islands.
@@ -66,11 +76,13 @@ product truth (`docs/PRD.md`).
   alongside `brittanychiang.com` pulled the brief two ways.
 - **`800k.dev` was cited for minimalism, but its actual distinctive move
   is working functionality as content** (live typing test, real-time
-  viewer count). That reading is what put the Monte Carlo simulator in
-  scope — do not re-derive it as "make it minimal."
-- **The live element is a client-side Monte Carlo simulator** from
-  `Sports-Bet-Tracker`'s maths. Should-have, never at the expense of the
-  launch date. No backend — §6 still holds.
+  viewer count) — do not re-derive it as "make it minimal."
+- **No live/interactive proof element ships in v1** (2026-09-04). The
+  Monte Carlo simulator was cut: over-scoped for the deadline, and its
+  source project `Sports-Bet-Tracker` was also cut. A client-side
+  probabilistic-reasoning widget from `ufc-scouting-app`'s `lib/scoring`
+  (implied probability / edge / calibration) is the sanctioned
+  post-launch version — no backend, test-first when built.
 
 ## Flows and navigation
 
@@ -78,33 +90,30 @@ product truth (`docs/PRD.md`).
   screens. The auth-gate section of the flow map is empty by design.
 - **Navigation is `800k.dev`-style**: persistent bar, wordmark left
   returning to the homepage intro, hamburger right opening a full-screen
-  overlay menu. **The menu lists all six projects directly**, which is
-  what turns it from a hidden utility list into the site's real
-  navigation surface — that mitigation is load-bearing, not decoration.
-  If it is ever reduced to a plain collapsed list, the
-  recognition-over-recall tradeoff stops being acceptable.
-- **`/about` was removed and folded into a homepage section;
-  `/services` was added** for the small-business audience. Still 11
-  routes. No `/contact` (footer only), no `/thanks` (inline success).
+  overlay menu. **The menu lists every project directly** (the 3 hero
+  briefs + Pahinga's live site), which is what turns it from a hidden
+  utility list into the site's real navigation surface — that mitigation
+  is load-bearing, not decoration. If it is ever reduced to a plain
+  collapsed list, the recognition-over-recall tradeoff stops being
+  acceptable.
+- **`/about` folded into a homepage section; `/services` added; the
+  `/work` index route removed** (2026-09-04 — four projects don't need
+  one; the homepage work section is the full list). **7 routes.** No
+  `/contact` (footer only), no `/thanks` (inline success).
 - **`/services` must stand alone.** That audience arrives via a link Gary
   sends while pitching, so it is frequently the first and only page seen.
 - **Contact is footer-only, sitewide.** One surface, both audiences.
 
-- **The GitHub contribution graph is being built against
-  recommendation.** Real data, fetched 2026-08-28: **418 contributions
-  across 23 active days out of 370** (94% empty; busiest day 53). The
-  inspiring reference (`800k.dev`) had 2,296. A sparse *monochrome* dot
-  matrix reads harsher than GitHub's green version because there is no
-  colour to soften it, and "inactive" is the one signal the footer must
-  not send. Gary chose to build it anyway with the numbers in hand.
-  **Revisit once it can be seen rendered rather than described.** The
-  alternative on the table was a spec-sheet stat block (projects shipped,
-  live in production, real clients, peak day), which fits the
-  technical-drawing world better and is flattering on every number.
-- **Not GitHub's green squares, and not a third-party image.** Green
-  would fight both the technical-drawing world and the neutrals-plus-one-
-  accent rule; image services only emit GitHub's own styling. It must be
-  build-time API data rendered as custom inline SVG.
+- **The GitHub contribution graph was cut 2026-09-04; the footer carries
+  a static spec-sheet stat block instead** (projects shipped, live in
+  production, real client work, peak commit day — hand-maintained, no API
+  call). Real contribution data, fetched 2026-08-28: **418 contributions
+  across 23 active days out of 370** (94% empty; busiest day 53) — a
+  sparse monochrome matrix would read "inactive" to exactly the audience
+  the footer exists to persuade. The stat block was the alternative
+  already on the table; it fits the technical-drawing world better and is
+  flattering on every number. Not revisited unless the contribution
+  numbers change substantially.
 
 ## Visual direction — assigned 2026-08-28
 
@@ -124,12 +133,14 @@ present in built output — **do not move or delete it.**
   which is why this direction is cheap to build correctly.
 - **Three raises, donated by declined challengers** — carry them or the
   direction is weaker than the one that was chosen: one continuous label
-  stock across all 11 routes (from the orizuru crane); a single vertical
+  stock across every route (from the orizuru crane); a single vertical
   registration axis everything aligns to (from Versailles); density as
   tone (from the ASCII render).
-- **The density raise solves the sparse GitHub graph.** If information
-  density is the medium everywhere, a thin field reads as data rather
-  than as absence.
+- **The density raise now carries the lean roster.** It was originally
+  meant to make the sparse GitHub graph read as data rather than absence;
+  with the graph cut (2026-09-04) it does the same work for a
+  four-project site — if information density is the medium everywhere, a
+  short manifest reads as substantial rather than thin.
 - **Guardrails, binding:** must not read as gimmicky or try-hard, and
   must not look like every other dev portfolio. Both were named by Gary
   as what would make a finished result feel wrong.
@@ -153,27 +164,32 @@ present in built output — **do not move or delete it.**
 
 ## Testing
 
-- **No test runner is installed, deliberately** (decided 2026-08-28).
-  Nothing in the project is testable yet: the content schema is enforced
-  by Zod failing the build, which is stronger than a test, and every
+- **No test runner is installed, deliberately** (decided 2026-08-28,
+  reaffirmed 2026-09-04). Nothing in v1 is testable: the content schema
+  is enforced by Zod failing the build (stronger than a test), and every
   other surface is judgment/presentation work with no single correct
   output to assert.
-- **Vitest gets installed at the start of Phase 7**, not before — see the
-  warning block at the top of that phase in `ROADMAP.md`. Vitest reuses
-  Astro's existing Vite config, so setup is minutes.
-- **Phase 7 holds the only correctness-critical logic in the project**,
-  and both sub-phases are test-first: the contribution graph's week/day
-  bucketing (an off-by-one renders the grid wrong) and the Monte Carlo
-  simulator's statistical maths (a subtly wrong variance calculation
-  renders plausible-looking wrong numbers on a site whose entire purpose
-  is demonstrating competence). Write the failing test before the
-  implementation; the test passing is the definition of done.
+- **Phase 7 was removed from v1** (2026-09-04). It held the only
+  correctness-critical logic — the contribution graph's date bucketing
+  and the Monte Carlo simulator's statistical maths — and both were cut.
+  No test-first work remains in v1 scope.
+- **If the post-launch probabilistic-reasoning widget is built**, install
+  Vitest then (it reuses Astro's Vite config — minutes) and write it
+  test-first: a subtly wrong probability/edge calculation renders
+  plausible-looking wrong numbers on a site whose purpose is
+  demonstrating competence.
 
 ## Open
 
 - **Domain is not yet purchased** — a v1 blocker. Cloudflare Registrar
-  assumed (~$10–15/yr, sold at cost with no renewal markup).
-- **Visual direction is not yet assigned.** It must come from
-  `/impeccable new-work`'s `concept-seed.mjs`, not be chosen by taste —
-  see `docs/PRD.md` §8's aesthetic-clustering warning. Gary shapes the
-  *brief*; the seed picks the world inside it.
+  assumed (~$12/yr, sold at cost with no renewal markup).
+- **Résumé PDF does not exist** — deferred, not a launch blocker. The
+  footer résumé-download link waits on it.
+- **Application timing** — Gary is not applying imminently (2026-09-04).
+  The launch guardrail (PRD §7 metric 1) stands anyway; "portfolio 90%
+  done for months" is more likely without an application forcing the date.
+- **Whether `nfc-side-hustle` returns as a second card** — decide once the
+  three heroes are built and the roster can be judged as it renders.
+- **Two repo-hygiene tasks before launch:** `saffron-web` has no README
+  (13 bytes); `ufc-scouting-app`'s README still describes the frozen
+  group/clan tool, not the current solo "intern" app.

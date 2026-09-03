@@ -2,9 +2,12 @@
 
 **Status:** Confirmed
 **Date:** 2026-08-28
+**Amended:** 2026-09-04 — scope revision. 11 routes → 7 (the `/work`
+index and 3 case-study routes removed); demo video → screenshots;
+Monte Carlo simulator and GitHub contribution graph cut. See `CHANGES.md`.
 **Reads from:** [`docs/PRD.md`](PRD.md) (user types, use cases),
 [`ARCHITECTURE.md`](../ARCHITECTURE.md) (routes, entity)
-**Feeds:** the design-direction step, then `roadmap-planner`
+**Feeds:** `roadmap-planner`, then the `feature-planner` build loop
 
 There is **no authentication anywhere** in this project — no login, no
 accounts, no gated screens. Every route is public and statically
@@ -13,27 +16,29 @@ by design, not by omission.
 
 ---
 
-## Screen inventory — 11 routes
+## Screen inventory — 7 routes
 
 Counted explicitly so a partial list is visibly incomplete.
 
 | # | Route | Purpose |
 | --- | --- | --- |
-| 1 | `/` | Home — intro, work preview, about/IE, footer |
-| 2 | `/work` | Project index, hover-preview grid |
-| 3 | `/work/cornerman` | Case study |
-| 4 | `/work/nfc-side-hustle` | Case study |
-| 5 | `/work/saffron-web` | Case study |
-| 6 | `/work/ufc-scouting-app` | Case study |
-| 7 | `/work/sports-bet-tracker` | Case study — **carries the Monte Carlo simulator** |
-| 8 | `/work/pahinga-coffee` | Case study |
-| 9 | `/services` | Business-owner page (secondary audience) |
-| 10 | `/how-i-build` | The method — harness, skills, MCPs, CI gates |
-| 11 | `/404` | Not found |
+| 1 | `/` | Home — intro, **work section (the full project list)**, about/IE, footer |
+| 2 | `/work/cornerman` | Hero project brief |
+| 3 | `/work/ufc-scouting-app` | Hero project brief |
+| 4 | `/work/saffron-web` | Hero project brief |
+| 5 | `/services` | Business-owner page (secondary audience) |
+| 6 | `/how-i-build` | The method — harness, skills, MCPs, CI gates |
+| 7 | `/404` | Not found |
 
-**Changed from `ARCHITECTURE.md`:** `/about` is **removed** — folded into
-a homepage section. `/services` is **added**. `ARCHITECTURE.md`'s folder
-tree must be corrected to match.
+**Changed 2026-09-04:** the `/work` **index route is removed** — four
+projects do not need an index; the homepage work section is the full
+list. `/work` redirects to `/#work`. Case-study routes are down to **3**
+(one per hero). **Pahinga Coffee is a card**, not a route — it renders in
+the homepage work section and on `/services`, and its card links to its
+live site. `nfc-side-hustle` and `sports-bet-tracker` are off v1.
+
+**Earlier changes still standing:** `/about` folded into a homepage
+section; `/services` added.
 
 **No `/contact` route.** Contact lives in the sitewide footer.
 **No `/thanks` route.** Form success is an inline swap.
@@ -48,7 +53,7 @@ often left unspecified until it is missing from a finished build.
 **Persistent top bar on every route**, following the `800k.dev` pattern:
 
 - **Left — wordmark.** Returns to the homepage intro ("Hello, I'm Gary
-  Reyes, a 3rd-year Industrial Engineering student"). From a case study
+  Reyes, a 3rd-year Industrial Engineering student"). From a brief page
   this navigates to `/` and then scrolls to the intro; on `/` itself it
   scrolls to top.
 - **Right — hamburger**, opening a full-screen overlay menu.
@@ -57,13 +62,11 @@ often left unspecified until it is missing from a finished build.
 
 ```
 Menu (full-screen overlay)
-├─ Work                          → /work
+├─ Work                          → /#work
 │   ├─ 01  Cornerman             → /work/cornerman
-│   ├─ 02  NFC Review Plates     → /work/nfc-side-hustle
+│   ├─ 02  UFC Scouting          → /work/ufc-scouting-app
 │   ├─ 03  Saffron               → /work/saffron-web
-│   ├─ 04  UFC Scouting          → /work/ufc-scouting-app
-│   ├─ 05  Sports Bet Tracker    → /work/sports-bet-tracker
-│   └─ 06  Pahinga Coffee        → /work/pahinga-coffee
+│   └─ 04  Pahinga Coffee        → pahinga-coffee.vercel.app (↗ external)
 ├─ Services                      → /services
 ├─ How I build                   → /how-i-build
 ├─ Contact                       → scrolls to footer
@@ -76,7 +79,7 @@ A hamburger hides navigation, which trades against *recognition over
 recall*: on desktop a visitor cannot see that `/services` or
 `/how-i-build` exist until they open it.
 
-**This is mitigated by listing all six projects inside the menu.** That
+**This is mitigated by listing every project inside the menu.** That
 turns it from a collapsed utility list into the site's real navigation
 surface — one click to any destination from anywhere. The pattern works
 on `800k.dev` because the menu is a designed full-screen typographic
@@ -86,8 +89,9 @@ collapsed list.**
 ### Footer — sitewide, on every route
 
 1. Contact form (Web3Forms) — the only contact surface on the site
-2. GitHub contribution graph — custom monochrome dot matrix
-3. Résumé download link
+2. Spec-sheet stat block — projects shipped, live in production, real
+   client work, peak commit day (static, hand-maintained)
+3. Résumé download link — *deferred; the résumé does not exist yet*
 4. Socials — GitHub, LinkedIn, email
 
 ---
@@ -101,10 +105,10 @@ time-poor, skeptical, and forms a judgment in under two minutes.
 flowchart TD
     A[Lands on / from a link in an application] --> B{Intro reads as credible?}
     B -->|No| X[Leaves]
-    B -->|Yes| C[Scrolls to work preview]
-    C --> D[Opens a case study<br/>from preview, /work, or menu]
-    D --> E[Sees poster image,<br/>clicks to play demo video]
-    E --> F[Reads problem, build,<br/>decisions, tradeoffs]
+    B -->|Yes| C[Scrolls to the work section]
+    C --> D[Opens a hero brief<br/>from the work section or menu]
+    D --> E[Views screenshots]
+    E --> F[Reads the problem,<br/>key decisions, status]
     F --> G{Wants more?}
     G -->|Method| H[/how-i-build/]
     G -->|Another project| D
@@ -115,17 +119,15 @@ flowchart TD
     J --> K[Inline success message]
 ```
 
-**Screens involved:** `/` → `/work` or direct to `/work/[slug]` →
-optionally `/how-i-build` → footer. **Four screens maximum** between
-landing and contact.
+**Screens involved:** `/` → `/work/[slug]` → optionally `/how-i-build` →
+footer. **Three screens maximum** between landing and contact.
 
 **Primary action per screen:**
 
 | Screen | One obvious primary action |
 | --- | --- |
 | `/` | Open the work |
-| `/work` | Open a case study |
-| `/work/[slug]` | Play the demo video |
+| `/work/[slug]` | Follow the live link / repo |
 | `/how-i-build` | Return to the work |
 | `/services` | Submit an inquiry |
 | Footer | Send a message |
@@ -133,7 +135,7 @@ landing and contact.
 **Recognition over recall:** nothing in this flow requires remembering
 anything from a previous screen. Project status (`live` /
 `android-apk` / `archived`) is shown wherever a link appears, so a
-visitor never has to recall which demos are clickable.
+visitor never has to recall which links are clickable.
 
 ---
 
@@ -169,8 +171,8 @@ Edit src/content/projects/<slug>.mdx → commit → PR → CI passes → merge �
 ```
 
 No admin interface and no login. Editing content **is** the normal
-development workflow. Adding a seventh project means adding one `.mdx`
-file — no other change.
+development workflow. Adding another project means adding one `.mdx`
+file (with `tier: hero` or `tier: card`) — no other change.
 
 ---
 
@@ -187,73 +189,47 @@ failure states. These are the real ones.
 | **Form — success** | Form swaps in place for a confirmation. No navigation, no `/thanks` route |
 | **Form — failure** | Visible error **plus a `mailto:` fallback**. Never a silent failure, never an endless spinner (PRD §10) |
 | **Form — spam** | Honeypot field plus Web3Forms' own filtering |
-| **Video — default** | Poster image, `preload="none"`. Nothing downloads until clicked |
-| **Video — failed** | Poster remains with a visible note; the case study still reads completely without it |
+| **Screenshots — default** | `loading="lazy"` with reserved dimensions. Nothing shifts as they load |
+| **Screenshot — failed** | `alt` text shows; the brief still reads completely without the image |
 | **Demo link — paused/dead** | Status label shown next to every link. `Cornerman` is `android-apk` and has **no** live URL — its card must not render a dead "Live demo" affordance |
 | **Reduced motion** | All scroll and hover motion disabled; menu opens without animation; content fully readable and navigable |
-| **JavaScript disabled** | Menu, hover previews, and the Monte Carlo simulator are React islands. The site must remain **fully navigable and readable** without them — menu falls back to plain links, simulator shows a static image or is hidden |
-| **Slow connection** | Text and layout render first. Videos and the contribution graph never block first paint |
-| **404** | Designed page with a route back to `/work` — not a bare message |
+| **JavaScript disabled** | Menu and hover previews are React islands. The site must remain **fully navigable and readable** without them — menu falls back to plain links |
+| **Slow connection** | Text and layout render first. Screenshots never block first paint |
+| **404** | Designed page with a route back to the homepage work section — not a bare message |
 | **Menu open** | Focus trapped inside, `Esc` closes, background scroll locked, focus returns to the trigger |
-| **Deep link to a case study** | Every case study independently linkable with correct OG tags for previews |
+| **Deep link to a hero brief** | Every brief independently linkable with correct OG tags for previews |
 
 ---
 
-## The Monte Carlo simulator — `/work/sports-bet-tracker`
+## Footer stat block
 
-Lives inside its own case study, where it is contextually honest: that
-project's actual mathematics, shown running rather than described. This
-is the `800k.dev` move — working functionality as content — and the most
-direct expression of "show, don't tell."
+A static spec-sheet block in the footer — a small set of hand-maintained
+figures set as a manifest line: **projects shipped**, **live in
+production**, **real client work**, **peak commit day**. No API call, no
+build-time fetch, no JavaScript.
 
-**Client-side only. No backend, so PRD §6 holds.**
-
-| State | Behaviour |
-| --- | --- |
-| Initial | Sensible defaults already producing a result — never a blank chart awaiting input |
-| Interacting | Redraws on input change; no submit button |
-| Reduced motion | Redraws without transition animation |
-| No JS | Static fallback image with a one-line caption |
-
-**Should-have, never at the expense of the launch date.** If the deadline
-tightens, this is the first thing cut.
-
----
-
-## GitHub contribution graph — footer
-
-Custom monochrome dot matrix rendered from build-time GitHub API data —
-**not** a third-party image and **not** GitHub's green squares, which
-would fight both the technical-drawing world and the "neutrals plus at
-most one accent" rule.
-
-> ⚠️ **Built against recommendation, with the data known.** Gary's real
-> figures: **418 contributions across 23 active days out of 370** — the
-> matrix will be ~94% empty, versus the 2,296-contribution reference that
-> inspired it. The risk is that a sparse monochrome grid signals
-> "inactive" to exactly the audience the footer exists to persuade.
-> Decision recorded in `PROJECT_FACTS.md`; revisit once it can be seen
-> rendered rather than described.
+Replaces the GitHub contribution graph from the original plan, cut
+2026-09-04: Gary's real figures (418 contributions across 23 of 370
+active days, ~94% empty) would read as "inactive" to exactly the audience
+the footer exists to persuade. Full reasoning in `PROJECT_FACTS.md`.
 
 | State | Behaviour |
 | --- | --- |
-| Normal | Static inline SVG, baked at build |
-| Build-time API failure | **Build must not fail.** Omit the graph, keep the profile link |
-| No JS | Unaffected — it is inline SVG, not a script |
+| Normal | Plain typography over 4–5 figures, baked into the page |
+| No JS | Unaffected — it is static markup |
+
+*(A client-side probabilistic-reasoning widget derived from UFC
+Scouting's scoring lib — implied probability / edge / calibration — is a
+possible post-launch "working functionality as content" element. Not v1.)*
 
 ---
 
 ## Handoff
 
-Written: **`docs/user-flows.md`** — 11 routes, three flows, navigation
-convention, and every failure state.
+**`docs/user-flows.md`** — 7 routes, three flows, navigation convention,
+and every failure state. Revised 2026-09-04 for the scope change.
 
-Next, and it must happen now, before the first component exists:
-
-1. **`/impeccable init`** — point it at `docs/PRD.md`; it translates
-   rather than re-interviewing. **Omit its `## Stack` section** —
-   `ARCHITECTURE.md` owns the stack.
-2. **`/impeccable new-work`** — runs `concept-seed.mjs` to assign the
-   visual direction from outside the model.
-
-Then `roadmap-planner`.
+`/impeccable init`, `/impeccable new-work` (visual direction assigned),
+and `roadmap-planner` have all run. `ROADMAP.md` is being re-segmented
+for the scope change; then the `feature-planner` build loop starts at
+Phase 3a.

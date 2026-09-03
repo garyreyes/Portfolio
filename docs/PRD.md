@@ -1,7 +1,12 @@
 # PRD — Gary Reyes Portfolio
 
-**Status:** Draft for confirmation
+**Status:** Confirmed
 **Date:** 2026-08-28
+**Amended:** 2026-09-04 — scope revision after re-verifying the source
+repos: roster cut to 3 hero briefs + 1 card; long-form case studies
+replaced by short briefs; recorded demo videos replaced by screenshots;
+the Monte Carlo simulator and GitHub contribution graph cut. See
+`CHANGES.md` and `PLAN-REVIEW-BRIEF.md`. Sections 5, 9, 10, 11 updated.
 **Owner:** Gary Reyes (Industrial Engineering, De La Salle University — 3rd year)
 
 This is the single source of product truth for this project. Later
@@ -14,20 +19,21 @@ one, this one wins.
 
 ## 1. Problem statement
 
-Gary has shipped six real software projects — a mobile training app with
-offline speech synthesis, a platform running an actual NFC business, a
-site for a friend's local business, and three data-driven web apps — but
-has no single place that presents them. Right now the only way anyone can
-evaluate the work is by browsing raw GitHub repositories, which no startup
-founder and no café owner will ever do.
+Gary has shipped several real software projects — a mobile training app
+with offline speech synthesis and real-time audio DSP, a full-stack
+fight-analysis tool with an LLM assistant, a live site for a friend's
+restaurant, and more — but has no single place that presents them. Right
+now the only way anyone can evaluate the work is by browsing raw GitHub
+repositories, which no startup founder and no café owner will ever do.
 
 The specific pain being removed: **the work exists but is unpresentable.**
 Applications currently rest on a resume that cannot show a working
 product, and freelance prospects have nothing to look at.
 
-Why now: internship applications are imminent (2–3 week window), and the
-café-website side hustle needs a credible sales surface to fund ongoing
-tooling costs.
+Why now: the café-website side hustle needs a credible sales surface, and
+a portfolio is the prerequisite for startup applications whenever they
+start going out. (As of 2026-09-04 no application is imminent — the
+launch guardrail in §7 stands regardless.)
 
 ---
 
@@ -70,7 +76,7 @@ a personal project tracker).
 1. Lands on the homepage, understands within seconds who Gary is and what
    he builds.
 2. Scans the project list and picks whichever is most relevant.
-3. Opens a case study, watches a short demo video, reads what the problem
+3. Opens a project brief, views the screenshots, reads what the problem
    was and what decisions were made.
 4. Optionally follows through to the live site or the GitHub repository.
 5. Optionally visits "How I build" to understand the working method.
@@ -85,7 +91,7 @@ a personal project tracker).
 
 **Gary maintaining the site**
 
-1. Adds or edits a case study by writing an MDX file in the repository.
+1. Adds or edits a project by writing an MDX file in the repository.
 2. Commits and pushes; the site redeploys automatically.
 3. There is no admin interface and no login. Editing content _is_ the
    normal development workflow.
@@ -106,30 +112,42 @@ across his repositories. Curious readers self-select into it; skeptics
 never reach it.
 
 **Consequence, accepted deliberately:** because nothing is _claimed_ on the
-homepage, the case studies carry the entire persuasive load. Six shallow
-project cards would show nothing. This is why full case studies and demo
-videos are Must-have rather than polish.
+homepage, the project briefs and the honest live links carry the
+persuasive load. Bare project cards would show nothing. This is why each
+hero project gets a real brief (problem, key decisions, status,
+screenshots) — see §9 — rather than a one-line card.
 
 ---
 
 ## 5. Project inventory
 
-Five of six are real, live, or attached to real money. Only Pahinga is a
-practice build. This ratio is the core argument of the portfolio.
+**Four projects shown: three hero briefs plus one practice card.** Three
+are built for real use; one is a deliberate practice build. This is the
+honest version of the old "five of six are real" claim, which did not
+survive re-verification (2026-09-04).
 
-| Project                | Type                  | Backend                                | Status                              | Notable                                                                                                             |
-| ---------------------- | --------------------- | -------------------------------------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| **Cornerman**          | Expo / React Native   | None — offline, MMKV                   | Android APK; Play Store in progress | Bundled Kokoro TTS, WSOLA time-stretching, background audio. Most technically distinctive; the only mobile project. |
-| **nfc-side-hustle**    | Next.js + TS          | Neon Postgres + Drizzle                | Live, real business                 | Real users, real revenue, door-to-door sales                                                                        |
-| **saffron-web**        | Next.js + TS          | None — reservations via email redirect | Live on Vercel                      | **Real client, unpaid** — a friend's local business                                                                 |
-| **ufc-scouting-app**   | Next.js App Router    | Supabase + RLS                         | Live                                | External API sync via GitHub Actions cron                                                                           |
-| **Sports-Bet-Tracker** | React/Vite + Tailwind | Supabase + RLS                         | Live                                | Analytics, Monte Carlo simulation, private groups                                                                   |
-| **Pahinga-Coffee**     | React/Vite, static    | Web3Forms                              | Live                                | Practice build; the café-site sales proof                                                                           |
+| Project              | Tier | Type                | Backend                          | Status                             | Notable                                                                                                          |
+| -------------------- | ---- | ------------------- | -------------------------------- | ---------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| **Cornerman**        | hero | Expo / React Native | None — offline, MMKV             | Android APK; Play Store in progress | Bundled Kokoro TTS, WSOLA time-stretching, background audio. Most technically distinctive; the only mobile project. |
+| **ufc-scouting-app** | hero | Next.js App Router   | Supabase + RLS                   | Live                               | Multi-source data reconciliation, immutable odds snapshots, an LLM "intern" scored on two boards against a control line, GitHub Actions cron, test-first money math |
+| **saffron-web**      | hero | Next.js + TS         | None — reservations via email    | Live on Vercel                     | **Real client, unpaid** — a friend's operating restaurant                                                        |
+| **pahinga-coffee**   | card | React/Vite, static   | Web3Forms                        | Live                               | Practice build; the café-site proof for `/services`                                                              |
 
-**Range demonstrated:** offline audio/DSP and mobile systems, a
-cron-driven external data pipeline, row-level security and permissions,
-statistical modelling, and a revenue-generating business — not six
-variations of the same CRUD app.
+**Range demonstrated:** offline audio/DSP and mobile systems, row-level
+security and permissions, external-API data pipelines with statistical
+modelling, and real client delivery — three genuinely different
+competencies, not variations of one CRUD app.
+
+**Considered and cut (2026-09-04):**
+
+- **nfc-side-hustle** (QR review-plate platform) — real full-stack build
+  (Next.js, Neon + Drizzle, role-based auth, multi-branch, scan
+  analytics), but its "running business" framing did not hold: it is a
+  door-to-door *sales-practice* project with one pilot restaurant and ~3
+  plates sold. Possible future card.
+- **Sports-Bet-Tracker** — live, but overt gambling framing, a
+  contradictory rebuild-vs-live story in its own docs, and heavily
+  redundant with ufc-scouting-app.
 
 ---
 
@@ -177,13 +195,13 @@ on top of a site that is already live.
 
 | #   | Metric                    | Placeholder target                                                                | What it actually tells you                                                                                                                                                                            |
 | --- | ------------------------- | --------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | **Launch guardrail**      | Live on a custom domain with all six case studies and demo videos, within 3 weeks | The only non-invented one. Guards against the real failure mode: a portfolio 90% done for months while the hero section gets re-tweaked.                                                              |
+| 1   | **Launch guardrail**      | Live on a custom domain with all three hero briefs and the Pahinga card, within ~3 weeks of build start | The only non-invented one. Guards against the real failure mode: a portfolio 90% done for months while the hero section gets re-tweaked. More important now that no imminent application is forcing the date. |
 | 2   | **Startup response rate** | Apply to ~15 startups within 2 weeks of launch; count replies                     | Zero replies out of 15 means something is broken and needs changing. Three means it works and the answer is simply to send more. Without the count, you cannot tell those apart.                      |
 | 3   | **Freelance conversion**  | ≥1 genuine inquiry and ≥1 _paid_ site within 3 months                             | Tests the second audience independently — the site could work on startups and do nothing for business owners. Note this would be a **first-ever paid client**, so it is more ambitious than it reads. |
 
 Secondary signal, free via drop-in analytics: what fraction of visitors
-open at least one case study. Directly tests whether "show, don't tell" is
-working. An observation for v1, not a target.
+open at least one project brief. Directly tests whether "show, don't
+tell" is working. An observation for v1, not a target.
 
 ---
 
@@ -214,7 +232,7 @@ working. An observation for v1, not a target.
 | HTTPS certificate                    | Cloudflare, automatic                                                                             | **$0**           |
 | Analytics                            | Cloudflare Web Analytics (no cookie banner needed) or Umami free tier                             | **$0**           |
 | Contact form                         | Web3Forms free tier (~250 submissions/mo) — already proven in `Pahinga-Coffee`                    | **$0**           |
-| Demo video hosting                   | Committed to the repo and served by Pages; compress each to <10 MB                                | **$0**           |
+| Screenshot hosting                   | Committed to the repo and served by Pages                                                        | **$0**           |
 | Email forwarding to a custom address | Cloudflare Email Routing (receive/forward only)                                                   | **$0**           |
 | **Total**                            |                                                                                                   | **~$10–15/year** |
 
@@ -267,36 +285,43 @@ pulling from it.
 
 ---
 
-## 9. Case study depth and demo strategy
+## 9. Project briefs and media strategy
 
-Each of the six projects gets its **own case study page**, reached by
-navigating away from the index (the `brittanychiang.com` pattern), not an
-in-page panel.
+Each of the **three hero projects** gets a short, README-shaped **brief**
+on its own page (`/work/[slug]`), reached by navigating away from the
+homepage work section (the `brittanychiang.com` pattern). **Not** a
+long-form case study — long case studies read as padding for an
+early-career SWE portfolio and recruiters do not read them. Pahinga is a
+**card** only: a screenshot, a line, and a link to its live site — no
+brief page.
 
-**Each case study contains:**
+**Each hero brief contains (~150–250 words, one screen):**
 
-- The problem and who it was for
-- What was built
-- Key decisions and their tradeoffs
-- Outcome / current status
-- **A 30–60 second recorded demo video or GIF**
-- Links: live site and/or repository, with status labelled honestly
+- One line: what it is
+- **Screenshots** — this is the "show"
+- 3–5 bullets: the problem, the 1–2 genuinely interesting technical
+  decisions, the outcome / current status
+- Tech tags
+- Links: live site and/or repository and/or APK, with status labelled
+  honestly (`Live` / `Android APK` / `Practice`)
 
-**Why recorded demos are Must-have, not polish.** Three of six projects
-cannot be reliably clicked and seen:
+**Media is screenshots, not recorded video.** The video-production
+dependency was the largest schedule risk and would not reliably get done.
+An optional ~20-second Cornerman clip (spoken combo call-outs — the one
+thing a screenshot cannot convey) may be added later but never blocks
+launch.
 
-- **Cornerman** has no web demo at all — Android APK only.
-- **Sports-Bet-Tracker** and **ufc-scouting-app** run on Supabase's free
-  tier, which **pauses projects after roughly 7 days of inactivity.** A
-  founder clicking "Live Demo" after a quiet week gets a dead link.
+**What this leans on:** "show, don't tell" now rests on (a) the live
+links being up and (b) the code being clean and browsable. Two of three
+heroes are clickable — Saffron is a live marketing site, and UFC
+Scouting's twice-daily GitHub Actions cron keeps its free-tier Supabase
+project awake. Cornerman is a mobile app; nobody expects to click it from
+a desktop portfolio.
 
-A dead demo in front of a hiring manager is worse than no demo link. The
-recording removes the dependency entirely.
-
-**Source material:** `Cornerman-2`, `nfc-side-hustle`, and `saffron-web`
-already carry `ARCHITECTURE.md`, `PRODUCT.md`, `ROADMAP.md`, and
-`PROJECT_FACTS.md`. Case studies are largely a translation job from
-existing documents, not writing from blank.
+**Source material:** `Cornerman-2`, `ufc-scouting-app`, and `saffron-web`
+all carry rich internal docs (`ARCHITECTURE.md`, `PRODUCT.md`,
+`RETROSPECTIVE.md`). Each brief is largely a translation job, not writing
+from blank.
 
 ---
 
@@ -306,12 +331,12 @@ existing documents, not writing from blank.
 | --------------------------------------- | -------------------------------------------------------------------------------------------- |
 | Contact form service is down or rejects | Visible error message with a mailto fallback. Never a silent failure or an infinite spinner. |
 | Contact form spam                       | Honeypot field at minimum; the form service's own spam filtering.                            |
-| A project's live demo is dead or paused | Recorded demo still plays. Link status labelled honestly (Live / Android APK / Archived).    |
-| Demo video fails to load or is slow     | Poster image / screenshot fallback. Videos must be lazy-loaded, never blocking first paint.  |
+| A project's live demo is dead or paused | Screenshots still tell the story. Link status labelled honestly (Live / Android APK / Practice). Cornerman has no live URL and must not render a dead "Live demo" affordance. |
+| A screenshot fails to load or is slow   | Layout holds with alt text; the brief still reads completely. Images lazy-loaded, never blocking first paint. |
 | Visitor has `prefers-reduced-motion`    | All scroll and hover motion disabled or reduced. Content fully readable and navigable.       |
 | Slow connection or large media          | Text and layout render first; media never blocks reading.                                    |
-| Direct link to a case study             | Every case study is independently linkable and shareable, with correct OG tags for previews. |
-| Unknown URL                             | Designed 404 page with a route back to the work.                                             |
+| Direct link to a project brief          | Every hero brief is independently linkable and shareable, with correct OG tags for previews. |
+| Unknown URL                             | Designed 404 page with a route back to the homepage work section.                            |
 | Very small or very large viewport       | Fully responsive; no horizontal scroll on the body at any width.                             |
 | Empty states                            | Not applicable — all content is authored and static.                                         |
 
@@ -321,9 +346,10 @@ existing documents, not writing from blank.
 
 ### Must have — v1 does not ship without these
 
-- Homepage: who Gary is, what he builds, one obvious primary action
-- Project index with all six projects
-- Six full case study pages, each with a recorded demo video
+- Homepage: who Gary is, what he builds, one obvious primary action; the
+  work section doubles as the full project list
+- Three hero project briefs, each with screenshots and honest links
+- Pahinga as a card (screenshot + line + link to its live site)
 - "How I build" page (the method, owned honestly)
 - About section (IE @ DLSU as positioning)
 - Working contact form with visible failure handling
@@ -331,33 +357,24 @@ existing documents, not writing from blank.
 - Fully responsive, `prefers-reduced-motion` respected
 - Designed 404
 - SEO/OG baseline: titles, meta, OG images, `sitemap.xml`, `robots.txt`, favicon
+- Footer spec-sheet stat block (projects shipped, live in production, real
+  client work, peak commit day) — static, no API call
 
 ### Should have
 
-- **Live proof element — a client-side Monte Carlo simulator.** A small
-  interactive bankroll/variance simulation lifted from
-  `Sports-Bet-Tracker`: adjust inputs, watch the outcome distribution
-  redraw. This is the `800k.dev` move — working functionality as content —
-  and it is the most direct possible expression of "show, don't tell":
-  proof that runs in the visitor's browser rather than proof asserted in
-  prose. Stochastic modelling is also authentically IE-flavoured and
-  almost unheard of on a developer portfolio.
-  **Pure client-side maths — no backend, so §6 still holds.** Should-have,
-  not Must-have: it must not put the launch date at risk.
-- Drop-in analytics (Plausible / Umami / Cloudflare)
-- Hover previews on the project index (the `webportfolios.dev` pattern)
+- Drop-in analytics (Cloudflare Web Analytics)
+- Hover previews on the work section (the `webportfolios.dev` pattern)
 - Restrained scroll motion (the `hampusdesign.com` reference)
-- Downloadable résumé link
 - Honest status labels on every project link
 
 ### Could have
 
-- GitHub Actions cron to keep Supabase free-tier demos awake, so live
-  links stay genuinely clickable (reuses the pattern already in
-  `ufc-scouting-app`)
-- Filter/sort on the project index
-- Case study reading time
-- Subtle live touch (e.g. GitHub activity) — only if cheap and reliable
+- Downloadable résumé link (deferred — résumé does not exist yet)
+- An optional ~20s Cornerman audio clip
+- Filter/sort on the work section
+- A client-side probabilistic-reasoning widget derived from
+  `ufc-scouting-app`'s scoring lib (implied probability / edge /
+  calibration) — post-launch only, needs a test-first pass
 
 ### Won't have (this version)
 
@@ -368,22 +385,28 @@ existing documents, not writing from blank.
 - Theme toggle (unless the assigned design direction requires it)
 - i18n
 - IE-targeted content track
+- Recorded demo videos
+- GitHub contribution graph (94% empty — replaced by the stat block)
+- Monte Carlo simulator (over-scoped for v1; its source project was cut)
 
 ---
 
-## 12. Open questions for `app-architect`
+## 12. Open questions for `app-architect` — all resolved
 
-1. Final framework: Vite + React Router, Astro, or Next.js static export —
-   all satisfy "React + TypeScript, static."
-2. MDX tooling and how case study frontmatter is typed and validated.
-3. Where demo video files live and how they are served within Cloudflare
-   Pages' limits.
-4. Domain name selection and registrar.
+1. Framework → **Astro** (see `ARCHITECTURE.md`).
+2. MDX frontmatter typing → **Astro Content Collections + Zod** in
+   `src/content/config.ts`.
+3. ~~Where demo video files live~~ → moot; media is screenshots in
+   `public/`, no video pipeline (2026-09-04).
+4. Domain name and registrar → still open; Cloudflare Registrar assumed,
+   not yet purchased (a v1 blocker).
 
 ---
 
 ## Handoff
 
-Next step: **`app-architect`**, reading this document as its starting
-context. It owns entities, the framework fork, folder structure, and
-layer boundaries — none of which are decided here.
+`app-architect`, `harness-setup`, `user-flow-mapper`, the design
+direction, and `roadmap-planner` have all run. The 2026-09-04 scope
+revision has been propagated through `ARCHITECTURE.md`,
+`docs/user-flows.md`, `PROJECT_FACTS.md`, `PRODUCT.md`, and `ROADMAP.md`.
+Next: the `feature-planner` build loop, starting at Phase 3a.
