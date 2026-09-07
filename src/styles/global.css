@@ -1,15 +1,20 @@
 @import 'tailwindcss';
 
 /* KNOWN, ACCEPTED: Tailwind v4 scans the whole project for class-name-shaped
-   strings by default, including prose. .impeccable/critique/*.md documents
-   fixes like "mt-2 -> mt-gutter" in plain English, and the literal substring
-   "mt-2" is enough to make Tailwind generate a real (if unused, confirmed via
-   dist/index.html — zero elements carry it) .mt-2 utility into the built CSS.
-   Caught in the Phase 3 close review. `@source not "../../.impeccable"` was
-   tried and did not suppress it with this project's @tailwindcss/vite setup
-   (v4.3.3) — not worth chasing further, or restructuring source detection
-   from opt-out to an explicit allow-list, for a few dead bytes with zero
-   functional impact. */
+   strings by default, including prose — not just .impeccable/critique/*.md
+   (which documented "mt-2 -> mt-gutter") but CHANGES.md's own changelog
+   entries (which mention "py-4" while describing a past fix). Each literal
+   substring is enough to make Tailwind generate a real, unused utility into
+   the built CSS — confirmed via dist/index.html: zero elements ever carry
+   any of them. Caught in the Phase 3 close review. `@source not
+   "../../.impeccable"` was tried and did not suppress the first instance
+   with this project's @tailwindcss/vite setup (v4.3.3); since project docs
+   generally (not just one directory) can trigger this, and it costs zero
+   functional bytes, it is not worth chasing further or restructuring source
+   detection from opt-out to an explicit allow-list. If a stray selector
+   like this is ever found again during a review, check it against
+   dist/index.html before assuming it is a real regression — it usually
+   isn't. */
 
 /* ==========================================================================
    THE LABEL STOCK — design tokens for the assigned visual direction
@@ -79,53 +84,62 @@
 
 @theme {
   /* --- Ground: the label stock itself ---------------------------------
-     Manila board, warmed. stock-200 is THE ground; every route sits on it
-     so the site reads as one continuous run of label stock rather than a
-     sequence of pages. The others are the same stock lit differently, not
-     separate colours.
+     AMENDED 2026-09-07: recoloured from warm kraft/manila to true
+     achromatic paper, Gary's explicit call after being told the tradeoff
+     (this is the single most common developer-portfolio palette, and the
+     assigned direction's whole point was to avoid landing there). Every
+     value below has EQUAL r/g/b channels — genuinely no hue, not just
+     "lighter" — which is the real technical difference between "black and
+     white" and the previous warm-tinted grays. stock-200 is THE ground;
+     every route sits on it so the site reads as one continuous run of
+     stock. The structure this replaces — one continuous stock, the
+     registration axis, density as tone — is unchanged; only the colour
+     system is. See PROJECT_FACTS.md "Visual direction" for the full record.
      -------------------------------------------------------------------- */
-  --color-stock-100: #f3ecdd; /* label face — placards, raised panels */
-  --color-stock-200: #e8dcc3; /* THE ground */
-  --color-stock-300: #d9c9a8; /* recessed band, alternating rows */
-  --color-stock-400: #c0a980; /* kraft edge */
+  --color-stock-100: #fafafa; /* label face — placards, raised panels */
+  --color-stock-200: #efefef; /* THE ground */
+  --color-stock-300: #dcdcdc; /* recessed band, alternating rows */
+  --color-stock-400: #b8b8b8; /* stock edge */
 
   /* --- Ink -------------------------------------------------------------
-     Stencil ink is never pure black. Printed ink on brown board is warm and
-     slightly open; #000 on manila reads as a screenshot of a PDF.
+     Near-black, not pure #000 — on true white/near-white stock, unlike on
+     kraft, pure black is completely normal, but a hair off keeps it ink
+     rather than screen-glass.
      -------------------------------------------------------------------- */
-  --color-ink: #1c1813; /* stencil ink — body and display */
-  --color-ink-muted: #4a4136; /* secondary prose */
+  --color-ink: #171717; /* stencil ink — body and display */
+  --color-ink-muted: #595959; /* secondary prose */
   /* Measured, not estimated. The binding case is the "mark" utility: 11px is
      far below WCAG's large-text threshold, so 4.5:1 is required, and the
-     worst ground is stock-300. This tone gives 4.8:1 there, 5.7:1 on the
-     ground and 6.7:1 on a placard. The previous lighter value (#7a6c58)
-     measured 3.1:1 on stock-300 and failed AA on all three grounds. */
-  --color-ink-faint: #5c5040; /* stencil labels, metadata, lot codes */
-  --color-rule: #b8a684; /* hairline on stock — structure, not a border */
-  --color-rule-strong: #6f6250; /* the registration axis itself */
+     worst ground is stock-300. This tone gives 6.16:1 there, 7.35:1 on the
+     ground and 8.10:1 on a placard — comfortably clear on every ground, a
+     wider margin than the previous warm palette needed. */
+  --color-ink-faint: #4d4d4d; /* stencil labels, metadata, lot codes */
+  --color-rule: #c7c7c7; /* hairline on stock — structure, not a border */
+  --color-rule-strong: #7a7a7a; /* the registration axis itself, 3.73:1+ */
 
-  /* --- The one accent --------------------------------------------------
-     Safety orange, as sprayed on a crate. Carries meaning only: current
-     state, the primary action, a LIVE stamp. It is never decoration and
-     never a second brand colour (CLAUDE.md, "restrained colour strategy").
+  /* --- No accent, by design -----------------------------------------
+     AMENDED 2026-09-07: the safety-orange accent (--color-safety /
+     --color-safety-text) is gone, not recoloured. Three things it used to
+     carry meaning for now carry it without hue instead:
 
-     TWO tokens on purpose. --color-safety is for marks, fills and display
-     sizes, where WCAG needs 3:1. It measures 3.58:1 on the ground, which
-     is NOT enough for body-size text, so accent-coloured running text and
-     small links use --color-safety-text (5.26:1 on the ground, 6.08:1 on a
-     placard) instead.
+       LIVE/SHIPPED STATUS — @utility stamp's default state is now a solid
+       ink FILL (--color-ink background, --color-stock-100 text), not an
+       outline. Archived/spent stays outline-only. Weight replaces hue —
+       arguably more authentic to the metaphor than colour was: a real ink-
+       stamp impression is a solid dark fill, not a tint.
 
-     HARD CONSTRAINT, measured: NEITHER accent token may be used on
-     --color-stock-300. That ground is dark enough to sink both — safety
-     lands at 2.98:1 (under even the 3:1 large-text floor) and safety-text at
-     4.38:1 (under AA). The accent is sanctioned on stock-100 and stock-200
-     only. A recessed band that needs emphasis uses ink weight or the hazard
-     rule, not colour. Reaching for the
-     brighter one on small text is the mistake this split exists to stop.
+       INTERACTIVE FEEDBACK — hover states split in two, because several
+       elements' resting colour is ALREADY --color-ink once there's no
+       accent to shift toward, and a hover rule that shifts ink -> ink is
+       an invisible no-op. Buttons (the Menu trigger, the menu's Close
+       control) get an ink-fill hover, reusing the stamp's own visual
+       language. Inline text links get an underline, darkening to
+       --color-ink additionally wherever the resting colour is lighter
+       (ink-muted or ink-faint) than that.
+
+       SELECTION / FOCUS — ::selection and :focus-visible below both moved
+       to --color-ink; see their own comments.
      -------------------------------------------------------------------- */
-  --color-safety: #ce3e0a;
-  --color-safety-text: #a03105;
-  --color-safety-face: #f3ecdd; /* text ON a safety fill */
 
   /* --- Type ------------------------------------------------------------
      Archivo Narrow sets the stencil caps the direction asks for. Archivo
@@ -199,7 +213,7 @@
   /* Single-mode on purpose. The direction commits to ONE label stock across
      every route; an inverted "dark label" would be a second world, not a
      theme of this one. Declared explicitly so the browser does not paint a
-     dark form control onto manila. */
+     dark form control onto the (now achromatic) stock. */
   html {
     color-scheme: light;
     /* Deliberately NO overflow-x here. An earlier draft set `overflow-x: clip`
@@ -224,17 +238,17 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  /* Ink on stock, not a browser blue box. */
-  /* safety-text, not safety: selected 16px body copy has to clear 4.5:1,
-     and the brighter accent only reaches 4.13:1 behind it. */
+  /* Ink on stock, not a browser blue box. Reads like a redaction/highlight
+     mark rather than a colour swatch — an inverted block, ink on ink's own
+     ground colour, the same fill pattern @utility stamp uses for "live". */
   ::selection {
-    background-color: var(--color-safety-text);
-    color: var(--color-safety-face);
+    background-color: var(--color-ink);
+    color: var(--color-stock-100);
   }
 
-  /* Visible on manila at 3:1 against both stock-100 and stock-200. */
+  /* Visible on stock at well past 3:1 against every ground. */
   :focus-visible {
-    outline: var(--rule-heavy) solid var(--color-safety-text);
+    outline: var(--rule-heavy) solid var(--color-ink);
     outline-offset: 2px;
   }
 
@@ -372,14 +386,20 @@
    square to the sheet — the rotation is the point, and it is the only place
    on the site anything is rotated.
 
+   AMENDED 2026-09-07: live/shipped is now a solid ink FILL, not an
+   accent-coloured outline — a real ink-stamp impression is a dark fill,
+   not a tint, so this is arguably closer to the metaphor than colour was.
+   Weight (filled vs outlined) now does the job hue used to.
+
    The spent variant is a nested attribute selector, NOT a second "stamp-spent"
    utility. Two same-specificity utilities only override in the order Tailwind
    happens to sort them by property, so `class="stamp stamp-spent"` worked by
    luck: adding a display property to the variant could have re-sorted it ahead
    of .stamp and silently stopped it overriding. This form cannot be reordered.
 
-   The distinction is not carried by colour alone — the label itself changes
-   (Shipped / Archived), which is what satisfies WCAG 1.4.1. */
+   The distinction is not carried by colour (there is none) or fill alone —
+   the label itself changes too (Shipped / Archived), which is what actually
+   satisfies WCAG 1.4.1. */
 @utility stamp {
   display: inline-block;
   font-family: var(--font-stencil);
@@ -388,15 +408,17 @@
   line-height: 1;
   letter-spacing: var(--text-mark--letter-spacing);
   text-transform: uppercase;
-  color: var(--color-safety-text);
-  border: var(--rule-heavy) solid var(--color-safety-text);
+  color: var(--color-stock-100);
+  background-color: var(--color-ink);
+  border: var(--rule-heavy) solid var(--color-ink);
   padding: 0.4rem 0.6rem 0.3rem;
   rotate: -2.5deg;
 
-  /* Spent/archived: the same mark, drained of the accent. Meaning carried by
-     colour, which is the only job colour has here. */
+  /* Spent/archived: outline only, no fill — the mark that's been drained,
+     not freshly stamped. */
   &[data-state='spent'] {
     color: var(--color-ink-faint);
+    background-color: transparent;
     border-color: var(--color-ink-faint);
   }
 }

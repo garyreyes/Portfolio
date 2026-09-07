@@ -261,6 +261,34 @@ present in built output — **do not move or delete it.**
   reading the CSS alone. The JS-active `position:fixed` state needs its own
   inset since fixed positioning escapes the header's padding entirely.
 
+## Design system — monochrome amendment (2026-09-07, after Phase 3 close)
+
+- **The safety-orange accent is removed, not recoloured** — Gary's explicit
+  call, made after being told the tradeoff: black-and-white is one of the
+  single most common developer-portfolio looks, and this walks toward the
+  thing the whole Phase 2 direction roll existed to avoid. His call stands;
+  recorded here so it isn't re-litigated. Every ground/ink token is now
+  genuinely achromatic (R=G=B exactly, not just "lighter") — that's the real
+  technical difference between "black and white" and the previous warm
+  kraft palette.
+- **Meaning that used to be carried by hue now reads by weight/fill:**
+  live/shipped status is a solid ink FILL on the `stamp` primitive
+  (archived/spent stays outline-only); buttons (Menu trigger, menu Close)
+  get an ink-fill hover, matching the stamp's own visual language; inline
+  text links get an underline, plus darkening to full ink wherever the
+  resting colour was lighter than that (an ink-to-ink hover rule would be
+  an invisible no-op — caught while building this, not by review).
+- **Contrast re-verified from scratch**, not carried over — every pair
+  clears AA with more margin than the warm palette needed (worst case
+  5.11:1 for `ink-muted` on the darkest ground, vs. AA's 4.5:1 floor).
+- **The direction contract in BaseLayout.astro carries a second, separate
+  amendment note** (AMENDED 2026-09-07 (b)) distinct from the earlier
+  scope-count amendment (a) — this one genuinely alters the assigned
+  direction, unlike (a), and is recorded as such rather than folded in.
+- **Structure is unchanged**: the manifest metaphor, registration axis, one
+  continuous stock, and density-as-tone work from the Phase 3 close
+  checkpoint all carry forward untouched — only colour moved.
+
 ## Design system — Phase 3 close (2026-09-07)
 
 - **Ran the hard design checkpoint** per ROADMAP.md: `/impeccable critique`

@@ -22,6 +22,14 @@ import { WORK_ITEMS, MENU_LINKS, SOCIALS } from '../../lib/site';
  * signalled that the projects are the point and the rest is secondary.
  * Utility links now sit under an "Also" label at a smaller size and muted
  * tone; the four work items keep the full stencil/placard treatment.
+ *
+ * AMENDED 2026-09-07: monochrome pass. The Close button is a button, so it
+ * gets the ink-fill hover (matches Nav's Menu trigger). Every text link's
+ * resting colour here is already --color-ink (work items) or lighter
+ * (--color-ink-muted for utility links, --color-ink-faint via .mark for
+ * socials) — an ink-to-ink hover rule would be an invisible no-op, so work
+ * items get an underline on hover and the lighter two additionally darken
+ * to full ink. See global.css's "No accent, by design" note for the reasoning.
  */
 ---
 
@@ -32,7 +40,7 @@ import { WORK_ITEMS, MENU_LINKS, SOCIALS } from '../../lib/site';
       <button
         type="button"
         data-menu-close
-        class="stencil text-mark text-ink hover:text-safety-text duration-mark p-gutter uppercase transition-colors"
+        class="stencil text-mark text-ink hover:bg-ink hover:text-stock-100 duration-mark p-gutter uppercase transition-colors"
       >
         Close
       </button>
@@ -50,7 +58,7 @@ import { WORK_ITEMS, MENU_LINKS, SOCIALS } from '../../lib/site';
             <li>
               <a
                 href={item.href}
-                class="hover:text-safety-text duration-mark gap-gutter flex items-baseline transition-colors"
+                class="gap-gutter flex items-baseline hover:underline"
                 target={'external' in item && item.external ? '_blank' : undefined}
                 rel={'external' in item && item.external ? 'noopener noreferrer' : undefined}
               >
@@ -72,7 +80,7 @@ import { WORK_ITEMS, MENU_LINKS, SOCIALS } from '../../lib/site';
             <li>
               <a
                 href={link.href}
-                class="stencil text-lede text-ink-muted hover:text-safety-text duration-mark block uppercase transition-colors"
+                class="stencil text-lede text-ink-muted hover:text-ink duration-mark block uppercase transition-colors hover:underline"
               >
                 {link.label}
               </a>
@@ -90,7 +98,7 @@ import { WORK_ITEMS, MENU_LINKS, SOCIALS } from '../../lib/site';
           <li>
             <a
               href={social.href}
-              class="mark hover:text-safety-text duration-mark transition-colors"
+              class="mark hover:text-ink duration-mark transition-colors hover:underline"
               target={social.href.startsWith('http') ? '_blank' : undefined}
               rel={social.href.startsWith('http') ? 'noopener noreferrer' : undefined}
             >

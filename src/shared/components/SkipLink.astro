@@ -9,12 +9,17 @@
  * it isn't a spacing/rhythm decision, just "far enough off-screen to hide."
  * Every value that IS spacing or type (position, padding, size) reads gutter
  * or the declared type scale instead.
+ *
+ * AMENDED 2026-09-07: bg-ink/text-stock-100 (was the safety accent) — the
+ * same solid ink-fill treatment @utility stamp uses for "live". No explicit
+ * focus-visible outline override needed here; the global :focus-visible
+ * rule in global.css already applies to every element, this one included.
  */
 ---
 
 <a
   href="#main-content"
-  class="stencil bg-safety-text text-safety-face focus-visible:outline-safety-text duration-mark top-gutter left-gutter p-gutter text-mark fixed z-50 -translate-y-16 uppercase transition-transform focus:translate-y-0"
+  class="stencil bg-ink text-stock-100 duration-mark top-gutter left-gutter p-gutter text-mark fixed z-50 -translate-y-16 uppercase transition-transform focus:translate-y-0"
 >
   Skip to content
 </a>

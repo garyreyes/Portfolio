@@ -10,6 +10,41 @@ does that.
 
 ## Unreleased
 
+### 2026-09-07 — Monochrome: the accent is removed
+
+Requested by Gary after the Phase 3 close checkpoint shipped — a genuine
+recolour of the whole system, not a tweak, done after naming the tradeoff
+(black-and-white is one of the most common portfolio looks; the direction
+roll existed specifically to avoid that) and getting an explicit "yes,
+do it" back.
+
+- **Every ground/ink/rule token in `global.css` is now genuinely
+  achromatic** (R=G=B in every value) — self-hosted verification, not
+  eyeballed: computed via the real WCAG relative-luminance formula.
+- **`--color-safety`/`--color-safety-text`/`--color-safety-face` are
+  deleted**, not recoloured. Confirmed zero remaining references anywhere
+  in `src/` or the built `dist/` output.
+- **Live/shipped status reads as a solid ink-fill stamp** instead of an
+  accent-coloured outline — arguably more authentic to a real ink-stamp
+  impression than colour was. Archived/spent stays outline-only.
+- **Hover feedback split into two patterns**, since several elements'
+  resting colour was already full ink once there's no accent to shift
+  toward: buttons get an ink-fill hover (reusing the stamp's language),
+  inline links get an underline plus a darken-to-ink where the resting
+  tone was lighter.
+- **`SkipLink.astro`'s revealed state** uses the same ink-fill treatment;
+  its own redundant `focus-visible` override was removed since the global
+  rule already covers it (verified nothing distinguishing was lost).
+- **The direction contract carries a second, honest amendment note**
+  (BaseLayout.astro) distinct from the earlier scope-count one — this one
+  really does change the assigned direction, and says so.
+
+Reviewed independently: contrast re-verified on every changed pair (worst
+case 5.11:1, all clear AA with margin), zero regressions to Phase 3c's
+focus trap/inert/no-JS-fallback logic (confirmed the Nav.astro script
+block is untouched), and every hover state confirmed to actually produce
+a visible change rather than an accidental ink-to-ink no-op.
+
 ### 2026-09-07 — Phase 3 close: the hard design checkpoint
 
 Ran before Phase 4, per ROADMAP.md's own rule — no runway left to fix
