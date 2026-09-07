@@ -1,0 +1,163 @@
+---
+import { WORK_ITEMS, MENU_LINKS, SOCIALS } from '../../lib/site';
+
+/**
+ * The packing-list docket — the direction's named "signature moment"
+ * (PROJECT_FACTS.md "Visual direction"). Real links, present in markup
+ * unconditionally, with NO `inert` and NO hidden state in the static HTML:
+ * the no-JS fallback (docs/user-flows.md) is not a separate <noscript>
+ * list, it is this same markup, plainly visible in normal flow, because
+ * nothing here hides it until JS says otherwise. Nav.astro's script adds
+ * `inert` (establishing "closed") as its first action on load — precisely
+ * so a closed, hidden state only ever exists for JS-enabled visitors. See
+ * that file for the open/close, focus-trap and inert wiring — this
+ * component owns content and layout only.
+ *
+ * Opens instantly, no transition — a deliberate call given the direction's
+ * own "must not read as gimmicky" guardrail. The signature moment lives in
+ * the docket's CONTENT, not in how it arrives.
+ *
+ * Phase 3 close: the four project links and the three utility links
+ * (Services/How I build/Contact) rendered at identical weight — nothing
+ * signalled that the projects are the point and the rest is secondary.
+ * Utility links now sit under an "Also" label at a smaller size and muted
+ * tone; the four work items keep the full stencil/placard treatment.
+ */
+---
+
+<div id="site-menu" role="dialog" aria-modal="true" aria-label="Menu" class="menu-panel">
+  <div class="menu-panel-inner flex h-full flex-col">
+    <div class="py-gutter flex items-center justify-between">
+      <p class="stencil text-mark text-ink-faint uppercase">Site menu</p>
+      <button
+        type="button"
+        data-menu-close
+        class="stencil text-mark text-ink hover:text-safety-text duration-mark p-gutter uppercase transition-colors"
+      >
+        Close
+      </button>
+    </div>
+
+    <div class="hazard-rule"></div>
+
+    <nav class="py-band flex-1 overflow-y-auto" aria-label="Site">
+      <p class="mark">Work</p>
+      <a href="/#work" class="stencil text-placard mt-gutter block uppercase"> Every project </a>
+
+      <ul class="mt-band space-y-gutter">
+        {
+          WORK_ITEMS.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                class="hover:text-safety-text duration-mark gap-gutter flex items-baseline transition-colors"
+                target={'external' in item && item.external ? '_blank' : undefined}
+                rel={'external' in item && item.external ? 'noopener noreferrer' : undefined}
+              >
+                <span class="lot">{item.lot}</span>
+                <span class="stencil text-placard uppercase">{item.label}</span>
+                {'external' in item && item.external && <span class="mark">↗</span>}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="hazard-rule my-band"></div>
+
+      <p class="mark">Also</p>
+      <ul class="mt-gutter space-y-gutter">
+        {
+          MENU_LINKS.map((link) => (
+            <li>
+              <a
+                href={link.href}
+                class="stencil text-lede text-ink-muted hover:text-safety-text duration-mark block uppercase transition-colors"
+              >
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="hazard-rule"></div>
+
+    <ul class="py-gutter gap-gutter flex">
+      {
+        SOCIALS.map((social) => (
+          <li>
+            <a
+              href={social.href}
+              class="mark hover:text-safety-text duration-mark transition-colors"
+              target={social.href.startsWith('http') ? '_blank' : undefined}
+              rel={social.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+            >
+              {social.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</div>
+
+<style>
+  /*
+   * No-JS default: normal flow, always visible, always tabbable — this IS
+   * the fallback docs/user-flows.md asks for. Nothing here hides the panel;
+   * only `html.js` (set synchronously in BaseLayout's <head>, so it is
+   * present or absent before this ever paints) switches it to fixed/hidden.
+   * `inert` is added by Nav.astro's script, not present in this markup —
+   * see this file's header comment for why the order matters.
+   *
+   * .menu-panel-inner deliberately does NOT use the "axis" utility class.
+   * In the no-JS state this element is a normal child of <header>, which
+   * already has "axis" applied — adding it again drew a SECOND hairline
+   * next to the header's real one (caught by an actual headless render,
+   * not visible from reading the CSS). In the JS-active state below,
+   * .menu-panel becomes position: fixed, which escapes header's padding
+   * entirely, so the inset has to be re-declared for THAT context only.
+   * Same tokens as the "axis" utility, applied only where flow requires it.
+   */
+  html.js .menu-panel {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    overflow-y: auto;
+    background-color: var(--color-stock-100);
+    visibility: hidden;
+  }
+
+  html.js .menu-panel[data-open='true'] {
+    visibility: visible;
+  }
+
+  html.js .menu-panel-inner {
+    position: relative;
+    max-width: var(--container-stock);
+    margin-inline: auto;
+    padding-inline-start: var(--spacing-axis);
+    padding-inline-end: var(--spacing-gutter);
+  }
+
+  html.js .menu-panel-inner::before {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: calc(var(--spacing-axis) - var(--spacing-gutter));
+    width: var(--rule-hair);
+    background-color: var(--color-rule-strong);
+  }
+
+  @media (width < 40rem) {
+    html.js .menu-panel-inner {
+      padding-inline-start: calc(var(--spacing-gutter) * 2);
+    }
+
+    html.js .menu-panel-inner::before {
+      inset-inline-start: var(--spacing-gutter);
+    }
+  }
+</style>

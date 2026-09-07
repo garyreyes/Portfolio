@@ -10,6 +10,154 @@ does that.
 
 ## Unreleased
 
+### 2026-09-07 — Phase 3 close: the hard design checkpoint
+
+Ran before Phase 4, per ROADMAP.md's own rule — no runway left to fix
+tokens or type by the Phase 8d finish review otherwise.
+
+- **`/impeccable critique`** (dual-agent, isolated) scored the shell
+  26/32 applicable Nielsen heuristics. Design-specificity verdict:
+  grounded overall, but the persistent nav — the one surface every visitor
+  sees before any click — was the weakest, and the menu's content alone
+  (typography aside) read as a competent link list rather than the
+  direction's named "signature moment."
+- **`/impeccable polish` on the confirmed scope:**
+  - Nav gets a `hazard-rule` under the bar — one manifest motif on every
+    route, not just behind the menu click.
+  - Menu's utility links (Services/How I build/Contact) visually demoted
+    under an "Also" label, smaller and muted, so the four project links
+    read as primary.
+  - Footer tightened (`py-band`→`py-gutter`) and gained a real closing
+    line (© 2026 Gary Reyes — Manila, Philippines) below a new hairline.
+  - "Pending — Phase 5d" (internal roadmap language) replaced with "To
+    follow" in user-facing footer copy.
+  - The recurring raw-Tailwind-spacing defect (`mt-2`) fixed in
+    `index.astro`, the one file none of the prior three phase reviews had
+    scope to catch it in.
+- **Two comment corrections in `global.css`**, both caught by the review:
+  a stale claim that raise 2 (registration axis) was still "opt-in" after
+  3b had already mechanized it, and an overclaim that raise 3 (density)
+  was fully "mechanized" when `ROADMAP.md` still (correctly) said
+  otherwise — the exact doc-drift failure mode the file's own header
+  warns about. Both files now agree: partially addressed, not landed.
+
+### 2026-09-07 — Phase 3c: the manifest docket
+
+The direction's named "signature moment." The Menu button built inert in
+Phase 3b now opens a real full-screen dialog.
+
+- **`src/shared/components/MenuPanel.astro` (new)** — the packing-list
+  docket: Work section (4 numbered lot items + "every project"),
+  Services/How I build/Contact, socials. Content matches
+  docs/user-flows.md's menu tree exactly (lot codes, labels, hrefs, order,
+  Pahinga's external target/rel).
+- **`Nav.astro`'s script wires the trigger for real** — open/close, a
+  manual focus trap (Tab/Shift+Tab cycling within the panel regardless of
+  what else is in the DOM), Esc-to-close, scroll lock, `inert` on the
+  background (main, footer, and the wordmark) while open, focus returned to
+  the trigger on close.
+- **Opens instantly, no transition** — a deliberate call given the
+  direction's own "must not read as gimmicky" guardrail; the signature
+  moment lives in the docket's content, not its entrance.
+- **Real hrefs, not placeholders.** `/work/*`, `/services`, `/how-i-build`
+  and `/#work` don't exist until Phase 4/5 and will 404 until then —
+  expected mid-build, same precedent as 3b's inert button.
+- **No-JS fallback verified by literally stripping every `&lt;script&gt;` from the
+  built HTML and rendering the result** — not asserted from reading the CSS.
+  The panel renders as a plain, visible, fully navigable link list.
+
+Fixed after the review pass:
+
+- **The wordmark link stayed reachable by AT browse-mode navigation while
+  the dialog was "open"** — `inert` only covered `main`/`footer`. Now covers
+  the wordmark too.
+- **Four raw Tailwind spacing values** (`mt-2`, `space-y-4` ×2, `gap-4`) in
+  MenuPanel.astro, the same defect class caught and fixed in Nav/Footer one
+  phase earlier. Substituted `gutter`-based tokens throughout.
+- **`focus({ preventScroll: true })`** added to both focus moves, closing
+  a possible scroll race on the Contact link's same-page anchor.
+
+### 2026-09-07 — Phase 3b: the persistent shell
+
+Every route now renders through real chrome instead of a bare `&lt;slot/&gt;`.
+
+- **`BaseLayout.astro` now renders SkipLink → Nav → `&lt;main id="main-content"&gt;`
+  → Footer.** The `&lt;main&gt;` landmark and its `axis mx-auto max-w-stock` classes
+  moved here from `index.astro`, which previously owned them itself.
+- **`src/shared/components/` exists for the first time** — `SkipLink.astro`,
+  `Nav.astro` (wordmark + Menu trigger), `Footer.astro` (socials row + a
+  stamped "Pending — Phase 5d" placeholder instead of empty space).
+- **`src/lib/site.ts` centralizes the site name/description and the three
+  real social URLs** — `index.astro` now reads `SITE` instead of duplicating
+  its title/description as separate literals.
+- **The registration axis is now site-wide, not per-page.** Nav, main, and
+  Footer each apply the `axis` utility independently at the same inset, so
+  the vertical line runs continuously from the nav bar through the footer on
+  every route — the open item from Phase 3a's close-out.
+- **The Menu trigger is a real button that does nothing yet, on purpose.**
+  Phase 3c builds the panel it controls; wiring ARIA state onto a button with
+  no panel would be asserting something false.
+
+Fixed after the review pass:
+
+- **`index.astro` had drifted from `SITE`** — its title/description were
+  hardcoded literals identical to `SITE.name`/`SITE.description` rather than
+  reading them, which would have silently kept the old copy if `SITE` were
+  ever edited. Now imports `SITE` directly.
+- **Nav, Footer, and SkipLink reached for Tailwind's default spacing/type
+  scale** (`py-4`, `gap-6`, `top-2`, `text-sm`) instead of the project's own
+  three declared spacing tokens and six-step type scale. Substituted
+  `gutter`/`band`/`text-mark` throughout; verified every replacement utility
+  actually compiles by reading the built CSS, not just by assumption.
+
+### 2026-09-07 — Phase 3a: the design system
+
+The visual direction assigned back in Phase 2 became real tokens. Every
+component from 3b on inherits this and nothing later re-opens it.
+
+- **`src/styles/global.css` is now the design system** — `@theme` tokens for
+  the manila stock scale, warm stencil ink, one safety accent, an uneven type
+  scale and the registration-axis measure, plus six `@utility` primitives
+  (`axis`, `stencil`, `mark`, `lot`, `placard`, `hazard-rule`, `stamp`).
+- **Three faces self-hosted**, 63 KB total, so the Phase 3d CSP needs no
+  third-party origin.
+- **`src/pages/index.astro` is a deliberate throwaway token proof**, not the
+  homepage. `design:check` reads `dist/`, so tokens no page renders would let
+  that gate pass vacuously. Phase 3b replaces it.
+- **The direction contract had its stale counts amended** (six projects to
+  four, 11 routes to 7) with a dated `AMENDED` line. Wording untouched.
+
+Fixed after the review pass, all of which would have shipped silently:
+
+- **`--color-ink-faint` failed WCAG AA on every ground** (3.1:1 on stock-300)
+  while being the colour of the `mark` utility at 11px — the utility destined
+  to carry the consignee and contents lines on every project placard.
+  Darkened to clear 4.5:1 everywhere.
+- **`--duration-mark` generated no utility at all.** Tailwind resolves
+  `duration-*` from `--transition-duration-*`; the wrong name fails silently
+  and leaves the transition at 0s.
+- **`overflow-x: clip` on `html` was removed** — it converted a visible
+  overflow bug into invisible clipped content and made the no-horizontal-
+  scroll floor unfalsifiable.
+- **Five primitives hardcoded values they already declared as tokens**, so
+  editing the documented source of truth would have changed nothing.
+- **`stamp-spent` overrode `stamp` only by luck of Tailwind's property sort**;
+  it is now a nested attribute variant that cannot be reordered.
+
+### 2026-09-07 — The domain stops blocking the build
+
+- **Deploy targets `*.pages.dev` first.** Cloudflare Pages serves a free
+  permanent subdomain, so the site can be built, deployed and reviewed on
+  a real URL with no purchase. Roadmap **3d** loses its `needs A1` and
+  now covers the deploy, `_headers`, and setting `site` in
+  `astro.config.mjs`.
+- **Attaching the custom domain becomes A5** — a Cloudflare dashboard
+  action plus a one-line `site` change, done any time before launch.
+  **A1 (buy the domain) is demoted** from "the one hard blocker" to a
+  launch-time step; nothing in Track B waits on it.
+- **Track A now starts with A2/A3** (screenshots and hero briefs), which
+  gate Phase 6 and are the actual schedule risk.
+
 ### 2026-09-04 — Scope revision after re-verifying the source repos
 
 All six candidate projects were checked against their live GitHub state.

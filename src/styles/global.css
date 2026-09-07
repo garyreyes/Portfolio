@@ -1,1 +1,402 @@
 @import 'tailwindcss';
+
+/* KNOWN, ACCEPTED: Tailwind v4 scans the whole project for class-name-shaped
+   strings by default, including prose. .impeccable/critique/*.md documents
+   fixes like "mt-2 -> mt-gutter" in plain English, and the literal substring
+   "mt-2" is enough to make Tailwind generate a real (if unused, confirmed via
+   dist/index.html — zero elements carry it) .mt-2 utility into the built CSS.
+   Caught in the Phase 3 close review. `@source not "../../.impeccable"` was
+   tried and did not suppress it with this project's @tailwindcss/vite setup
+   (v4.3.3) — not worth chasing further, or restructuring source detection
+   from opt-out to an explicit allow-list, for a few dead bytes with zero
+   functional impact. */
+
+/* ==========================================================================
+   THE LABEL STOCK — design tokens for the assigned visual direction
+   (shipping manifest / logistics labeling, seed d4e5136b).
+
+   The direction contract lives in src/layouts/BaseLayout.astro. This file is
+   its mechanical form: every colour, size and rule the site is allowed to
+   use. Components read these tokens. They never write a raw hex value, a
+   raw px size, or a one-off margin (CLAUDE.md, "Design and accessibility
+   floor").
+
+   The direction owes three raises. Being precise about which of them this
+   file actually MECHANIZES, versus which it only makes possible, because a
+   comment claiming a raise is handled is how a raise quietly goes missing:
+
+     1. ONE CONTINUOUS LABEL STOCK — mechanized. The body ground is set once,
+        in the one stylesheet every route imports, so it cannot be opted out
+        of.
+     2. A SINGLE VERTICAL REGISTRATION AXIS — mechanized as of 3b. Nav,
+        <main>, and Footer each apply @utility axis independently at the
+        identical inset, so the line runs continuously through all three
+        landmarks on every route. No longer opt-in per element.
+     3. DENSITY AS TONE — partially addressed at the Phase 3 close checkpoint
+        (2026-09-07), not fully mechanized. This file still only supplies the
+        permission (a small mark size, a hairline rule); density is a layout
+        property, so a token file can never discharge it alone. What actually
+        shipped this pass: Footer's rhythm tightened, one hazard-rule motif
+        added to the always-visible Nav, and a size/weight split in
+        MenuPanel's link hierarchy — real, narrow moves, not the raise fully
+        landed. The highest-visibility test of this raise (the real homepage,
+        Phase 5a — a lean 4-project roster reading as substantial) hasn't
+        been built yet. See ROADMAP.md for the tracked status; don't let this
+        comment and that file disagree — that IS the failure mode this note
+        exists to prevent.
+   ========================================================================== */
+
+/* --- Faces -------------------------------------------------------------
+   Self-hosted, latin subset, from Google Fonts (all three are SIL OFL 1.1;
+   see public/fonts/LICENSE.md). Self-hosted rather than CDN-linked so the
+   Phase 3d CSP needs no third-party origin and first paint needs no extra
+   DNS + TLS handshake.
+   ---------------------------------------------------------------------- */
+
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url('/fonts/archivo-latin-var.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Archivo Narrow';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/archivo-narrow-700-latin.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Space Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/space-mono-400-latin.woff2') format('woff2');
+}
+
+@theme {
+  /* --- Ground: the label stock itself ---------------------------------
+     Manila board, warmed. stock-200 is THE ground; every route sits on it
+     so the site reads as one continuous run of label stock rather than a
+     sequence of pages. The others are the same stock lit differently, not
+     separate colours.
+     -------------------------------------------------------------------- */
+  --color-stock-100: #f3ecdd; /* label face — placards, raised panels */
+  --color-stock-200: #e8dcc3; /* THE ground */
+  --color-stock-300: #d9c9a8; /* recessed band, alternating rows */
+  --color-stock-400: #c0a980; /* kraft edge */
+
+  /* --- Ink -------------------------------------------------------------
+     Stencil ink is never pure black. Printed ink on brown board is warm and
+     slightly open; #000 on manila reads as a screenshot of a PDF.
+     -------------------------------------------------------------------- */
+  --color-ink: #1c1813; /* stencil ink — body and display */
+  --color-ink-muted: #4a4136; /* secondary prose */
+  /* Measured, not estimated. The binding case is the "mark" utility: 11px is
+     far below WCAG's large-text threshold, so 4.5:1 is required, and the
+     worst ground is stock-300. This tone gives 4.8:1 there, 5.7:1 on the
+     ground and 6.7:1 on a placard. The previous lighter value (#7a6c58)
+     measured 3.1:1 on stock-300 and failed AA on all three grounds. */
+  --color-ink-faint: #5c5040; /* stencil labels, metadata, lot codes */
+  --color-rule: #b8a684; /* hairline on stock — structure, not a border */
+  --color-rule-strong: #6f6250; /* the registration axis itself */
+
+  /* --- The one accent --------------------------------------------------
+     Safety orange, as sprayed on a crate. Carries meaning only: current
+     state, the primary action, a LIVE stamp. It is never decoration and
+     never a second brand colour (CLAUDE.md, "restrained colour strategy").
+
+     TWO tokens on purpose. --color-safety is for marks, fills and display
+     sizes, where WCAG needs 3:1. It measures 3.58:1 on the ground, which
+     is NOT enough for body-size text, so accent-coloured running text and
+     small links use --color-safety-text (5.26:1 on the ground, 6.08:1 on a
+     placard) instead.
+
+     HARD CONSTRAINT, measured: NEITHER accent token may be used on
+     --color-stock-300. That ground is dark enough to sink both — safety
+     lands at 2.98:1 (under even the 3:1 large-text floor) and safety-text at
+     4.38:1 (under AA). The accent is sanctioned on stock-100 and stock-200
+     only. A recessed band that needs emphasis uses ink weight or the hazard
+     rule, not colour. Reaching for the
+     brighter one on small text is the mistake this split exists to stop.
+     -------------------------------------------------------------------- */
+  --color-safety: #ce3e0a;
+  --color-safety-text: #a03105;
+  --color-safety-face: #f3ecdd; /* text ON a safety fill */
+
+  /* --- Type ------------------------------------------------------------
+     Archivo Narrow sets the stencil caps the direction asks for. Archivo
+     (its own regular-width sibling) sets running prose — a ~200 word brief
+     set in condensed is punishing to read, and the superfamily keeps the
+     pairing coherent. Space Mono appears ONLY on real codes: lot numbers,
+     dates, versions, counts. Never on prose, never for texture.
+     -------------------------------------------------------------------- */
+  --font-sans: 'Archivo', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-stencil: 'Archivo Narrow', 'Archivo', ui-sans-serif, system-ui, sans-serif;
+  /* NOTE: there is no --font-stencil--font-weight. It was tried and it emits
+     nothing — Tailwind's font-family theme keys do not take a weight
+     descriptor, and the generated .font-stencil sets font-family alone. The
+     weight is carried by @utility stencil below instead. */
+  --font-code: 'Space Mono', ui-monospace, 'Cascadia Mono', monospace;
+
+  /* Scale. The gaps are deliberately uneven: a geometric ramp reads as
+     generated. --text-mark is the workhorse — it is what makes density
+     legible instead of noisy. */
+  --text-mark: 0.6875rem; /* CONSIGNEE, CONTENTS, STATUS */
+  --text-mark--line-height: 1.1;
+  --text-mark--letter-spacing: 0.16em;
+
+  --text-code: 0.8125rem;
+  --text-code--line-height: 1.4;
+  --text-code--letter-spacing: 0.02em;
+
+  --text-body: 1rem;
+  --text-body--line-height: 1.65;
+
+  --text-lede: 1.1875rem;
+  --text-lede--line-height: 1.5;
+
+  --text-placard: clamp(1.5rem, 1rem + 2vw, 2.25rem);
+  --text-placard--line-height: 1.05;
+  --text-placard--letter-spacing: -0.01em;
+
+  --text-consign: clamp(2.5rem, 1rem + 7vw, 5.5rem);
+  --text-consign--line-height: 0.92;
+  --text-consign--letter-spacing: -0.02em;
+
+  /* --- Measure ---------------------------------------------------------
+     --spacing-axis is the registration axis: the single vertical line every
+     route aligns to. It is an inset, not a margin — the axis rule is drawn
+     AT it and content starts after it.
+     -------------------------------------------------------------------- */
+  --spacing-axis: 4.5rem;
+  --spacing-gutter: 1.25rem;
+  --spacing-band: 2.75rem;
+
+  --container-stock: 78rem;
+
+  /* Hairlines. One weight for structure, one for the axis. */
+  --rule-hair: 1px;
+  --rule-heavy: 2px;
+
+  /* Motion. Feedback only, and short enough to read as mechanical rather
+     than animated. No bounce, no spring — a label does not bounce. */
+  --ease-stamp: cubic-bezier(0.2, 0, 0, 1);
+  /* NOT --duration-mark. Tailwind resolves the duration-* utilities from the
+     --transition-duration-* namespace, so the shorter name compiles to no
+     utility at all and fails silently, leaving the transition at 0s. */
+  --transition-duration-mark: 120ms;
+}
+
+/* ==========================================================================
+   BASE — the ground everything is printed on
+   ========================================================================== */
+
+@layer base {
+  /* Single-mode on purpose. The direction commits to ONE label stock across
+     every route; an inverted "dark label" would be a second world, not a
+     theme of this one. Declared explicitly so the browser does not paint a
+     dark form control onto manila. */
+  html {
+    color-scheme: light;
+    /* Deliberately NO overflow-x here. An earlier draft set `overflow-x: clip`
+       as belt and braces against a horizontal scrollbar. That is a trap:
+       overflow propagates from html to the viewport, so real overflow stops
+       being scrollable and becomes CLIPPED AND UNREACHABLE — a WCAG 1.4.10
+       reflow failure that looks like "some text is just missing". It also
+       makes CLAUDE.md's "no horizontal scroll at any viewport width" pass
+       vacuously, disabling the one check that would catch the layout bug.
+       Overflow is verified by measuring instead: scrollWidth == clientWidth
+       at 320/360/390/414/480/600/640. */
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-stock-200);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Ink on stock, not a browser blue box. */
+  /* safety-text, not safety: selected 16px body copy has to clear 4.5:1,
+     and the brighter accent only reaches 4.13:1 behind it. */
+  ::selection {
+    background-color: var(--color-safety-text);
+    color: var(--color-safety-face);
+  }
+
+  /* Visible on manila at 3:1 against both stock-100 and stock-200. */
+  :focus-visible {
+    outline: var(--rule-heavy) solid var(--color-safety-text);
+    outline-offset: 2px;
+  }
+
+  /* Binding site-wide (CLAUDE.md). Motion is feedback here, so removing it
+     costs nothing but the confirmation. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* ==========================================================================
+   LABEL-STOCK PRIMITIVES
+
+   The cross-cutting texture of the direction, as utilities. Deliberately
+   NOT components: these are things that get printed ONTO a layout, and every
+   phase from 3b on needs them in places whose component shape is not decided
+   yet. Anything with real props (a status badge, a project placard) becomes
+   an .astro component in the phase that actually needs it.
+
+   Raw values ARE allowed inside this file, and only this file — a primitive's
+   own internal metrics (stripe pitch, stamp padding) have to be written
+   somewhere. The rule the header states is about everything DOWNSTREAM. What
+   is not allowed even here is restating a value that already exists as a
+   token: that makes the token dead, so editing the documented source of truth
+   silently changes nothing.
+   ========================================================================== */
+
+/* RAISE 2 — the single vertical registration axis.
+   Draws one hairline down the left of a container and starts content after
+   it. Opt-in per element: applying it consistently is what would make separate
+   pages read as one continuous run of stock, and nothing here enforces that
+   yet. 3b's shell is where it stops being a convention. */
+@utility axis {
+  position: relative;
+  padding-inline-start: var(--spacing-axis);
+  padding-inline-end: var(--spacing-gutter);
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: calc(var(--spacing-axis) - var(--spacing-gutter));
+    width: var(--rule-hair);
+    background-color: var(--color-rule-strong);
+  }
+
+  /* The axis collapses on narrow viewports — a 4.5rem inset on a 360px
+     screen is most of the screen. The rule stays; the measure tightens.
+     Nested inside the utility so it stays in the utilities layer and cannot
+     be beaten by an unlayered rule elsewhere. */
+  @media (width < 40rem) {
+    padding-inline-start: calc(var(--spacing-gutter) * 2);
+
+    &::before {
+      inset-inline-start: var(--spacing-gutter);
+    }
+  }
+}
+
+/* Diagonal hazard banding, as on a crate edge. Structural divider, not
+   decoration: it separates consignments, so it appears between sections and
+   nowhere else. */
+@utility hazard-rule {
+  height: 0.625rem;
+  border-block: var(--rule-hair) solid var(--color-ink);
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--color-ink) 0 0.4rem,
+    var(--color-stock-300) 0.4rem 0.9rem
+  );
+}
+
+/* A raised label face on the stock. Low chrome by design — one hairline, no
+   shadow, no radius. Labels are glued flat; they do not float. */
+@utility placard {
+  background-color: var(--color-stock-100);
+  border: var(--rule-hair) solid var(--color-rule);
+  padding: var(--spacing-gutter);
+}
+
+/* The stencil face, family AND weight together.
+
+   Use this, never the generated `font-stencil` utility. Only one Archivo
+   Narrow face is bundled, at 700, and nothing in the codebase requests a
+   weight — so `font-stencil` alone computes to 400 and merely LOOKS bold
+   because 700 is the only face available to match. Two ways that bites: during
+   font-display: swap the fallback (Archivo, which really is loaded at 400)
+   paints regular and then snaps weight; and the day anyone adds a Narrow 400
+   face, every heading silently un-bolds with no edit to the heading. */
+@utility stencil {
+  font-family: var(--font-stencil);
+  font-weight: 700;
+}
+
+/* Stencilled caps: CONSIGNEE, CONTENTS, STATUS, LOT. This is the size that
+   PERMITS density — small enough that a lot of information can sit close
+   together and stay scannable. It does not create density on its own; see
+   raise 3 in the header. */
+@utility mark {
+  font-family: var(--font-stencil);
+  font-weight: 700;
+  font-size: var(--text-mark);
+  line-height: var(--text-mark--line-height);
+  letter-spacing: var(--text-mark--letter-spacing);
+  text-transform: uppercase;
+  color: var(--color-ink-faint);
+}
+
+/* Real codes only — lot numbers, dates, versions, counts. If it is prose, it
+   does not go here.
+
+   Sequential line-item numbers (01, 02, 03…) count as real codes, not a
+   placeholder standing in for one — a real manifest numbers its line items
+   the same way, and the position genuinely IS the data. Flagged as a
+   possible rule violation at the Phase 3 close checkpoint and confirmed
+   authentic to the metaphor; recorded here so the question doesn't recur at
+   the Phase 8d finish review. */
+@utility lot {
+  font-family: var(--font-code);
+  font-size: var(--text-code);
+  line-height: var(--text-code--line-height);
+  letter-spacing: var(--text-code--letter-spacing);
+  color: var(--color-ink-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Rubber-stamped status. Off-axis because a hand-applied stamp is never
+   square to the sheet — the rotation is the point, and it is the only place
+   on the site anything is rotated.
+
+   The spent variant is a nested attribute selector, NOT a second "stamp-spent"
+   utility. Two same-specificity utilities only override in the order Tailwind
+   happens to sort them by property, so `class="stamp stamp-spent"` worked by
+   luck: adding a display property to the variant could have re-sorted it ahead
+   of .stamp and silently stopped it overriding. This form cannot be reordered.
+
+   The distinction is not carried by colour alone — the label itself changes
+   (Shipped / Archived), which is what satisfies WCAG 1.4.1. */
+@utility stamp {
+  display: inline-block;
+  font-family: var(--font-stencil);
+  font-weight: 700;
+  font-size: var(--text-mark);
+  line-height: 1;
+  letter-spacing: var(--text-mark--letter-spacing);
+  text-transform: uppercase;
+  color: var(--color-safety-text);
+  border: var(--rule-heavy) solid var(--color-safety-text);
+  padding: 0.4rem 0.6rem 0.3rem;
+  rotate: -2.5deg;
+
+  /* Spent/archived: the same mark, drained of the accent. Meaning carried by
+     colour, which is the only job colour has here. */
+  &[data-state='spent'] {
+    color: var(--color-ink-faint);
+    border-color: var(--color-ink-faint);
+  }
+}

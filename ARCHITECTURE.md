@@ -275,10 +275,10 @@ authoritative for screens. Corrections from the original plan:
 
 | #   | Decision                                                                                              | Owner  |
 | --- | --------------------------------------------------------------------------------------------------- | ------ |
-| 1   | **Domain name and registrar** — v1 blocker, not yet purchased; Cloudflare Registrar assumed (~$12/yr) | Gary   |
+| 1   | **Domain name and registrar** — **launch blocker, not a build blocker** (2026-09-07); deploy runs on `*.pages.dev` until it is bought. Cloudflare Registrar assumed (~$12/yr) | Gary   |
 | 2   | ~~Visual design direction~~ — **assigned** 2026-08-28 (shipping manifest / logistics labeling, seed `d4e5136b`). See `PROJECT_FACTS.md`. | done |
 | 3   | Whether work-section filtering ships (PRD Could-have) — if yes, `TechTag` becomes a real relation      | Later  |
-| 4   | ~~Font choice~~ — follows from the assigned direction; settled at Phase 3a                             | done   |
+| 4   | ~~Font choice~~ — **settled 2026-09-07 at Phase 3a**: Archivo Narrow 700 display, Archivo body, Space Mono codes; self-hosted, 63 KB | done   |
 | 5   | Whether `nfc-side-hustle` returns as a second card                                                    | Later  |
 
 ---

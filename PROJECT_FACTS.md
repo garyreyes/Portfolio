@@ -60,6 +60,12 @@ product truth (`docs/PRD.md`).
   files under `public/screenshots/`. If a short Cornerman clip is ever
   added it is a normal file too — never Git LFS (Cloudflare Pages does not
   fetch LFS objects at build time).
+- **Deploy runs on `*.pages.dev` first; the custom domain attaches later**
+  (2026-09-07). Cloudflare Pages serves a free permanent subdomain, so
+  nothing in the build waits on a purchase. `site` in `astro.config.mjs`
+  is the only place the URL appears in code — it feeds canonical tags, OG
+  image URLs and the sitemap, and is a one-line change when the domain
+  lands. Set it before sharing the link, or OG previews break.
 - **Astro amends the PRD's "React + TypeScript" constraint** to
   "TypeScript everywhere; React where interactive." Static pages are
   `.astro` and ship zero JS; React is loaded only for genuine islands.
@@ -162,6 +168,124 @@ present in built output — **do not move or delete it.**
   early-80s drum machine step row (competitive; lost on the loop
   metaphor fitting six unrelated projects).
 
+## Design system — settled 2026-09-07 (Phase 3a)
+
+- **Typefaces: Archivo Narrow 700 (display/labels), Archivo 400–600 (body),
+  Space Mono 400 (codes only).** Self-hosted, latin subset, 63 KB total, SIL
+  OFL. Settles `ARCHITECTURE.md` open decision 4. Self-hosted rather than
+  CDN-linked so the Phase 3d CSP needs no third-party origin. **Body is
+  Archivo, not Archivo Narrow** — the contract's "condensed grotesque caps"
+  governs display and labels; a 200-word brief set in condensed is punishing.
+- **Use the `stencil` utility, never Tailwind's generated `font-stencil`.**
+  Only one Narrow face is bundled (700) and nothing requests a weight, so
+  `font-stencil` computes to 400 and merely looks bold because 700 is the only
+  face available to match. It would silently un-bold the day a Narrow 400 face
+  is added. `--font-stencil--font-weight` does not work: Tailwind's
+  font-family theme keys take no weight descriptor.
+- **The accent has two tokens, and a ground it may not sit on.**
+  `--color-safety` (marks, fills, display; 3.58:1) and `--color-safety-text`
+  (body-size text and links; 5.26:1). **Neither may be used on
+  `--color-stock-300`** — measured 2.98:1 and 4.38:1 there, both failing.
+- **No dark mode.** The direction commits to one continuous label stock; an
+  inverted variant would be a second world, not a theme of this one.
+  `color-scheme: light` is declared so form controls are not painted dark.
+- **Never set `overflow-x: clip/hidden` on `html` or `body`.** It was tried in
+  3a and removed. Overflow propagates to the viewport, so real overflow stops
+  being scrollable and becomes clipped and unreachable (WCAG 1.4.10), and it
+  makes the "no horizontal scroll" floor pass vacuously. Verify by measuring
+  `scrollWidth == clientWidth` across widths instead.
+- **A green `design:check` is not evidence the accessibility floor is met.**
+  The detector caught 0 findings on a page whose 11px labels sat at 3.76:1.
+  It checks mechanical AI-design tells, not contrast.
+- **Primitives are `@utility` classes in `global.css`, not components.**
+  Components come in the phase that gives them real props. Raw values are
+  allowed inside `global.css` only, and never where they restate an existing
+  token — that makes the token dead.
+
+## Design system — Phase 3b additions (2026-09-07)
+
+- **Real social URLs, recorded once.** `src/lib/site.ts` now holds
+  `SOCIALS` (GitHub `github.com/garyreyes`, LinkedIn, and a public
+  `garyludelq@gmail.com` — deliberately not the DLSU address) so no later
+  phase has to ask for them again.
+- **The Menu button is intentionally inert in 3b.** It is a real, focusable
+  `&lt;button&gt;` with an accessible name, but has no `aria-expanded`, no
+  `aria-controls`, and no click handler — it opens nothing. Adding those
+  attributes before the panel they'd describe exists would assert a state
+  that isn't real. Phase 3c wires both the panel and the ARIA onto this
+  exact element; it does not start over.
+- **Chrome components (Nav/Footer/SkipLink) read only the three declared
+  spacing tokens** (`gutter`, `band`, `axis`) and the declared type scale —
+  never Tailwind's un-tokenized numeric defaults (`py-4`, `gap-6`, `text-sm`,
+  ...). Caught in review on the first pass; the fix was substitution, not a
+  new token, since `gutter`/`band` already covered every real case.
+- **`BaseLayout` now owns the `&lt;main&gt;` landmark** (id `main-content`, the
+  `axis mx-auto max-w-stock` classes). Pages no longer declare their own
+  `&lt;main&gt;` — `index.astro`'s token-proof content sits in a plain `&lt;div&gt;` now.
+  A page adding a second `&lt;main&gt;` would be a landmark-structure bug from
+  here on, not a style choice.
+
+## Design system — Phase 3c additions (2026-09-07)
+
+- **The menu panel's markup carries no `inert`/`hidden` state at all.** The
+  no-JS fallback is this same markup, plainly visible in normal flow — not a
+  separate `&lt;noscript&gt;` list. `BaseLayout`'s `&lt;script is:inline&gt;` adds an
+  `html.js` class synchronously before paint; only under that class does a
+  scoped `&lt;style&gt;` in MenuPanel.astro switch the panel to
+  `position:fixed`/hidden. `Nav.astro`'s script adds `inert` to the panel as
+  its first action on load — a closed, hidden state only ever exists once JS
+  has actually run. Confirmed by stripping every `&lt;script&gt;` from the built
+  HTML and rendering: the fallback is real links, real nav, single axis line.
+- **`inert` covers the wordmark link too, not just `&lt;main&gt;`/`&lt;footer&gt;`** —
+  caught in review. The trigger itself stays reachable while open (clicking
+  it again just closes), but the wordmark navigates away, and a screen
+  reader's browse-mode cursor doesn't go through the keydown-based focus
+  trap. `inert` removes it from the accessibility tree entirely, which is
+  the actual guarantee needed here.
+- **`inert` does not block a synthetic `.click()` call** — confirmed against
+  spec, and the hard way, when a test using `.click()` on the inert wordmark
+  triggered a real navigation and a self-inflicted reload loop in the test
+  harness, not the site. `inert`'s real guarantees are pointer hit-testing
+  and accessibility-tree removal — both of which hold for actual users. A
+  test simulating a click bypass isn't a real threat model.
+- **`focus({ preventScroll: true })`** on both the open and close focus
+  moves — matters specifically for the Contact link (`/#site-footer`, a
+  same-page anchor): without it, focusing the trigger on close could race
+  the browser's own hash-scroll to the footer. Verified: hash sets, footer
+  scrolls into view, panel closes, all in one clean sequence.
+- **`MenuPanel.astro`'s wrapper deliberately skips the `axis` utility class**
+  and hand-writes the equivalent in a scoped, `html.js`-gated `&lt;style&gt;`
+  block instead. Applying `axis` directly produced two parallel hairlines in
+  the no-JS state (the panel is a normal nested child of the already-inset
+  header there) — caught by an actual headless render, not visible from
+  reading the CSS alone. The JS-active `position:fixed` state needs its own
+  inset since fixed positioning escapes the header's padding entirely.
+
+## Design system — Phase 3 close (2026-09-07)
+
+- **Ran the hard design checkpoint** per ROADMAP.md: `/impeccable critique`
+  (dual sub-agent — design review + detector/browser evidence, run in
+  isolation from each other) scored the built shell **26/32 applicable**
+  heuristics, then `/impeccable polish` on the confirmed scope. Full report:
+  `.impeccable/critique/2026-09-07T07-38-23Z__src-pages-index-astro.md`.
+- **Sequential lot numbers (01–04) are confirmed authentic**, not a rule
+  violation — a real manifest numbers its line items the same way. Recorded
+  in the `lot` utility's own comment so the question doesn't recur at the
+  Phase 8d finish review.
+- **Raise 3 (density as tone) is partially addressed, not fully landed.**
+  What shipped: tighter footer rhythm, one hazard-rule motif on the
+  always-visible Nav, a size/weight split between project and utility links
+  in the menu. **Phase 5a (the real homepage) inherits the open
+  obligation** — the real test of a lean 4-project roster reading as
+  substantial happens there, not in the shell.
+- **`@source not` did not work for excluding `.impeccable/` from Tailwind's
+  content scan** in this project's `@tailwindcss/vite` setup (v4.3.3) —
+  tried and reverted. One dead, unused `.mt-2` utility ships in `dist/` as a
+  result (confirmed zero elements use it); not worth chasing further or
+  restructuring source detection for a few harmless bytes. If revisited,
+  start from Tailwind's `source(none)` + explicit allow-list pattern rather
+  than `@source not`.
+
 ## Testing
 
 - **No test runner is installed, deliberately** (decided 2026-08-28,
@@ -181,8 +305,10 @@ present in built output — **do not move or delete it.**
 
 ## Open
 
-- **Domain is not yet purchased** — a v1 blocker. Cloudflare Registrar
-  assumed (~$12/yr, sold at cost with no renewal markup).
+- **Domain is not yet purchased** — no longer a build blocker
+  (2026-09-07), but still a launch one: a `pages.dev` URL on a résumé
+  reads as unfinished. Cloudflare Registrar assumed (~$12/yr, sold at
+  cost with no renewal markup).
 - **Résumé PDF does not exist** — deferred, not a launch blocker. The
   footer résumé-download link waits on it.
 - **Application timing** — Gary is not applying imminently (2026-09-04).

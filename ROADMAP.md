@@ -1,6 +1,8 @@
 # Roadmap — Gary Reyes Portfolio
 
 **Created:** 2026-08-28
+**Revised:** 2026-09-07 — the domain no longer blocks the build; deploy
+runs on `*.pages.dev` and the custom domain attaches later (A5).
 **Re-segmented:** 2026-09-04 for the scope revision (see [`CHANGES.md`](CHANGES.md)
 and `PLAN-REVIEW-BRIEF.md`): roster is 3 hero briefs + 1 card, media is
 screenshots not video, the footer carries a stat block not a contribution
@@ -40,10 +42,11 @@ the original plan (no video production).
 
 | | Task | Blocks | Status |
 | --- | --- | --- | --- |
-| A1 | **Buy the domain.** Cloudflare Registrar, ~$12/yr, sold at cost. The one hard blocker. | 3d | not started |
+| A1 | **Buy the domain.** Cloudflare Registrar, ~$12/yr, sold at cost. **Blocks no build work** (revised 2026-09-07) — 3d ships on `*.pages.dev`. Needed before the site goes on a résumé or an application. | A5 | not started |
 | A2 | **Take screenshots** — Cornerman, UFC Scouting, Saffron, Pahinga. One cover each + a few gallery shots for the heroes. An afternoon. | 6a, 6b | not started |
 | A3 | **Rough notes → a ~200-word brief** for each of the three heroes: the problem, the 1–2 interesting decisions, the outcome/status. | 6a, 6b | not started |
 | A4 | **Repo hygiene.** Write a real `saffron-web` README (currently 13 bytes); update the `ufc-scouting-app` README (still describes the frozen group/clan tool, not the current solo "intern" app). | 8 (reviewers click through) | not started |
+| A5 | **Attach the custom domain** to the Cloudflare Pages project and update `site` in `astro.config.mjs`. A dashboard action plus one line — minutes. **Needs A1 and 3d.** | — | not started |
 
 A3 is mostly a translation job — `Cornerman-2`, `ufc-scouting-app`, and
 `saffron-web` all carry `ARCHITECTURE.md` / `PRODUCT.md` / `RETROSPECTIVE.md`.
@@ -59,17 +62,40 @@ Everything downstream inherits this phase. It lands first for that reason.
 
 | | Sub-phase | Status |
 | --- | --- | --- |
-| 3a | **Design tokens and label-stock primitives.** Tailwind v4 `@theme`: kraft/manila ground, stencil ink, one safety accent, condensed grotesque scale, monospace reserved for real codes, the vertical registration axis, hazard-band rule, placard and stamp primitives. This *is* the "one continuous label stock" raise. | not started |
-| 3b | **`BaseLayout`, persistent nav bar, footer shell.** Wordmark left → homepage intro; hamburger trigger right. The direction contract already lives in `BaseLayout` and must not move. | not started |
-| 3c | **Full-screen menu as a packing-list docket** — the signature moment. Lists the three hero briefs directly, plus Pahinga (→ its live site), Services, How I build, Contact, socials. Focus trap, `Esc` to close, scroll lock, `prefers-reduced-motion`, and a no-JS fallback to plain links. | not started |
-| 3d | **Cloudflare Pages deploy + custom domain + `_headers`** (CSP, `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`) — **needs A1**. | not started |
+| 3a | **done 2026-09-07.** Design tokens and label-stock primitives. Tailwind v4 `@theme`: kraft/manila ground, stencil ink, one safety accent, condensed grotesque scale, monospace reserved for real codes, the vertical registration axis, hazard-band rule, placard and stamp primitives. This *is* the "one continuous label stock" raise. | **done** |
+| 3b | **done 2026-09-07.** `BaseLayout`, persistent nav bar, footer shell. Wordmark left → homepage intro; hamburger trigger right. The direction contract already lives in `BaseLayout` and must not move. | **done** |
+| 3c | **done 2026-09-07.** Full-screen menu as a packing-list docket** — the signature moment. Lists the three hero briefs directly, plus Pahinga (→ its live site), Services, How I build, Contact, socials. Focus trap, `Esc` to close, scroll lock, `prefers-reduced-motion`, and a no-JS fallback to plain links. | **done** |
+| 3d | **Cloudflare Pages deploy on `*.pages.dev` + `_headers`** (CSP, `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`), and `site` set in `astro.config.mjs` to the `pages.dev` URL so canonical, OG and sitemap URLs resolve. **Blocked by nothing** — the custom domain attaches later as A5. | not started |
 
-**Phase 3 close — the hard design checkpoint.** Full `/impeccable
-critique` + `polish` of the built shell against the named guardrails
-("must not read as gimmicky or try-hard," "must not look like every other
-dev portfolio," restrained motion). **Do not proceed to Phase 4 until the
-direction has landed** — by the 8d finish review there is no runway left
-to fix tokens or type.
+**3b update:** raise 2 (registration axis) is now mechanized, not just a
+primitive — `Nav`, `main`, and `Footer` each apply `axis` independently, so
+the line runs at an identical inset through all three landmarks on every
+route.
+
+**Phase 3 close — done 2026-09-07.** The hard design checkpoint. Ran
+`/impeccable critique` (dual-agent: design review + detector/browser
+evidence) against the named guardrails ("must not read as gimmicky or
+try-hard," "must not look like every other dev portfolio," restrained
+motion), scored 26/32 applicable heuristics, then `/impeccable polish` on
+the confirmed scope: footer density (tightened `py-band`→`py-gutter`, a
+closing © line added), a hazard-rule added to the always-visible Nav (was
+the weakest specificity surface — the one thing every visitor sees before
+any click), the menu's utility links (Services/How I build/Contact)
+visually demoted under an "Also" label so the four project links read as
+primary, "Pending — Phase 5d" (internal phase language) replaced with "To
+follow" in user-facing footer copy, and the recurring raw-Tailwind-spacing
+defect (`mt-2`) fixed in `index.astro`. Full report:
+`.impeccable/critique/2026-09-07T07-38-23Z__src-pages-index-astro.md`.
+
+**Raise 3 (density as tone) — partially addressed, not fully landed.**
+The three moves above are real but narrow: a tightened footer, one accent
+motif in the nav, a hierarchy split in the menu. None of them is "the
+shell reads dense throughout." The highest-visibility test of this raise —
+whether a lean 4-project roster reads as substantial — is the real
+homepage, which is Phase 5a and hasn't been built yet. Carrying this
+forward explicitly rather than letting "partially addressed" quietly read
+as "done": **Phase 5a inherits an open density obligation**, not a blank
+slate.
 
 ---
 
@@ -89,7 +115,7 @@ to fix tokens or type.
 
 | | Sub-phase | Status |
 | --- | --- | --- |
-| 5a | **Homepage.** Intro placard leads ("Hello, I'm Gary Reyes, a 3rd-year Industrial Engineering student"), then the work section, then the about/IE section. One obvious primary action: open the work. | not started |
+| 5a | **Homepage.** Intro placard leads ("Hello, I'm Gary Reyes, a 3rd-year Industrial Engineering student"), then the work section, then the about/IE section. One obvious primary action: open the work. **Inherits the open density-as-tone obligation from the Phase 3 close checkpoint** — the real test of whether a lean 4-project roster reads as substantial happens here, not in the shell. | not started |
 | 5b | **`/services`** — standalone business-owner page. Must read correctly as the only page seen. Pahinga and Saffron as the proof. May say *available for freelance*; must **not** imply *trusted by businesses*. | not started |
 | 5c | **`/how-i-build`** — the harness, skills, MCP setup, CI gates, planning docs. Honest, not a sales pitch. | not started |
 | 5d | **Contact form + `/404` + footer stat block.** Web3Forms in the sitewide footer: idle, submitting, inline success swap, visible failure with `mailto:` fallback, honeypot. Designed 404 with a route back to the homepage work section. Static spec-sheet stat block (projects shipped, live in production, real client work, peak commit day) from a hand-maintained `src/lib/stats.ts` — no API call. | not started |
@@ -189,7 +215,8 @@ been left to emerge.
 
 ## Next action
 
-**Track A:** begin **A1 — buy the domain**. Nothing else is a hard
-blocker, but A2/A3 gate Phase 6, so start them early.
+**Track A:** **A2 and A3** — they gate Phase 6 and are the real schedule
+risk. A1 (the domain) is no longer urgent: it blocks no build work and can
+be bought any time before the site goes on an application.
 **Track B:** `feature-planner` on **3a — design tokens and label-stock
 primitives**.

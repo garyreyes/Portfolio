@@ -1,0 +1,138 @@
+---
+import { SITE } from '../../lib/site';
+import MenuPanel from './MenuPanel.astro';
+
+/**
+ * Persistent top bar, every route (docs/user-flows.md "Navigation
+ * convention"). Wordmark left returns home; the trigger right now opens the
+ * MenuPanel (Phase 3c). The panel is a real dialog: focus trap, Esc to
+ * close, scroll lock, background inert, focus returned to this trigger on
+ * close, per docs/user-flows.md "Menu open" and "JavaScript disabled".
+ *
+ * Phase 3 close: the hazard-rule under the bar is new. The checkpoint's
+ * critique named this bar the weakest specificity surface in the shell —
+ * wordmark + text button is a shape any portfolio could use unchanged, and
+ * everything that reads as "shipping manifest" lived behind a click, in the
+ * menu. This puts one manifest motif on every route before any click.
+ */
+---
+
+<header class="axis max-w-stock mx-auto">
+  <div class="py-gutter flex items-center justify-between">
+    <a href="/" data-wordmark class="stencil text-placard text-ink uppercase">
+      {SITE.name}
+    </a>
+    <button
+      type="button"
+      id="menu-trigger"
+      aria-controls="site-menu"
+      aria-expanded="false"
+      class="stencil text-mark text-ink hover:text-safety-text duration-mark p-gutter uppercase transition-colors"
+    >
+      Menu
+    </button>
+  </div>
+  <div class="hazard-rule"></div>
+  <MenuPanel />
+</header>
+
+<script>
+  /**
+   * Progressive enhancement only. MenuPanel's markup is fully navigable
+   * with none of this — see that file's header comment. Everything below
+   * establishes a "closed, hidden, trapped" state that only ever exists
+   * once this script has actually run.
+   */
+  const trigger = document.getElementById('menu-trigger');
+  const panel = document.getElementById('site-menu');
+  const wordmark = document.querySelector<HTMLElement>('[data-wordmark]');
+  const main = document.querySelector('main');
+  const footer = document.querySelector('footer');
+  const closeButton = panel?.querySelector<HTMLButtonElement>('[data-menu-close]');
+
+  if (trigger && panel && wordmark && main && footer && closeButton) {
+    // Establish the closed state. Before this runs, the panel is plain,
+    // visible, tabbable content — the no-JS fallback. This is the one line
+    // that turns it into a dialog.
+    panel.setAttribute('inert', '');
+
+    const focusableSelector = 'a[href], button:not([disabled])';
+
+    const isOpen = () => panel.dataset.open === 'true';
+
+    const open = () => {
+      panel.dataset.open = 'true';
+      panel.removeAttribute('inert');
+      trigger.setAttribute('aria-expanded', 'true');
+      // The trigger itself stays reachable (re-activating it just closes —
+      // safe). The wordmark does not: it navigates away, and unlike Tab
+      // presses, a screen reader's browse-mode/virtual cursor does not go
+      // through onKeydown below, so nothing else would stop it reaching an
+      // un-inerted link while the dialog claims to be modal.
+      wordmark.setAttribute('inert', '');
+      main.setAttribute('inert', '');
+      footer.setAttribute('inert', '');
+      document.documentElement.style.overflow = 'hidden';
+      closeButton.focus({ preventScroll: true });
+      document.addEventListener('keydown', onKeydown);
+    };
+
+    const close = () => {
+      panel.dataset.open = 'false';
+      panel.setAttribute('inert', '');
+      trigger.setAttribute('aria-expanded', 'false');
+      wordmark.removeAttribute('inert');
+      main.removeAttribute('inert');
+      footer.removeAttribute('inert');
+      document.documentElement.style.overflow = '';
+      // preventScroll matters specifically for the panel's own Contact link
+      // (/#site-footer, a same-page anchor): without it, focusing the
+      // trigger could scroll to top a moment before the browser's own hash
+      // navigation scrolls to the footer, a one-frame flash. Harmless
+      // either way for Esc/close-button/a cross-page link, where the page
+      // hasn't scrolled since the modal opened.
+      trigger.focus({ preventScroll: true });
+      document.removeEventListener('keydown', onKeydown);
+    };
+
+    // Manual trap: cycles focus among the panel's own elements regardless
+    // of what else exists in the document, so it holds even though the
+    // wordmark and trigger remain real, undecorated DOM siblings.
+    const onKeydown = (event: KeyboardEvent) => {
+      if (!isOpen()) return;
+
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        close();
+        return;
+      }
+
+      if (event.key !== 'Tab') return;
+
+      const focusable = Array.from(panel.querySelectorAll<HTMLElement>(focusableSelector));
+      if (focusable.length === 0) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const active = document.activeElement;
+
+      if (event.shiftKey && active === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && active === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    trigger.addEventListener('click', () => (isOpen() ? close() : open()));
+    closeButton.addEventListener('click', close);
+
+    // A same-page anchor (Contact -> /#site-footer) leaves the panel open
+    // on top of the content it just scrolled to. A cross-page link doesn't
+    // strictly need this (the document unloads) but closing costs nothing.
+    panel.querySelectorAll('a[href]').forEach((link) => {
+      link.addEventListener('click', close);
+    });
+  }
+</script>

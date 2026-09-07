@@ -1,18 +1,85 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import '../styles/global.css';
+import { SITE } from '../lib/site';
+
+/**
+ * TOKEN PROOF, not the homepage.
+ *
+ * Phase 3a ships the design system. This page exists so the system is
+ * exercised in built output: `npm run design:check` reads dist/, so tokens
+ * that no page renders would make that gate vacuously pass.
+ *
+ * Phase 3b (now) wraps it in the real chrome — Nav, Footer, and the <main>
+ * landmark all now live in BaseLayout. Phase 5a replaces this content with
+ * the real homepage. Nothing here is a layout decision — it is the
+ * primitives, printed once.
+ */
+
+const units = [
+  { lot: 'LOT 01', name: 'Cornerman', consignee: 'Self-directed', status: 'live' },
+  { lot: 'LOT 02', name: 'UFC Scouting', consignee: 'Self-directed', status: 'live' },
+  { lot: 'LOT 03', name: 'Saffron', consignee: 'Saffron Restaurant', status: 'live' },
+  { lot: 'LOT 04', name: 'Pahinga Coffee', consignee: 'Pahinga Coffee', status: 'spent' },
+];
 ---
 
-<BaseLayout
-  title="Gary Reyes"
-  description="Third-year Industrial Engineering student at De La Salle University who ships production software."
->
-  <main>
-    <h1>Gary Reyes</h1>
-    <p>
-      Placeholder. The visual direction is recorded in the contract comment in
-      <code>src/layouts/BaseLayout.astro</code>; the site is built in the roadmap's phases, not
-      here.
-    </p>
-  </main>
+<BaseLayout title={SITE.name} description={SITE.description}>
+  <div class="py-band">
+    <header class="gap-gutter flex flex-wrap items-start justify-between">
+      <div>
+        <h1 class="stencil text-consign uppercase">Gary Reyes</h1>
+        <p class="mark mt-gutter">Industrial Engineering · DLSU · Manila</p>
+      </div>
+      <p class="lot">
+        LOT d4e5136b<br />
+        2026-09-07
+      </p>
+    </header>
+
+    <div class="hazard-rule my-band"></div>
+
+    <section id="contents">
+      <h2 class="mark">Contents</h2>
+      <ul class="mt-gutter gap-gutter grid sm:grid-cols-2">
+        {
+          units.map((unit) => (
+            <li class="placard gap-gutter flex items-start justify-between">
+              <div>
+                <p class="lot">{unit.lot}</p>
+                <p class="stencil text-placard uppercase">{unit.name}</p>
+                <p class="mark mt-gutter">Consignee</p>
+                <p class="text-ink-muted">{unit.consignee}</p>
+              </div>
+              <p class="stamp" data-state={unit.status === 'live' ? 'shipped' : 'spent'}>
+                {unit.status === 'live' ? 'Shipped' : 'Archived'}
+              </p>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <div class="hazard-rule my-band"></div>
+
+    <section class="max-w-prose">
+      <h2 class="mark">Notice</h2>
+      <p class="mt-gutter text-lede">
+        This page proves the design tokens render. It is not the homepage.
+      </p>
+      <p class="mt-gutter text-ink-muted">
+        The visual direction is recorded in the contract comment in <code class="lot"
+          >src/layouts/BaseLayout.astro</code
+        >. The shell that replaces this page is Phase 3b, and the full-screen manifest docket is
+        Phase 3c. Both read their colour, type and spacing from <code class="lot"
+          >src/styles/global.css</code
+        > and define none of their own.
+      </p>
+      <p class="mt-band">
+        <a
+          class="stencil text-safety-text hover:text-safety duration-mark uppercase underline underline-offset-4 transition-colors"
+          href="#contents">Primary action goes here</a
+        >
+      </p>
+    </section>
+  </div>
 </BaseLayout>

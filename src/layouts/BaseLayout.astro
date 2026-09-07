@@ -1,11 +1,27 @@
 ---
+import '../styles/global.css';
+import SkipLink from '../shared/components/SkipLink.astro';
+import Nav from '../shared/components/Nav.astro';
+import Footer from '../shared/components/Footer.astro';
+
 /**
  * Root layout. Every route renders through this.
  *
  * The direction contract below MUST remain the first child of <body> and
  * MUST survive the production build — it is the auditable record of the
  * visual world every component inherits. Do not move it into a child or
- * slotted component; Astro strips a slot's leading comment.
+ * slotted component; Astro strips a slot's leading comment. An HTML comment
+ * renders nothing, so SkipLink is still the first real element for keyboard
+ * and screen-reader users despite following it in source.
+ *
+ * <main> owns the axis/measure (mx-auto max-w-stock), not each page. Nav and
+ * Footer apply the same "axis" utility independently, so the registration
+ * axis appears at the identical inset in all three landmarks — this is what
+ * makes it a real site-wide alignment guide instead of per-page discipline
+ * (the open item from Phase 3a's close-out). The three segments are not
+ * required to paint as one unbroken stroke — a registration mark is a guide
+ * every section references, not a single physical ruler — so normal spacing
+ * between landmarks is fine.
  */
 interface Props {
   title: string;
@@ -20,34 +36,81 @@ const { title, description } = Astro.props;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!--
+      Progressive-enhancement flag for MenuPanel.astro (Phase 3c): synchronous
+      and unprocessed (is:inline) so it runs before first paint, avoiding a
+      frame where the menu panel is visible in its no-JS layout. Its absence
+      is not an error state — it is the fallback docs/user-flows.md requires.
+    -->
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
     <title>{title}</title>
     <meta name="description" content={description} />
+
+    <!--
+      All three faces are preloaded because all three are used above the fold,
+      and a swap after first paint is exactly the flash the direction's tight
+      stencil tracking makes most obvious. Space Mono is included on the
+      contract's own terms: the FIRST VIEWPORT block below puts the lot/date
+      stamp in the opening frame, and that is set in Space Mono. 63 KB total.
+    -->
+    <link
+      rel="preload"
+      href="/fonts/archivo-latin-var.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/archivo-narrow-700-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/space-mono-400-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
   </head>
   <body>
     <!--
-    THESIS: Six shipped projects presented as consigned goods with placards,
+    THESIS: Four shipped projects presented as consigned goods with placards,
     each carrying its own lot code, consignee and stamped status. Refuses the
     dark developer-portfolio card grid and its cream-editorial opposite alike.
 
     OWN-WORLD: Kraft/manila board ground, black stencil ink, one safety accent.
     Condensed grotesque caps; monospace reserved for real codes only. Hazard-band
     rules, rubber-stamped status marks, lot numbers, consignee lines. One label
-    stock across all 11 routes; a single vertical registration axis everything
+    stock across all 7 routes; a single vertical registration axis everything
     aligns to; density itself is tone, never decoration.
 
-    STORY: A founder understands this person ships real things, believes five of
-    six are genuinely live, and opens a case study.
+    STORY: A founder understands this person ships real things, believes they are
+    genuinely live, and opens a project brief.
 
     FIRST VIEWPORT: Consignment placard top-left — GARY REYES, INDUSTRIAL
     ENGINEERING, DLSU, MANILA — set as a shipping mark against the registration
     axis, lot/date stamp opposite. Work begins immediately below as placarded
     units. Primary action: the first unit.
 
+    AMENDED 2026-09-07: counts only (six->four projects, 11->7 routes, case
+    study->brief), to match the 2026-09-04 scope revision. No part of the
+    assigned direction was altered.
+
     FORM: Shipping manifest / logistics labeling; candidate 3 of 7; seed d4e5136b.
 
     FINISH: unreviewed and undocumented is unfinished; this build ends with the
     finish review, the verdict, and DESIGN.md
     -->
-    <slot />
+    <SkipLink />
+    <Nav />
+    <main id="main-content" class="axis max-w-stock mx-auto">
+      <slot />
+    </main>
+    <Footer />
   </body>
 </html>

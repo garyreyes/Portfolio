@@ -1,0 +1,43 @@
+---
+import { SOCIALS } from '../../lib/site';
+
+/**
+ * Sitewide footer shell (docs/user-flows.md "Footer — sitewide, on every
+ * route"). Socials ship now — nothing blocks them. The contact form and
+ * stat block are Phase 5d; rendered here as an honest stamped placeholder
+ * rather than empty space, so the footer never silently looks unfinished
+ * between now and then.
+ *
+ * Phase 3 close: tightened from py-band to py-gutter, and a second closing-
+ * mark row added below the hairline — real content (not filler), and it
+ * directly answers the checkpoint's density-as-tone finding, which named
+ * this file as the airiest surface in the shell. "Pending — Phase 5d" was
+ * internal roadmap language sitting in user-facing copy; replaced with a
+ * plain manifest term with no phase reference to leak.
+ */
+---
+
+<footer id="site-footer" class="axis max-w-stock mx-auto">
+  <div class="hazard-rule"></div>
+  <div class="py-gutter gap-gutter flex flex-wrap items-center justify-between">
+    <ul class="gap-gutter flex">
+      {
+        SOCIALS.map((social) => (
+          <li>
+            <a
+              href={social.href}
+              class="mark hover:text-safety-text duration-mark transition-colors"
+              target={social.href.startsWith('http') ? '_blank' : undefined}
+              rel={social.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+            >
+              {social.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="stamp" data-state="spent">To follow</p>
+  </div>
+  <div class="border-rule border-t"></div>
+  <p class="mark py-gutter">© 2026 Gary Reyes — Manila, Philippines</p>
+</footer>
