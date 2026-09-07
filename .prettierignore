@@ -9,3 +9,12 @@ package-lock.json
 # its tables creates churn with no benefit.
 *.md
 docs/
+
+# Impeccable's own tool-state cache files, already excluded from git via
+# .git/info/exclude (impeccable-hook-ignore block) — not authored content,
+# and `prettier --check .` scans the whole working tree regardless of git
+# tracking, so a stale cache file here can fail the pre-push gate for a
+# file nobody committed. Same three paths as the git-exclude list.
+.impeccable/hook.cache.json
+.impeccable/hook.pending.json
+.impeccable/config.local.json
