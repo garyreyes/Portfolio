@@ -261,6 +261,47 @@ present in built output — **do not move or delete it.**
   reading the CSS alone. The JS-active `position:fixed` state needs its own
   inset since fixed positioning escapes the header's padding entirely.
 
+## Nav: sticky on scroll (2026-09-09)
+
+- **Requested against an 800k.dev reference** (an always-visible left
+  sidebar) — narrowed after clarifying scope: kept the existing horizontal
+  bar and full-screen-menu pattern, added only (a) the bar sticks to the
+  viewport top on scroll and (b) clicking the wordmark scrolls to top
+  instead of only working as a home link. Matching 800k.dev's actual
+  sidebar layout would have replaced Phase 3c's reviewed "signature
+  moment" pattern entirely — a real redesign, not attempted here.
+- **Sticky/background/z-index are gated behind `html.js`**, not plain
+  Tailwind classes on `<header>` — caught in review. MenuPanel's entire
+  link list renders unconditionally INSIDE that header in normal flow as
+  the deliberate no-JS fallback; an unconditionally sticky header pinned
+  that ~900px block over the viewport for an entire no-JS session, hiding
+  real content behind it. Same `html.js`-gating pattern MenuPanel.astro
+  already used for its own `position: fixed` state, for the identical
+  reason. Verified both states directly: no-JS scrolls the header away
+  normally (`getBoundingClientRect().top` goes negative with scroll), JS
+  keeps it pinned at `top: 0`.
+- **The wordmark's scroll-to-top respects `prefers-reduced-motion`
+  explicitly in JS**, not via the global CSS rule — an explicit
+  `behavior: 'smooth'` option passed to `scrollTo()` overrides the CSS
+  `scroll-behavior` property, so the global reduced-motion override
+  doesn't catch this call and has to be checked directly.
+- **Headless Chrome's CLI `--screenshot` flag has a real compositing bug
+  for `position: sticky`/`fixed` content** in the version used this
+  session — it can show a stuck element in the wrong place even though
+  the actual DOM/computed-style state (and a CDP-driven
+  `Page.captureScreenshot`) confirm it's correct. Second confirmed
+  instance of this class of bug (first was `position: fixed` inside an
+  iframe, Phase 3c). Trust `getBoundingClientRect()`/computed styles or
+  a CDP-driven screenshot over the CLI flag when verifying non-static
+  positioning.
+- **A synthetic `.click()` call does not reliably trigger the same
+  `window.scrollTo` behavior a real click does** in this interaction
+  pattern — confirmed by dispatching a genuine CDP mouse click
+  (`Input.dispatchMouseEvent`), which worked correctly where `.click()`
+  had not. Same category as the Phase 3c finding that `.click()` bypasses
+  `inert`'s real protections — programmatic clicks are not a reliable
+  stand-in for real interaction when verifying certain browser behavior.
+
 ## Design system — monochrome amendment (2026-09-07, after Phase 3 close)
 
 - **The safety-orange accent is removed, not recoloured** — Gary's explicit

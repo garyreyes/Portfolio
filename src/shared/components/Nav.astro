@@ -14,10 +14,27 @@ import MenuPanel from './MenuPanel.astro';
  * wordmark + text button is a shape any portfolio could use unchanged, and
  * everything that reads as "shipping manifest" lived behind a click, in the
  * menu. This puts one manifest motif on every route before any click.
+ *
+ * AMENDED 2026-09-09: sticky on scroll, per Gary's reference (800k.dev) —
+ * narrowed to sticky + scroll-to-top rather than that site's always-visible
+ * sidebar, which would have replaced Phase 3c's full-screen menu entirely.
+ * An opaque background is required now: content scrolls UNDER a sticky
+ * header, which a static one in normal flow never had to paint over.
+ * z-40, deliberately under the open MenuPanel's z-50, so the panel still
+ * fully covers this bar when open.
+ *
+ * The sticky/background/z-index rules live in the scoped <style> below,
+ * gated to `html.js`, NOT as plain classes on <header> — caught in review.
+ * MenuPanel's entire link list renders unconditionally INSIDE this header
+ * in normal flow (that's the no-JS fallback, see MenuPanel.astro's own
+ * header comment); an unconditionally sticky header would have pinned that
+ * whole ~900px block over most of the viewport for the entire no-JS
+ * session, hiding real content behind it. Same html.js-gating pattern
+ * MenuPanel.astro already uses, for the identical reason.
  */
 ---
 
-<header class="axis max-w-stock mx-auto">
+<header class="axis max-w-stock nav-header mx-auto">
   <div class="py-gutter flex items-center justify-between">
     <a href="/" data-wordmark class="stencil text-placard text-ink uppercase">
       {SITE.name}
@@ -128,6 +145,18 @@ import MenuPanel from './MenuPanel.astro';
     trigger.addEventListener('click', () => (isOpen() ? close() : open()));
     closeButton.addEventListener('click', close);
 
+    // Wordmark: scroll-to-top when already home, real navigation otherwise.
+    // The CSS `scroll-behavior: auto` reduced-motion override in global.css
+    // does NOT catch this — an explicit `behavior: 'smooth'` in a JS call
+    // wins over that CSS property, so reduced motion has to be checked here
+    // directly, not assumed to be handled globally.
+    wordmark.addEventListener('click', (event) => {
+      if (window.location.pathname !== '/') return;
+      event.preventDefault();
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+    });
+
     // A same-page anchor (Contact -> /#site-footer) leaves the panel open
     // on top of the content it just scrolled to. A cross-page link doesn't
     // strictly need this (the document unloads) but closing costs nothing.
@@ -136,3 +165,19 @@ import MenuPanel from './MenuPanel.astro';
     });
   }
 </script>
+
+<style>
+  /*
+   * Gated to html.js — see the header comment above for why. Without JS,
+   * the no-JS fallback panel inside this header can be ~900px tall; sticky
+   * would pin that whole block over the viewport for the entire session.
+   * background-color must live here too, not as a plain class: it only
+   * makes sense once the header is actually pinned above scrolling content.
+   */
+  html.js .nav-header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background-color: var(--color-stock-200);
+  }
+</style>

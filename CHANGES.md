@@ -10,6 +10,26 @@ does that.
 
 ## Unreleased
 
+### 2026-09-09 — Nav: sticky on scroll, wordmark scrolls to top
+
+Requested against an 800k.dev reference (an always-visible sidebar);
+narrowed in scope to keep the existing shell and full-screen menu intact.
+
+- **The persistent top bar now sticks to the viewport top on scroll**
+  instead of scrolling away with the page.
+- **Clicking "GARY REYES" scrolls to top** (smooth, respecting
+  `prefers-reduced-motion`) when already on the homepage, instead of only
+  working as a plain home link.
+- **Fixed after review**: the sticky/background/z-index rules were
+  initially applied as plain classes directly on `<header>`, which broke
+  the deliberate no-JS fallback — MenuPanel's entire link list lives
+  inside that header in normal flow for no-JS visitors, and an
+  unconditionally sticky header pinned that ~900px block over the
+  viewport for the whole session. Moved into a scoped `<style>` block
+  gated behind `html.js`, matching the pattern MenuPanel.astro already
+  used for its own JS-only `position: fixed` state. Verified both states
+  directly after the fix, not just re-asserted.
+
 ### 2026-09-07 — Monochrome: the accent is removed
 
 Requested by Gary after the Phase 3 close checkpoint shipped — a genuine
