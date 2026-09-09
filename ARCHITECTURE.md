@@ -68,8 +68,18 @@ stay typed).
 ## Entities
 
 There is no database. The schema is **MDX frontmatter validated at build
-time** by Zod in `src/content/config.ts`. A project entry that violates
+time** by Zod in `src/content.config.ts`. A project entry that violates
 it fails the build rather than shipping broken.
+
+**AMENDED 2026-09-09 (Phase 4a):** the file lives at `src/content.config.ts`
+(a sibling of `src/content/`), not `src/content/config.ts` as the folder
+tree below still shows — the installed Astro version (7.2.9, v6+
+conventions) rejects the config at the old in-folder location with a
+`LegacyContentConfigError`, even though the loader-based API this project
+uses (`defineCollection` + `astro/loaders`' `glob()`) is the current one.
+Verified against the real installed version, not assumed from Astro's
+general docs. Only the file's location moved; the folder tree's shape for
+`src/content/projects/*.mdx` is unchanged.
 
 ### `Project` — the only entity
 
@@ -168,8 +178,8 @@ portfolio/
 │  ├─ robots.txt
 │  └─ favicon.svg
 ├─ src/
+│  ├─ content.config.ts           # Zod schema — the Project entity, enforced at build
 │  ├─ content/
-│  │  ├─ config.ts                # Zod schema — the Project entity, enforced at build
 │  │  └─ projects/
 │  │     ├─ cornerman.mdx         # hero
 │  │     ├─ ufc-scouting-app.mdx  # hero
@@ -227,7 +237,7 @@ infrastructure → `lib/`. New project → a new `.mdx` file, nothing else.
 ### Structure checks
 
 - Feature-based, not type-based ✅
-- `Project` defined in exactly one place (`content/config.ts`) ✅
+- `Project` defined in exactly one place (`content.config.ts`) ✅
 - Failure handling centralised — form errors in `contact/service.ts`,
   404 in one page, build-time validation in one schema ✅
 - Every piece of functionality has one obvious file ✅

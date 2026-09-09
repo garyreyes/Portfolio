@@ -10,6 +10,138 @@ does that.
 
 ## Unreleased
 
+### 2026-09-10 — Layout polish: margins, mobile nav, long stacks, overflow
+
+Direct feedback against the just-shipped plain nav, checked with real
+measurement rather than eyeballing a screenshot (headless Chrome's CLI
+`--screenshot` flag has known compositing bugs for `position: sticky`
+content — verified with CDP `getBoundingClientRect()`/`getClientRects()`
+instead, at this project's own stated test-width floor of 320px and
+below).
+
+- **Symmetric container margins.** `@utility axis` (shared by Nav, `<main>`,
+  and Footer) used to pad 4.5rem on the start side and a bare 1.25rem on
+  the end — a real, visible imbalance, not a deliberate registration-axis
+  choice. Both sides now match, on every viewport; the axis rule itself
+  still draws at the same inset near the start edge.
+- **Mobile nav no longer crams.** Two compounding bugs: the wordmark
+  reused the homepage hero's `text-placard` clamp and wrapped to two
+  lines at narrow widths, and the four links wrap-flowed unevenly across
+  up to three ragged lines fighting it for space. The wordmark is now a
+  fixed `text-lede` size (confirmed single-line down to 320px); below
+  `sm` the link row is a deliberate one-per-line vertical list instead of
+  an uncontrolled wrap.
+- **Long stack lists clamp instead of sprawling.** `ProjectCard`'s
+  Contents line (e.g. Cornerman's 5-item stack) could run to 4 lines and
+  dwarf shorter cards. Clamped to 2 lines with a real ellipsis cutoff;
+  full text stays in the DOM via a `title` attribute, so nothing is
+  actually lost for a screen reader or on hover.
+- **Closed a genuine horizontal-overflow bug**, found only by scripting a
+  narrow-viewport scan for elements whose right edge exceeds the
+  viewport (not by inspection): the Phase 3a placeholder's "Notice"
+  section prints literal file paths in an inline `<code class="lot">`
+  with no break point, which pushed real overflow below ~280px.
+  `@utility lot` now sets `overflow-wrap: anywhere`; verified clean down
+  to 220px, past any real device's floor.
+
+### 2026-09-10 — Nav: the full-screen menu is retired
+
+Gary's call, after seeing affaanmustafa.com's plain always-visible nav
+links and preferring that structure over Phase 3c's full-screen docket.
+
+- **`MenuPanel.astro` deleted entirely** — the full-screen dialog markup,
+  its no-JS fallback link list, and its scoped styles.
+- **`Nav.astro`'s ~110-line focus-trap script removed** — `open()`,
+  `close()`, the manual Tab-cycling trap, `inert` wiring on
+  `main`/`footer`/the wordmark, scroll lock. None of it has a job anymore
+  with no overlay to manage.
+- **Replaced with a plain, always-visible `<nav>`** — Work / Services /
+  How I build / Contact, from a new `NAV_LINKS` array (`src/lib/site.ts`,
+  replacing `WORK_ITEMS`/`MENU_LINKS`). Every destination is one click
+  from every route now, with nothing hidden behind a click first.
+- **The `html.js` progressive-enhancement flag is gone** — confirmed via
+  a full-tree grep that nothing else read it, then removed from
+  `BaseLayout.astro` rather than left as dead code. Sticky positioning
+  (kept from the 2026-09-09 change) no longer needs the gating that flag
+  existed for: it only existed because the menu's ~900px no-JS fallback
+  content used to live inside the same header, and pinning that
+  unconditionally would have hidden the page for no-JS visitors. A plain
+  link row has no such height problem in either state, and
+  `position: sticky` is native CSS needing no JavaScript to begin with —
+  verified directly (not assumed): no-JS header height is ~88px, and
+  sticky still holds (`top: 0` after scrolling) with zero scripts run.
+
+Reviewed independently: zero functional defects found — no dangling
+ARIA/focus-management attributes, no orphaned imports, anchor targets
+(`#work`, `#site-footer`) confirmed resolving in the built HTML, token
+discipline held. The review's one real finding was process, not code:
+`PROJECT_FACTS.md`, `ROADMAP.md`, and `docs/user-flows.md` still
+described the retired menu as current fact — all three corrected here,
+each with the historical spec kept as a marked, dated record rather than
+silently deleted.
+
+### 2026-09-09 — Phase 4b: the work section renders real data
+
+The homepage's project grid is no longer a mock array — it reads the real
+content collection built in 4a.
+
+- **`src/features/projects/queries.ts`** — the only place
+  `getCollection('projects')` is called, per CLAUDE.md's layer boundary.
+  `ProjectCard.astro`/`ProjectGrid.astro` never import `astro:content`
+  directly; confirmed by the project's own ESLint rule, not just by intent.
+- **Honest status labels, genuinely decoupled from the link.** The status
+  stamp always shows the true status word; the actual link is computed
+  separately (`liveUrl` → else `repoUrl` → else nothing rendered). This
+  means a `live` project with no recorded URL yet (UFC Scouting, Saffron
+  — see PROJECT_FACTS.md) correctly shows a true "Live" stamp beside an
+  honest "View repo" link, never a dead "Live" affordance — the exact rule
+  docs/PRD.md §10 states for Cornerman, now holding for every project.
+- **Fixed a real, pre-existing dead-anchor bug while touching this
+  section**: `MenuPanel.astro`'s "Work" link has pointed at `/#work` since
+  Phase 3c, but the homepage section was `id="contents"` — the link never
+  resolved to anything. Renamed to `id="work"` to match.
+- **Hover-preview React island deliberately deferred**, not forgotten —
+  it's a Should-have with no real screenshots to preview yet (Track A2
+  hasn't happened), and ROADMAP.md's own pre-committed cut list already
+  names "static placard cards" as this exact fallback.
+
+Reviewed independently: all four projects' stamp/link output verified
+against the compiled `dist/index.html`, not just source; the
+`stampState` fresh/drained visual split confirmed to still satisfy WCAG
+1.4.1 (the stamp's text differs across all three status values, so fill
+state is never the only signal); token discipline held (no raw Tailwind
+defaults, the recurring defect class from three prior phases).
+
+### 2026-09-09 — Phase 4a: the content collection schema
+
+The data layer for all four real projects — no database, MDX frontmatter
+validated by Zod at build time (ARCHITECTURE.md "Entities").
+
+- **`src/content.config.ts`** — the `Project` entity schema, matching
+  ARCHITECTURE.md's table field-for-field. Enforcement proven live: removed
+  a required field, confirmed the build fails with a precise error naming
+  the exact file and field, restored it, confirmed the build passes again.
+- **All four real project entries** (`cornerman`, `ufc-scouting-app`,
+  `saffron-web`, `pahinga-coffee`) — tier/type/status/client/stack sourced
+  from ARCHITECTURE.md and docs/PRD.md, nothing fabricated. `tagline` and
+  `year` are visibly flagged placeholders in all four files (no real values
+  exist yet); `media.cover` is a real path convention pending Track A2's
+  screenshots.
+- **`getCollection('projects')` confirmed working end-to-end** — not just
+  schema-valid at build time, actually queryable with correct shape (real
+  stack lengths, correct `featured` flags, `liveUrl`/`repoUrl` populated
+  only where real) via a temporary debug route, since deleted.
+- **ARCHITECTURE.md's documented config path was wrong** — corrected to
+  `src/content.config.ts` (the installed Astro version requires this
+  location, confirmed by an actual failing build at the old path), along
+  with the same stale reference in CLAUDE.md and docs/PRD.md.
+
+Fixed after review: the `year` placeholder was only visibly flagged in one
+of the four files, leaving `year: 2026` looking like a real fact in the
+other three; and two more stale `src/content/config.ts` references
+survived in CLAUDE.md (a binding rules file) and docs/PRD.md beyond the
+three already fixed in ARCHITECTURE.md.
+
 ### 2026-09-09 — Nav: sticky on scroll, wordmark scrolls to top
 
 Requested against an 800k.dev reference (an always-visible sidebar);

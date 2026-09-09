@@ -395,7 +395,7 @@ from blank.
 
 1. Framework → **Astro** (see `ARCHITECTURE.md`).
 2. MDX frontmatter typing → **Astro Content Collections + Zod** in
-   `src/content/config.ts`.
+   `src/content.config.ts`.
 3. ~~Where demo video files live~~ → moot; media is screenshots in
    `public/`, no video pipeline (2026-09-04).
 4. Domain name and registrar → still open; Cloudflare Registrar assumed,

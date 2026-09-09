@@ -290,8 +290,14 @@
    yet. 3b's shell is where it stops being a convention. */
 @utility axis {
   position: relative;
-  padding-inline-start: var(--spacing-axis);
-  padding-inline-end: var(--spacing-gutter);
+  /* AMENDED 2026-09-10: padding-inline-end used to be a bare --spacing-gutter
+     (1.25rem) against --spacing-axis (4.5rem) on the start side — a real,
+     visible imbalance (content hugging the right edge while the left carried
+     4.5rem of margin), flagged directly against affaanmustafa.com's evenly
+     margined layout. Symmetric now: the registration-axis rule still draws
+     at the same inset near the start edge, but the container itself is
+     centred with equal breathing room on both sides, on every viewport. */
+  padding-inline: var(--spacing-axis);
 
   &::before {
     content: '';
@@ -305,9 +311,10 @@
   /* The axis collapses on narrow viewports — a 4.5rem inset on a 360px
      screen is most of the screen. The rule stays; the measure tightens.
      Nested inside the utility so it stays in the utilities layer and cannot
-     be beaten by an unlayered rule elsewhere. */
+     be beaten by an unlayered rule elsewhere. Symmetric here too, for the
+     same reason as the desktop case above. */
   @media (width < 40rem) {
-    padding-inline-start: calc(var(--spacing-gutter) * 2);
+    padding-inline: calc(var(--spacing-gutter) * 2);
 
     &::before {
       inset-inline-start: var(--spacing-gutter);
@@ -380,6 +387,14 @@
   letter-spacing: var(--text-code--letter-spacing);
   color: var(--color-ink-muted);
   font-variant-numeric: tabular-nums;
+  /* Real codes are short ("LOT 01"), but this utility is also reused on
+     literal file paths (index.astro's Phase 3a notice section), which have
+     no natural break point. Below ~280px that pushed a real, measured
+     horizontal overflow (found via a genuine narrow-viewport diagnostic
+     scan, not assumed) — CLAUDE.md's floor is "no horizontal scroll at any
+     viewport width," not just the tested set, so this holds regardless of
+     when the placeholder text it's currently attached to gets replaced. */
+  overflow-wrap: anywhere;
 }
 
 /* Rubber-stamped status. Off-axis because a hand-applied stamp is never

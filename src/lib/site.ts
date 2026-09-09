@@ -16,21 +16,16 @@ export const SOCIALS = [
 ] as const;
 
 /**
- * The menu's contents, per docs/user-flows.md "Menu contents — counted
- * explicitly". Real, final hrefs — not placeholders. `/work/*`, `/services`
- * and `/how-i-build` don't exist until Phase 4/5, so those links 404 until
- * then. That is expected mid-build, the same way Phase 3b shipped a Menu
- * button that opened nothing until this phase. `/#work` and Pahinga's link
- * carry the same caveat; Contact and the socials work today.
+ * AMENDED 2026-09-10: replaces WORK_ITEMS/MENU_LINKS, which fed the
+ * full-screen menu docket (Phase 3c) — retired in favor of plain,
+ * always-visible nav links (Gary's call, after an affaanmustafa.com
+ * reference). Real, final hrefs — not placeholders. `/services` and
+ * `/how-i-build` don't exist yet, so those two 404 until they're built;
+ * expected mid-build, same precedent as every other forward-referencing
+ * link in this project. `/#work` and Contact work today.
  */
-export const WORK_ITEMS = [
-  { lot: '01', label: 'Cornerman', href: '/work/cornerman' },
-  { lot: '02', label: 'UFC Scouting', href: '/work/ufc-scouting-app' },
-  { lot: '03', label: 'Saffron', href: '/work/saffron-web' },
-  { lot: '04', label: 'Pahinga Coffee', href: 'https://pahinga-coffee.vercel.app', external: true },
-] as const;
-
-export const MENU_LINKS = [
+export const NAV_LINKS = [
+  { label: 'Work', href: '/#work' },
   { label: 'Services', href: '/services' },
   { label: 'How I build', href: '/how-i-build' },
   { label: 'Contact', href: '/#site-footer' },

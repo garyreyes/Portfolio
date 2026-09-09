@@ -94,14 +94,19 @@ product truth (`docs/PRD.md`).
 
 - **No authentication anywhere.** No login, no accounts, no gated
   screens. The auth-gate section of the flow map is empty by design.
-- **Navigation is `800k.dev`-style**: persistent bar, wordmark left
+- **AMENDED 2026-09-10: the hamburger/full-screen-overlay menu described
+  below is retired.** Gary's call, after an affaanmustafa.com reference —
+  plain, always-visible nav links (Work/Services/How I build/Contact) in
+  the persistent bar instead. The recognition-over-recall concern this
+  section used to flag no longer applies in the direction it was written
+  for: nothing is collapsed behind a click anymore, so there's no "plain
+  collapsed list" state to worry about becoming the fallback. Kept below
+  as history, not current fact.
+- ~~Navigation is `800k.dev`-style~~: persistent bar, wordmark left
   returning to the homepage intro, hamburger right opening a full-screen
-  overlay menu. **The menu lists every project directly** (the 3 hero
-  briefs + Pahinga's live site), which is what turns it from a hidden
-  utility list into the site's real navigation surface — that mitigation
-  is load-bearing, not decoration. If it is ever reduced to a plain
-  collapsed list, the recognition-over-recall tradeoff stops being
-  acceptable.
+  overlay menu. The menu listed every project directly (the 3 hero
+  briefs + Pahinga's live site), which is what turned it from a hidden
+  utility list into the site's real navigation surface.
 - **`/about` folded into a homepage section; `/services` added; the
   `/work` index route removed** (2026-09-04 — four projects don't need
   one; the homepage work section is the full list). **7 routes.** No
@@ -150,10 +155,13 @@ present in built output — **do not move or delete it.**
 - **Guardrails, binding:** must not read as gimmicky or try-hard, and
   must not look like every other dev portfolio. Both were named by Gary
   as what would make a finished result feel wrong.
-- **The memorable moment is the full-screen menu opening** — built as a
-  packing list / manifest docket. This is also the mitigation that makes
-  hiding navigation behind a hamburger acceptable, so it is load-bearing
-  twice over.
+- ~~The memorable moment is the full-screen menu opening~~ — built as a
+  packing list / manifest docket. **Retired 2026-09-10** along with the
+  hamburger pattern itself (see "Flows and navigation" above) — there is
+  no hidden navigation left for it to have been mitigating. The rest of
+  the direction (placards, stamps, the registration axis, one continuous
+  stock) is unaffected; only this specific signature-moment mechanism
+  is gone.
 - **First viewport leads with the intro, then the work** (Gary's call,
   against Experience mode's default of leading with the artifact).
 - **Code-led build.** No image generation was available this session, so
@@ -260,6 +268,55 @@ present in built output — **do not move or delete it.**
   header there) — caught by an actual headless render, not visible from
   reading the CSS alone. The JS-active `position:fixed` state needs its own
   inset since fixed positioning escapes the header's padding entirely.
+
+## Work section (2026-09-09, Phase 4b)
+
+- **UFC Scouting and Saffron are missing real `liveUrl` values** — both
+  are genuinely `status: live` (a real, sourced fact), but no confirmed
+  URL was available when the content was written, so their cards
+  correctly show a true "Live" stamp alongside a "View repo" link instead
+  of a dead "Live site" link. **Give me the real URLs and I'll add them**
+  — a one-line change per file, nothing structural.
+- **Static grid only — no hover-preview island.** Confirmed decision, not
+  an oversight: it's a Should-have per docs/PRD.md, there are no real
+  screenshots to preview yet (Track A2), and ROADMAP.md's cut list already
+  named this exact fallback. Revisit once Track A2 lands.
+- **`#work` is now the real anchor id** for the homepage's work section
+  (was `#contents`, which `MenuPanel.astro`'s "Work" link never actually
+  matched — a dead link since Phase 3c, fixed as part of this pass, not a
+  new decision).
+
+## Content schema (2026-09-09, Phase 4a)
+
+- **Config file lives at `src/content.config.ts`, not `src/content/config.ts`**
+  — ARCHITECTURE.md's original folder tree had the wrong location. The
+  installed Astro version (7.2.9, v6+ conventions) rejects the in-folder
+  location with a real `LegacyContentConfigError` even when using the
+  current loader-based API (`defineCollection` + `glob()`). Confirmed
+  empirically. Corrected in ARCHITECTURE.md, CLAUDE.md, and docs/PRD.md —
+  all three previously named the wrong path.
+- **Two Zod/Astro deprecations fixed by reading the actual type
+  declarations**, not guessed: `z` imports from `astro/zod`, not
+  `astro:content` (that re-export is removed entirely in Astro 8, per its
+  own JSDoc); `liveUrl`/`repoUrl` use `z.url()`, not the deprecated
+  `z.string().url()` chain. Verified no behavioral difference between the
+  two — same accept/reject set tested directly against the installed Zod
+  version.
+- **`tagline` and `year` are real, unresolved data gaps**, not filled in —
+  no per-project year or real marketing copy exists anywhere in this
+  repo's docs. Every one of the four `.mdx` files carries the same visible
+  `# PLACEHOLDER` comment on both fields (caught in review: the first pass
+  only flagged it in one of the four files, leaving `year: 2026` looking
+  like a real fact in the other three). Track A3's translation job is
+  where these get resolved.
+- **`media.cover` paths (`/screenshots/<slug>/cover.png`) are a real
+  naming convention, not a placeholder** — the files don't exist yet
+  (Track A2), but the path itself is final; landing a real file at that
+  exact location is all Track A2 needs to do, no code change required.
+- **`stack[]`/`repoUrl` facts are sourced, not invented** — every entry
+  traces to ARCHITECTURE.md's or docs/PRD.md's own project tables. All
+  four `repoUrl`/`liveUrl` values were confirmed live (HTTP 200) in
+  review, not just plausible-looking.
 
 ## Nav: sticky on scroll (2026-09-09)
 

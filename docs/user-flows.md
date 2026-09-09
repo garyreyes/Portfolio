@@ -50,15 +50,32 @@ section; `/services` added.
 Stated as a deliberate decision, not a default — this is the detail most
 often left unspecified until it is missing from a finished build.
 
-**Persistent top bar on every route**, following the `800k.dev` pattern:
+**AMENDED 2026-09-10:** this section originally specified an `800k.dev`
+-style hamburger opening a full-screen overlay menu (built in Phase 3c,
+2026-09-07). It's retired — Gary's call, after an affaanmustafa.com
+reference, in favor of plain always-visible links. The spec below is
+current; the menu-contents tree and hamburger tradeoff writeup that used
+to follow it are kept at the bottom of this section as history, not
+current fact.
+
+**Persistent top bar on every route:**
 
 - **Left — wordmark.** Returns to the homepage intro ("Hello, I'm Gary
   Reyes, a 3rd-year Industrial Engineering student"). From a brief page
   this navigates to `/` and then scrolls to the intro; on `/` itself it
   scrolls to top.
-- **Right — hamburger**, opening a full-screen overlay menu.
+- **Right — plain links, always visible**, no menu/overlay: Work,
+  Services, How I build, Contact. Every destination is one click from
+  every route, with nothing hidden behind a click first — recognition
+  over recall holds by construction rather than by mitigation.
 
-### Menu contents — counted explicitly
+Individual project links (the 3 hero briefs + Pahinga's live site) are
+not in the nav bar — they live in the homepage work section itself
+(`/#work`), which the "Work" link points to.
+
+### Retired 2026-09-10 — kept as history, not current fact
+
+The full-screen menu this section originally specified:
 
 ```
 Menu (full-screen overlay)
@@ -73,18 +90,12 @@ Menu (full-screen overlay)
 └─ GitHub · LinkedIn · Email     → external
 ```
 
-### UX-floor note on the hamburger — accepted tradeoff
-
-A hamburger hides navigation, which trades against *recognition over
-recall*: on desktop a visitor cannot see that `/services` or
-`/how-i-build` exist until they open it.
-
-**This is mitigated by listing every project inside the menu.** That
-turns it from a collapsed utility list into the site's real navigation
-surface — one click to any destination from anywhere. The pattern works
-on `800k.dev` because the menu is a designed full-screen typographic
-moment, and it must be built that way here. **It fails if it is just a
-collapsed list.**
+Its accepted UX-floor tradeoff, also retired along with it: a hamburger
+hides navigation, trading against *recognition over recall* — mitigated,
+at the time, by listing every project inside the menu so it read as the
+site's real navigation surface rather than a collapsed utility list. That
+tradeoff no longer needs accepting, since nothing is hidden behind a
+click anymore.
 
 ### Footer — sitewide, on every route
 
@@ -106,7 +117,7 @@ flowchart TD
     A[Lands on / from a link in an application] --> B{Intro reads as credible?}
     B -->|No| X[Leaves]
     B -->|Yes| C[Scrolls to the work section]
-    C --> D[Opens a hero brief<br/>from the work section or menu]
+    C --> D[Opens a hero brief<br/>from the work section]
     D --> E[Views screenshots]
     E --> F[Reads the problem,<br/>key decisions, status]
     F --> G{Wants more?}
@@ -192,11 +203,10 @@ failure states. These are the real ones.
 | **Screenshots — default** | `loading="lazy"` with reserved dimensions. Nothing shifts as they load |
 | **Screenshot — failed** | `alt` text shows; the brief still reads completely without the image |
 | **Demo link — paused/dead** | Status label shown next to every link. `Cornerman` is `android-apk` and has **no** live URL — its card must not render a dead "Live demo" affordance |
-| **Reduced motion** | All scroll and hover motion disabled; menu opens without animation; content fully readable and navigable |
-| **JavaScript disabled** | Menu and hover previews are React islands. The site must remain **fully navigable and readable** without them — menu falls back to plain links |
+| **Reduced motion** | All scroll and hover motion disabled; content fully readable and navigable |
+| **JavaScript disabled** | Nav is plain links (no JS dependency at all, 2026-09-10). Hover previews, if/when built, are a React island — the site must remain **fully navigable and readable** without them |
 | **Slow connection** | Text and layout render first. Screenshots never block first paint |
 | **404** | Designed page with a route back to the homepage work section — not a bare message |
-| **Menu open** | Focus trapped inside, `Esc` closes, background scroll locked, focus returns to the trigger |
 | **Deep link to a hero brief** | Every brief independently linkable with correct OG tags for previews |
 
 ---
