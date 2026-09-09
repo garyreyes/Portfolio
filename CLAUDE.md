@@ -65,7 +65,7 @@ the code.
   clip is ever added, commit it as a normal file too — **never Git LFS**
   (Cloudflare Pages does not fetch LFS objects at build time; it would
   silently 404 in production).
-- **Changing `src/content/config.ts` changes the schema for all four
+- **Changing `src/content.config.ts` changes the schema for all four
   project `.mdx` files at once.** Treat it as a migration: update every
   file in the same change, and confirm the build passes before pushing.
 - Every `target="_blank"` carries `rel="noopener noreferrer"`.

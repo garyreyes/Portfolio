@@ -37,14 +37,15 @@ const { title, description } = Astro.props;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!--
-      Progressive-enhancement flag for MenuPanel.astro (Phase 3c): synchronous
-      and unprocessed (is:inline) so it runs before first paint, avoiding a
-      frame where the menu panel is visible in its no-JS layout. Its absence
-      is not an error state — it is the fallback docs/user-flows.md requires.
+      AMENDED 2026-09-10: the `html.js` progressive-enhancement flag this
+      script used to set is gone — its only consumer was MenuPanel.astro's
+      no-JS-fallback gating (Phase 3c), which is retired along with the
+      panel itself. Removed rather than left as dead code nothing reads.
+      If a future feature needs a JS-vs-no-JS CSS distinction again, this
+      is the pattern to bring back: synchronous, unprocessed (is:inline),
+      placed before anything that would need it, so the flag is present or
+      absent before first paint.
     -->
-    <script is:inline>
-      document.documentElement.classList.add('js');
-    </script>
     <title>{title}</title>
     <meta name="description" content={description} />
 
@@ -112,6 +113,14 @@ const { title, description } = Astro.props;
     direction actually owes structurally — the manifest metaphor, the
     registration axis, one continuous stock, density as tone — is unchanged.
     Full reasoning: PROJECT_FACTS.md "Visual direction".
+
+    AMENDED 2026-09-10 (c): the full-screen menu docket (Phase 3c) — the
+    signature moment PROJECT_FACTS.md named as "load-bearing twice over" —
+    is retired. Gary's call, after an affaanmustafa.com reference: plain,
+    always-visible nav links instead. The manifest metaphor's other
+    load-bearing pieces (placards, stamps, the registration axis, one
+    continuous stock) are unchanged by this note; a broader visual pivot
+    toward that reference is tracked separately, not folded in here.
 
     FORM: Shipping manifest / logistics labeling; candidate 3 of 7; seed d4e5136b.
 

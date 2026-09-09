@@ -1,183 +1,83 @@
 ---
-import { SITE } from '../../lib/site';
-import MenuPanel from './MenuPanel.astro';
+import { SITE, NAV_LINKS } from '../../lib/site';
 
 /**
  * Persistent top bar, every route (docs/user-flows.md "Navigation
- * convention"). Wordmark left returns home; the trigger right now opens the
- * MenuPanel (Phase 3c). The panel is a real dialog: focus trap, Esc to
- * close, scroll lock, background inert, focus returned to this trigger on
- * close, per docs/user-flows.md "Menu open" and "JavaScript disabled".
+ * convention").
  *
- * Phase 3 close: the hazard-rule under the bar is new. The checkpoint's
- * critique named this bar the weakest specificity surface in the shell —
- * wordmark + text button is a shape any portfolio could use unchanged, and
- * everything that reads as "shipping manifest" lived behind a click, in the
- * menu. This puts one manifest motif on every route before any click.
+ * AMENDED 2026-09-10: the full-screen menu docket (Phase 3c) is retired —
+ * Gary's call, after seeing affaanmustafa.com's plain always-visible nav
+ * links and preferring that structure. Removed with it: MenuPanel.astro
+ * entirely, and the focus-trap/inert/open-close script that only existed
+ * to manage that overlay. What's kept: the sticky-on-scroll behavior and
+ * the wordmark's scroll-to-top click handler (2026-09-09), neither of
+ * which had anything to do with the menu.
  *
- * AMENDED 2026-09-09: sticky on scroll, per Gary's reference (800k.dev) —
- * narrowed to sticky + scroll-to-top rather than that site's always-visible
- * sidebar, which would have replaced Phase 3c's full-screen menu entirely.
- * An opaque background is required now: content scrolls UNDER a sticky
- * header, which a static one in normal flow never had to paint over.
- * z-40, deliberately under the open MenuPanel's z-50, so the panel still
- * fully covers this bar when open.
+ * Sticky no longer needs the html.js gating the menu required. That
+ * gating existed only because the menu's entire link list used to render
+ * unconditionally INSIDE this header (the no-JS fallback), making it
+ * ~900px tall — pinning that over the viewport for a no-JS visitor would
+ * have hidden real content. A plain link row has no such height problem
+ * in either state, and `position: sticky` is native CSS that needs no
+ * JavaScript to begin with. Sticky is now a plain, ungated class.
  *
- * The sticky/background/z-index rules live in the scoped <style> below,
- * gated to `html.js`, NOT as plain classes on <header> — caught in review.
- * MenuPanel's entire link list renders unconditionally INSIDE this header
- * in normal flow (that's the no-JS fallback, see MenuPanel.astro's own
- * header comment); an unconditionally sticky header would have pinned that
- * whole ~900px block over most of the viewport for the entire no-JS
- * session, hiding real content behind it. Same html.js-gating pattern
- * MenuPanel.astro already uses, for the identical reason.
+ * AMENDED 2026-09-10 (b): the wordmark + 4 links used to share one
+ * `justify-between` row, which at phone widths (≤~400px) forced the nav
+ * links to wrap mid-list into a cramped two-line stack fighting the
+ * wordmark for space — a real bug, caught by inspecting the actual mobile
+ * render, not a deliberate density choice. Below `sm` (40rem, the same
+ * breakpoint @utility axis already collapses at) the row stacks instead:
+ * wordmark first, link row second, each with room to lay out on its own.
+ *
+ * AMENDED 2026-09-10 (c): (b) wasn't enough — down at genuinely narrow
+ * widths (~320-360px, this project's own stated test floor,
+ * PROJECT_FACTS.md) the wordmark was still borrowing `text-placard`, the
+ * SAME clamp the homepage hero uses, so it wrapped to two lines and ate
+ * most of the header on its own; the four links then wrapped unevenly
+ * into a ragged 3-line stack below it. Two real fixes: the wordmark is an
+ * identity mark, not a hero — it now sits at the fixed `text-lede` size
+ * so it never competes with page headings and reliably stays on one line
+ * down to 320px. And below `sm` the link row becomes a clean one-per-line
+ * vertical list instead of an uncontrolled wrap — deliberate stacking
+ * reads as intentional; wrap-induced stacking reads as broken.
  */
 ---
 
-<header class="axis max-w-stock nav-header mx-auto">
-  <div class="py-gutter flex items-center justify-between">
-    <a href="/" data-wordmark class="stencil text-placard text-ink uppercase">
+<header class="axis bg-stock-200 max-w-stock sticky top-0 z-40 mx-auto">
+  <div
+    class="py-gutter gap-gutter flex flex-col items-start sm:flex-row sm:items-center sm:justify-between"
+  >
+    <a href="/" data-wordmark class="stencil text-lede text-ink uppercase">
       {SITE.name}
     </a>
-    <button
-      type="button"
-      id="menu-trigger"
-      aria-controls="site-menu"
-      aria-expanded="false"
-      class="stencil text-mark text-ink hover:bg-ink hover:text-stock-100 duration-mark p-gutter uppercase transition-colors"
+    <nav
+      class="gap-gutter flex flex-col items-start sm:flex-row sm:flex-wrap sm:items-center"
+      aria-label="Site"
     >
-      Menu
-    </button>
+      {
+        NAV_LINKS.map((link) => (
+          <a href={link.href} class="stencil text-mark uppercase hover:underline">
+            {link.label}
+          </a>
+        ))
+      }
+    </nav>
   </div>
   <div class="hazard-rule"></div>
-  <MenuPanel />
 </header>
 
 <script>
-  /**
-   * Progressive enhancement only. MenuPanel's markup is fully navigable
-   * with none of this — see that file's header comment. Everything below
-   * establishes a "closed, hidden, trapped" state that only ever exists
-   * once this script has actually run.
-   */
-  const trigger = document.getElementById('menu-trigger');
-  const panel = document.getElementById('site-menu');
+  // Wordmark: scroll-to-top when already home, real navigation otherwise.
+  // The CSS `scroll-behavior: auto` reduced-motion override in global.css
+  // does NOT catch this — an explicit `behavior: 'smooth'` in a JS call
+  // wins over that CSS property, so reduced motion has to be checked here
+  // directly, not assumed to be handled globally.
   const wordmark = document.querySelector<HTMLElement>('[data-wordmark]');
-  const main = document.querySelector('main');
-  const footer = document.querySelector('footer');
-  const closeButton = panel?.querySelector<HTMLButtonElement>('[data-menu-close]');
 
-  if (trigger && panel && wordmark && main && footer && closeButton) {
-    // Establish the closed state. Before this runs, the panel is plain,
-    // visible, tabbable content — the no-JS fallback. This is the one line
-    // that turns it into a dialog.
-    panel.setAttribute('inert', '');
-
-    const focusableSelector = 'a[href], button:not([disabled])';
-
-    const isOpen = () => panel.dataset.open === 'true';
-
-    const open = () => {
-      panel.dataset.open = 'true';
-      panel.removeAttribute('inert');
-      trigger.setAttribute('aria-expanded', 'true');
-      // The trigger itself stays reachable (re-activating it just closes —
-      // safe). The wordmark does not: it navigates away, and unlike Tab
-      // presses, a screen reader's browse-mode/virtual cursor does not go
-      // through onKeydown below, so nothing else would stop it reaching an
-      // un-inerted link while the dialog claims to be modal.
-      wordmark.setAttribute('inert', '');
-      main.setAttribute('inert', '');
-      footer.setAttribute('inert', '');
-      document.documentElement.style.overflow = 'hidden';
-      closeButton.focus({ preventScroll: true });
-      document.addEventListener('keydown', onKeydown);
-    };
-
-    const close = () => {
-      panel.dataset.open = 'false';
-      panel.setAttribute('inert', '');
-      trigger.setAttribute('aria-expanded', 'false');
-      wordmark.removeAttribute('inert');
-      main.removeAttribute('inert');
-      footer.removeAttribute('inert');
-      document.documentElement.style.overflow = '';
-      // preventScroll matters specifically for the panel's own Contact link
-      // (/#site-footer, a same-page anchor): without it, focusing the
-      // trigger could scroll to top a moment before the browser's own hash
-      // navigation scrolls to the footer, a one-frame flash. Harmless
-      // either way for Esc/close-button/a cross-page link, where the page
-      // hasn't scrolled since the modal opened.
-      trigger.focus({ preventScroll: true });
-      document.removeEventListener('keydown', onKeydown);
-    };
-
-    // Manual trap: cycles focus among the panel's own elements regardless
-    // of what else exists in the document, so it holds even though the
-    // wordmark and trigger remain real, undecorated DOM siblings.
-    const onKeydown = (event: KeyboardEvent) => {
-      if (!isOpen()) return;
-
-      if (event.key === 'Escape') {
-        event.preventDefault();
-        close();
-        return;
-      }
-
-      if (event.key !== 'Tab') return;
-
-      const focusable = Array.from(panel.querySelectorAll<HTMLElement>(focusableSelector));
-      if (focusable.length === 0) return;
-
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      const active = document.activeElement;
-
-      if (event.shiftKey && active === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && active === last) {
-        event.preventDefault();
-        first.focus();
-      }
-    };
-
-    trigger.addEventListener('click', () => (isOpen() ? close() : open()));
-    closeButton.addEventListener('click', close);
-
-    // Wordmark: scroll-to-top when already home, real navigation otherwise.
-    // The CSS `scroll-behavior: auto` reduced-motion override in global.css
-    // does NOT catch this — an explicit `behavior: 'smooth'` in a JS call
-    // wins over that CSS property, so reduced motion has to be checked here
-    // directly, not assumed to be handled globally.
-    wordmark.addEventListener('click', (event) => {
-      if (window.location.pathname !== '/') return;
-      event.preventDefault();
-      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
-    });
-
-    // A same-page anchor (Contact -> /#site-footer) leaves the panel open
-    // on top of the content it just scrolled to. A cross-page link doesn't
-    // strictly need this (the document unloads) but closing costs nothing.
-    panel.querySelectorAll('a[href]').forEach((link) => {
-      link.addEventListener('click', close);
-    });
-  }
+  wordmark?.addEventListener('click', (event) => {
+    if (window.location.pathname !== '/') return;
+    event.preventDefault();
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+  });
 </script>
-
-<style>
-  /*
-   * Gated to html.js — see the header comment above for why. Without JS,
-   * the no-JS fallback panel inside this header can be ~900px tall; sticky
-   * would pin that whole block over the viewport for the entire session.
-   * background-color must live here too, not as a plain class: it only
-   * makes sense once the header is actually pinned above scrolling content.
-   */
-  html.js .nav-header {
-    position: sticky;
-    top: 0;
-    z-index: 40;
-    background-color: var(--color-stock-200);
-  }
-</style>

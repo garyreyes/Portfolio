@@ -1,0 +1,95 @@
+---
+import type { Project } from '../queries';
+
+interface Props {
+  project: Project;
+  /** Two-digit lot code, e.g. "01" (sequential line-item numbers are real
+   * manifest codes, not placeholder prose — see global.css's @utility lot
+   * comment). Previously matched src/lib/site.ts's WORK_ITEMS convention;
+   * that export is gone (2026-09-10, menu removal), but the convention
+   * itself is unrelated to the menu and continues here. */
+  lot: string;
+}
+
+const { project, lot } = Astro.props;
+const { data, id: slug } = project;
+
+/**
+ * Honest status labels (docs/PRD.md §10, ARCHITECTURE.md "Project" table):
+ * the STATUS STAMP and the ACTUAL LINK are two separate decisions. The
+ * stamp always shows the real status word. The link only ever points at
+ * something that actually exists — never a "Live" affordance with nowhere
+ * to go (Cornerman has no liveUrl; this must not render one anyway).
+ */
+const STATUS_LABEL: Record<typeof data.status, string> = {
+  live: 'Live',
+  'android-apk': 'Android APK',
+  archived: 'Archived',
+};
+
+// Fresh (solid ink fill, @utility stamp's default) vs drained (outline
+// only, [data-state=spent]) — a visual split, not a 1:1 map of the three
+// status words. android-apk is a real, current deployment state, just not
+// a web link, so it reads as "fresh," not "spent."
+const stampState = data.status === 'archived' ? 'spent' : 'shipped';
+
+const link = data.liveUrl
+  ? { href: data.liveUrl, label: 'Live site' }
+  : data.repoUrl
+    ? { href: data.repoUrl, label: 'View repo' }
+    : null;
+
+// Stack lists vary a lot in length (Cornerman's 5 entries wrapped to 4
+// lines, dwarfing shorter cards even though the grid already stretches
+// every card in a row to equal height). Clamped to 2 lines with a native
+// ellipsis cutoff — full text stays in the DOM (readable via `title` on
+// hover, and to screen readers) so nothing is actually lost, only the
+// visual sprawl. AMENDED 2026-09-10, direct feedback against the current
+// build.
+const CONSIGNEE_LABEL: Record<typeof data.client, string> = {
+  self: 'Self-directed',
+  // "Unpaid" stays on the card, not just in internal docs — the binding
+  // honesty constraint (PROJECT_FACTS.md) is that this site may say
+  // available for freelance but must never imply trusted by businesses.
+  'real-client': 'Real client (unpaid)',
+  practice: 'Practice build',
+};
+---
+
+<li class="placard gap-gutter flex flex-col justify-between">
+  <div>
+    <div class="gap-gutter flex items-start justify-between">
+      <p class="lot">LOT {lot}</p>
+      <p class="stamp" data-state={stampState}>{STATUS_LABEL[data.status]}</p>
+    </div>
+    <p class="stencil text-placard mt-gutter uppercase">{data.name}</p>
+    <p class="mark mt-gutter">Consignee</p>
+    <p class="text-ink-muted">{CONSIGNEE_LABEL[data.client]}</p>
+    <p class="mark mt-gutter">Contents</p>
+    <p class="text-ink-muted line-clamp-2" title={data.stack.join(' · ')}>
+      {data.stack.join(' · ')}
+    </p>
+  </div>
+
+  <div class="mt-band gap-gutter flex flex-wrap items-center">
+    {
+      data.tier === 'hero' && (
+        <a href={`/work/${slug}`} class="stencil text-mark uppercase hover:underline">
+          View brief
+        </a>
+      )
+    }
+    {
+      link && (
+        <a
+          href={link.href}
+          class="stencil text-mark uppercase hover:underline"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {link.label}
+        </a>
+      )
+    }
+  </div>
+</li>
