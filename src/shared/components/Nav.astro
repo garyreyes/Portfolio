@@ -8,28 +8,26 @@ import { SITE, NAV_LINKS } from '../../lib/site';
  *
  * 2026-09-10, plain-text reset: the hazard-rule strip under the bar is
  * replaced by a plain <hr>; the stencil/uppercase link treatment is gone.
- * Below `sm` the wordmark and link row stack, and the links become a
- * one-per-line list rather than an uneven wrap — deliberate stacking reads
- * as intentional, wrap-induced stacking reads as broken.
+ *
+ * Single row at every width — wordmark left, the links right, no wrap. Two
+ * short links ("Work", "Contact") fit beside the wordmark down past 320px,
+ * so the earlier below-`sm` vertical stack (a leftover from when there were
+ * four links) is gone. When 5b/5c re-add Services + How I build, that pass
+ * adds a mobile disclosure menu — four links, one of them long, do not fit.
  */
 ---
 
 <header class="bg-page px-gutter max-w-page sticky top-0 z-40 mx-auto">
-  <div
-    class="py-gutter gap-gutter flex flex-col items-start sm:flex-row sm:items-center sm:justify-between"
-  >
-    <a href="/" data-wordmark class="text-lede text-ink font-semibold"> {SITE.name} </a>
-    <nav
-      class="gap-gutter flex flex-col items-start sm:flex-row sm:flex-wrap sm:items-center"
-      aria-label="Site"
-    >
+  <div class="py-gutter gap-gutter flex items-center justify-between">
+    <a href="/" data-wordmark class="text-lede text-ink shrink-0 font-semibold">{SITE.name}</a>
+    <nav class="gap-gutter flex shrink-0 items-center" aria-label="Site">
       {
-        /* py-tight lifts the hit target to ~35px (WCAG 2.5.8). No negative
-           margin here — below sm the links stack and it would eat the gap. */
+        /* py-tight lifts the hit target to ~35px (WCAG 2.5.8); -my-tight
+           keeps the header's visible height tight. */
         NAV_LINKS.map((link) => (
           <a
             href={link.href}
-            class="text-meta text-ink-muted hover:text-ink py-tight underline-offset-4 hover:underline"
+            class="text-meta text-ink-muted hover:text-ink -my-tight py-tight underline-offset-4 hover:underline"
           >
             {link.label}
           </a>

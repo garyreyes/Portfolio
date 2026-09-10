@@ -5,7 +5,7 @@ import { getOrderedProjects } from '../features/projects/queries';
 import ProjectGrid from '../features/projects/components/ProjectGrid.astro';
 
 /**
- * Interim homepage — the intro and the work ledger. Phase 5a adds the
+ * Interim homepage — the intro and the work list. Phase 5a adds the
  * about / Industrial Engineering section and finalizes the copy. The intro
  * sentence is real (docs/PRD.md positioning), not placeholder text.
  */
@@ -23,7 +23,7 @@ const projects = await getOrderedProjects();
       </p>
     </header>
 
-    <hr class="mt-section mb-gutter" />
+    <hr class="my-section" />
 
     <section id="work">
       <h2 class="sr-only">Selected work</h2>

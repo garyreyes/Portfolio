@@ -511,37 +511,46 @@ present in built output — **do not move or delete it.**
   start from Tailwind's `source(none)` + explicit allow-list pattern rather
   than `@source not`.
 
-## Homepage ledger (2026-09-10, /impeccable shape → layout)
+## Homepage work list (2026-09-10 — ledger built, then retired same day)
 
-- **The work list is a ledger.** The authored structural decision the
-  post-reset critique found missing. `@utility ledger-row` in `global.css`:
-  a fixed `--rail` (10rem — sized to the longest label, "Real client
-  (unpaid)") metadata column + a `1fr` content column, single column below
-  the 40rem breakpoint. `align-items: baseline` so the rail's first line
-  ("Live") sits on the project name's baseline. The **status label aligning
-  vertically down every row** is the move — do not break that alignment
-  (don't let the rail width vary row to row).
-- **Two container roles.** `--container-page` (52rem) is the frame nav,
-  `<main>`, footer all align to. `--container-column` (42rem) is the prose
-  cap — used on the intro paragraph and the 404 body so a line never sets
-  wider than it reads. The old "one 42rem column" is superseded; the
-  direction contract in `BaseLayout.astro` was updated.
-- **Spacing scale is now four tokens** — `tight` (0.5rem) was added below
-  `gutter` for pairs that read as one unit (a name and its description).
-  `--text-name` (1.375rem) was added between `lede` and `title` for the
-  ledger project name.
-- **`year` is deliberately not rendered.** It's still placeholder data
-  (`2026` in all four `.mdx`). The rail shows status / client / platform
-  (`type`), all real. Add `year` to the rail when real values exist.
+- **The two-column ledger is retired.** It was built as the "authored
+  structural move" the post-reset critique asked for (a fixed `--rail`
+  metadata column + `1fr` content column, status label aligned vertically
+  down the list). The re-critique found the move didn't land: the aligned
+  status column read `Android APK / Live / Live / Live` — near-constant, so
+  the vertical alignment carried no information, and the rail was
+  visually indistinct from body captions. Gary's call, after weighing the
+  options: collapse it. `@utility ledger-row` and `--rail` are gone from
+  `global.css`.
+- **Each project is now a single-column entry** (`ProjectCard.astro`):
+  `<h3>` name → one `text-meta` facts line (`status · client · platform`)
+  → the one-liner in full ink → a `text-meta` "Built with …" stack line →
+  the honest link(s). Hairline (`divide-y`) between entries. Name-first so
+  AT announces "Cornerman. Android APK …", not the metadata before it.
+- **Two container roles stay.** `--container-page` (52rem) is the frame
+  nav / `<main>` / footer align to; `--container-column` (42rem) caps
+  running prose (the intro paragraph, the 404 body, `.prose`).
+- **Spacing scale is four tokens** — `tight` 0.5 / `gutter` 1 / `block` 2
+  / `section` 3 (rem). `--text-name` (1.375rem) is the project-name size
+  (work list) and the brief-page `<h1>`.
+- **`year` is still not rendered** — placeholder `2026` in all four
+  `.mdx`. The facts line shows status / client / platform, all real.
 - **The four `tagline` values are drafts**, adapted from `docs/PRD.md`
-  positioning and marked `# DRAFT (2026-09-10) … pending Track A3 review`
-  in each `.mdx`. A3 refines them against each project's own repo docs;
-  they are not invented facts but they are not final copy.
-- **All four projects are peer rows.** Gary's call in the shape pass.
-  `featured: true` is set on all three heroes (only Pahinga is false), so a
-  `featured`-gated size bump would have been a hero/practice tier split,
-  which contradicts "Pahinga as a full peer." Pahinga is distinguished
-  only by its honest "Practice build" rail label.
+  positioning, marked `# DRAFT (2026-09-10) … pending Track A3 review` in
+  each `.mdx`. A3 refines them against each repo's own docs.
+- **All four projects are peer entries.** Gary's call — no size or tier
+  split. Pahinga is distinguished only by its honest "Practice build"
+  facts label. (The re-critique flagged that the flagship and the practice
+  build read identically; keeping peers is a deliberate override of that.)
+- **The nav is one row at every width** — wordmark + two links, no wrap,
+  fits past 320px. The earlier below-`sm` vertical stack was a leftover
+  from four links; it's gone. When 5b/5c re-add Services + How I build
+  (four links, one long), that pass adds a mobile disclosure menu — not a
+  full-screen docket (retired 2026-09-10), a simple button + panel.
+- **Footer reads as a contact point** — "Get in touch — <email address>"
+  as an explicit action, GitHub/LinkedIn as profile links beside it. No
+  "contact form to follow" placeholder (read as unfinished). The real form
+  is still Phase 5d.
 
 ## Links and routes (2026-09-10, harden pass)
 

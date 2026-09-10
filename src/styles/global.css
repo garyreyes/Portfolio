@@ -23,10 +23,10 @@
    frame every landmark aligns to (--container-page) with prose capped
    narrower (--container-column, ~42rem); hairline <hr> rules and whitespace
    between sections; no ornament and no accent colour. The homepage work
-   list is a two-column ledger (see the LEDGER block below and
-   PROJECT_FACTS.md "Homepage ledger"). Components read these tokens — never
-   a raw hex, a raw px size, or a one-off margin (CLAUDE.md, "Design and
-   accessibility floor").
+   list is a single column — one hairline-separated entry per project (the
+   two-column ledger was retired 2026-09-10, see PROJECT_FACTS.md).
+   Components read these tokens — never a raw hex, a raw px size, or a
+   one-off margin (CLAUDE.md, "Design and accessibility floor").
    ========================================================================== */
 
 @theme {
@@ -50,9 +50,10 @@
   --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 
   /* Scale. Five steps, deliberately uneven — a geometric ramp reads as
-     generated. --text-meta is small print (status, stack, nav, the ledger
-     rail); --text-name is the work-ledger project name; --text-title is the
-     one genuinely large size and appears once per page (the intro). */
+     generated. --text-meta is small print (status, stack, nav, the project
+     facts line); --text-name is a project name in the work list and the
+     brief-page h1; --text-title is the one genuinely large size and appears
+     once per page (the intro). */
   --text-meta: 0.8125rem;
   --text-meta--line-height: 1.5;
 
@@ -83,16 +84,9 @@
   /* Two container roles. --container-page is the frame every landmark (nav,
      main, footer) aligns to. --container-column is the narrower cap for
      running prose so a paragraph never sets wider than it reads well. The
-     work ledger fills the page frame; the intro paragraph stays at column. */
+     work list fills the page frame; the intro paragraph stays at column. */
   --container-page: 52rem;
   --container-column: 42rem;
-
-  /* The work ledger's fixed metadata rail — wide enough for the longest
-     label ("Real client (unpaid)") and no wider, so the channel between
-     rail and content stays tight. ("Real client (unpaid)" measures ~152px;
-     10rem/160px leaves a small margin so a font-rendering difference can't
-     wrap it.) */
-  --rail: 10rem;
 
   /* Motion is feedback only, and short. No bounce, no spring. */
   --ease-out: cubic-bezier(0.2, 0, 0, 1);
@@ -118,16 +112,9 @@
        Overflow is verified by measuring scrollWidth == clientWidth instead. */
     -webkit-text-size-adjust: 100%;
     /* Anchor jumps (#work, #site-footer) clear the sticky Nav instead of
-       landing under it. The Nav wraps taller below sm, so the offset is
-       larger there. (Whether the Nav should stay sticky on mobile at all is
-       a polish/adapt question — see PROJECT_FACTS.md "Homepage ledger".) */
-    scroll-padding-top: 11rem;
-  }
-
-  @media (width >= 40rem) {
-    html {
-      scroll-padding-top: 5rem;
-    }
+       landing under it. The Nav is a single ~4.3rem row at every width now
+       (wordmark + two links, no wrap), so one offset covers it. */
+    scroll-padding-top: 5rem;
   }
 
   body {
@@ -175,33 +162,6 @@
       transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
     }
-  }
-}
-
-/* ==========================================================================
-   THE WORK LEDGER
-
-   One structural utility, not a component style. Each project row is a grid:
-   a fixed metadata rail (status / client / platform), then the content
-   column (name, description, stack, link). The rail width is constant down
-   the whole list, so the status label lines up vertically row to row — that
-   alignment IS the authored move (see PROJECT_FACTS.md "Homepage ledger").
-
-   Below the 40rem breakpoint (where the rest of the layout also collapses)
-   it is a single column and the rail facts render as an inline row above
-   the name.
-   ========================================================================== */
-
-@utility ledger-row {
-  display: grid;
-  /* Baseline, not start: the rail's first line ("Live") sits on the same
-     baseline as the project name, so the status column reads as truly
-     level with each row's heading. */
-  align-items: baseline;
-  gap: var(--spacing-gutter) var(--spacing-block);
-
-  @media (width >= 40rem) {
-    grid-template-columns: var(--rail) 1fr;
   }
 }
 

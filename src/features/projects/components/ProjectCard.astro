@@ -11,7 +11,10 @@ const { project } = Astro.props;
 const { data, id: slug } = project;
 
 /**
- * One row of the work ledger: a metadata rail, then the content column.
+ * One entry in the work list: name, the facts line, the one-liner, the
+ * stack, the link(s). Single column — the two-column ledger was retired
+ * 2026-09-10 (its aligned status column read "Live / Live / Live", so the
+ * alignment carried no information; see PROJECT_FACTS.md).
  *
  * Honest status labels (docs/PRD.md §10): the STATUS WORD and the ACTUAL
  * LINK are two separate decisions. The label always shows the real status
@@ -24,52 +27,51 @@ const link = data.liveUrl
   : data.repoUrl
     ? { href: data.repoUrl, label: LINK_LABEL.repo }
     : null;
+
+const facts = [STATUS_LABEL[data.status], CLIENT_LABEL[data.client], PLATFORM_LABEL[data.type]];
 ---
 
-<li class="ledger-row py-block">
-  {/* Rail: an inline row above the name on mobile, a column on sm+. */}
-  <div class="text-meta text-ink-muted gap-x-tight flex flex-wrap sm:flex-col sm:gap-x-0">
-    <span>{STATUS_LABEL[data.status]}</span>
-    <span aria-hidden="true" class="sm:hidden">·</span>
-    <span>{CLIENT_LABEL[data.client]}</span>
-    <span aria-hidden="true" class="sm:hidden">·</span>
-    <span>{PLATFORM_LABEL[data.type]}</span>
-  </div>
+<li class="py-block">
+  {
+    /* Name first, then the facts — so AT announces "Cornerman. Android APK …",
+      not the metadata before the thing it describes. */
+  }
+  <h3 class="text-name font-semibold">{data.name}</h3>
+  <p class="text-meta text-ink-muted mt-tight">{facts.join(' · ')}</p>
 
-  <div>
-    <h3 class="text-name font-semibold">{data.name}</h3>
-    <p class="mt-tight">{data.tagline}</p>
-    <p class="text-meta text-ink-muted mt-gutter line-clamp-2" title={data.stack.join(' · ')}>
-      {data.stack.join(' · ')}
-    </p>
+  {
+    /* The one-liner is the payload — full ink, body size, a gutter clear of
+      the facts above it. */
+  }
+  <p class="mt-gutter">{data.tagline}</p>
+  <p class="text-meta text-ink-muted mt-tight">Built with {data.stack.join(' · ')}</p>
 
+  {
+    /* py-tight lifts the hit target to ~35px (WCAG 2.5.8); -my-tight keeps
+      the visible rhythm unchanged. */
+  }
+  <div class="gap-x-block gap-y-tight mt-gutter flex flex-wrap items-center">
     {
-      /* py-tight on the links lifts the hit target to ~35px (WCAG 2.5.8);
-        -my-tight keeps the visible rhythm unchanged. */
+      data.tier === 'hero' && WORK_BRIEFS_LIVE && (
+        <a
+          href={`/work/${slug}`}
+          class="text-meta text-ink -my-tight py-tight underline underline-offset-4 hover:decoration-2"
+        >
+          View brief
+        </a>
+      )
     }
-    <div class="gap-x-block gap-y-gutter mt-gutter flex flex-wrap items-center">
-      {
-        data.tier === 'hero' && WORK_BRIEFS_LIVE && (
-          <a
-            href={`/work/${slug}`}
-            class="text-meta text-ink -my-tight py-tight underline underline-offset-4 hover:decoration-2"
-          >
-            View brief
-          </a>
-        )
-      }
-      {
-        link && (
-          <a
-            href={link.href}
-            class="text-meta text-ink -my-tight py-tight underline underline-offset-4 hover:decoration-2"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {link.label}
-          </a>
-        )
-      }
-    </div>
+    {
+      link && (
+        <a
+          href={link.href}
+          class="text-meta text-ink -my-tight py-tight underline underline-offset-4 hover:decoration-2"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {link.label}
+        </a>
+      )
+    }
   </div>
 </li>
