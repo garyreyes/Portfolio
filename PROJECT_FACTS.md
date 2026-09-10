@@ -482,10 +482,12 @@ present in built output — **do not move or delete it.**
 
 - **The work list is a ledger.** The authored structural decision the
   post-reset critique found missing. `@utility ledger-row` in `global.css`:
-  a fixed `--rail` (12rem) metadata column + a `1fr` content column, single
-  column below the 40rem breakpoint. The **status label aligning vertically
-  down every row** is the move — do not break that alignment (don't let the
-  rail width vary row to row).
+  a fixed `--rail` (10rem — sized to the longest label, "Real client
+  (unpaid)") metadata column + a `1fr` content column, single column below
+  the 40rem breakpoint. `align-items: baseline` so the rail's first line
+  ("Live") sits on the project name's baseline. The **status label aligning
+  vertically down every row** is the move — do not break that alignment
+  (don't let the rail width vary row to row).
 - **Two container roles.** `--container-page` (52rem) is the frame nav,
   `<main>`, footer all align to. `--container-column` (42rem) is the prose
   cap — used on the intro paragraph and the 404 body so a line never sets

@@ -87,8 +87,12 @@
   --container-page: 52rem;
   --container-column: 42rem;
 
-  /* The work ledger's fixed metadata rail. */
-  --rail: 12rem;
+  /* The work ledger's fixed metadata rail — wide enough for the longest
+     label ("Real client (unpaid)") and no wider, so the channel between
+     rail and content stays tight. ("Real client (unpaid)" measures ~152px;
+     10rem/160px leaves a small margin so a font-rendering difference can't
+     wrap it.) */
+  --rail: 10rem;
 
   /* Motion is feedback only, and short. No bounce, no spring. */
   --ease-out: cubic-bezier(0.2, 0, 0, 1);
@@ -190,7 +194,10 @@
 
 @utility ledger-row {
   display: grid;
-  align-items: start;
+  /* Baseline, not start: the rail's first line ("Live") sits on the same
+     baseline as the project name, so the status column reads as truly
+     level with each row's heading. */
+  align-items: baseline;
   gap: var(--spacing-gutter) var(--spacing-block);
 
   @media (width >= 40rem) {
