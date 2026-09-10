@@ -5,65 +5,29 @@ import { getOrderedProjects } from '../features/projects/queries';
 import ProjectGrid from '../features/projects/components/ProjectGrid.astro';
 
 /**
- * TOKEN PROOF, not the homepage.
- *
- * Phase 3a ships the design system. This page exists so the system is
- * exercised in built output: `npm run design:check` reads dist/, so tokens
- * that no page renders would make that gate vacuously pass.
- *
- * Phase 3b wrapped it in the real chrome — Nav, Footer, and the <main>
- * landmark all live in BaseLayout. Phase 5a still replaces the rest of this
- * page (the hero intro, the notice section) with the real homepage.
- *
- * Phase 4b (now): the "Contents" section below is no longer a mock — it's
- * the real ProjectGrid, reading real content-collection data. Scoped
- * narrowly on purpose (confirmed with Gary rather than assumed): touch only
- * the grid, leave the rest of this placeholder for 5a to replace whole.
+ * Interim homepage — the hero intro and the work list. Phase 5a adds the
+ * about / Industrial Engineering section and finalizes the copy. The intro
+ * sentence here is real (docs/PRD.md positioning), not placeholder text.
  */
 
 const projects = await getOrderedProjects();
 ---
 
 <BaseLayout title={SITE.name} description={SITE.description}>
-  <div class="py-band">
-    <header class="gap-gutter flex flex-wrap items-start justify-between">
-      <div>
-        <h1 class="stencil text-consign uppercase">Gary Reyes</h1>
-        <p class="mark mt-gutter">Industrial Engineering · DLSU · Manila</p>
-      </div>
-      <p class="lot">
-        LOT d4e5136b<br />
-        2026-09-07
+  <div class="py-section">
+    <header>
+      <h1 class="text-title">Gary Reyes</h1>
+      <p class="text-lede text-ink-muted mt-gutter">
+        Third-year Industrial Engineering student at De La Salle University. I ship production
+        software.
       </p>
     </header>
 
-    <div class="hazard-rule my-band"></div>
+    <hr class="my-section" />
 
     <section id="work">
-      <h2 class="mark">Contents</h2>
+      <h2 class="text-meta text-ink-muted">Work</h2>
       <ProjectGrid projects={projects} />
-    </section>
-
-    <div class="hazard-rule my-band"></div>
-
-    <section class="max-w-prose">
-      <h2 class="mark">Notice</h2>
-      <p class="mt-gutter text-lede">
-        This page proves the design tokens render. It is not the homepage.
-      </p>
-      <p class="mt-gutter text-ink-muted">
-        The visual direction is recorded in the contract comment in <code class="lot"
-          >src/layouts/BaseLayout.astro</code
-        >. The nav and footer shell live in <code class="lot">src/shared/components/</code>. All of
-        it reads colour, type and spacing from <code class="lot">src/styles/global.css</code> and defines
-        none of its own.
-      </p>
-      <p class="mt-band">
-        <a
-          class="stencil text-ink duration-mark uppercase underline underline-offset-4 transition-all hover:underline-offset-2"
-          href="#work">Primary action goes here</a
-        >
-      </p>
     </section>
   </div>
 </BaseLayout>

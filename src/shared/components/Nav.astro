@@ -3,67 +3,36 @@ import { SITE, NAV_LINKS } from '../../lib/site';
 
 /**
  * Persistent top bar, every route (docs/user-flows.md "Navigation
- * convention").
+ * convention"). Wordmark left (→ homepage / scroll-to-top), four plain
+ * links right. Sticks to the viewport top on scroll.
  *
- * AMENDED 2026-09-10: the full-screen menu docket (Phase 3c) is retired —
- * Gary's call, after seeing affaanmustafa.com's plain always-visible nav
- * links and preferring that structure. Removed with it: MenuPanel.astro
- * entirely, and the focus-trap/inert/open-close script that only existed
- * to manage that overlay. What's kept: the sticky-on-scroll behavior and
- * the wordmark's scroll-to-top click handler (2026-09-09), neither of
- * which had anything to do with the menu.
- *
- * Sticky no longer needs the html.js gating the menu required. That
- * gating existed only because the menu's entire link list used to render
- * unconditionally INSIDE this header (the no-JS fallback), making it
- * ~900px tall — pinning that over the viewport for a no-JS visitor would
- * have hidden real content. A plain link row has no such height problem
- * in either state, and `position: sticky` is native CSS that needs no
- * JavaScript to begin with. Sticky is now a plain, ungated class.
- *
- * AMENDED 2026-09-10 (b): the wordmark + 4 links used to share one
- * `justify-between` row, which at phone widths (≤~400px) forced the nav
- * links to wrap mid-list into a cramped two-line stack fighting the
- * wordmark for space — a real bug, caught by inspecting the actual mobile
- * render, not a deliberate density choice. Below `sm` (40rem, the same
- * breakpoint @utility axis already collapses at) the row stacks instead:
- * wordmark first, link row second, each with room to lay out on its own.
- *
- * AMENDED 2026-09-10 (c): (b) wasn't enough — down at genuinely narrow
- * widths (~320-360px, this project's own stated test floor,
- * PROJECT_FACTS.md) the wordmark was still borrowing `text-placard`, the
- * SAME clamp the homepage hero uses, so it wrapped to two lines and ate
- * most of the header on its own; the four links then wrapped unevenly
- * into a ragged 3-line stack below it. Two real fixes: the wordmark is an
- * identity mark, not a hero — it now sits at the fixed `text-lede` size
- * so it never competes with page headings and reliably stays on one line
- * down to 320px. And below `sm` the link row becomes a clean one-per-line
- * vertical list instead of an uncontrolled wrap — deliberate stacking
- * reads as intentional; wrap-induced stacking reads as broken.
+ * 2026-09-10, plain-text reset: the hazard-rule strip under the bar is
+ * replaced by a plain <hr>; the stencil/uppercase link treatment is gone.
+ * Below `sm` the wordmark and link row stack, and the links become a
+ * one-per-line list rather than an uneven wrap — deliberate stacking reads
+ * as intentional, wrap-induced stacking reads as broken.
  */
 ---
 
-<header class="axis bg-stock-200 max-w-stock sticky top-0 z-40 mx-auto">
+<header class="bg-page px-gutter max-w-column sticky top-0 z-40 mx-auto">
   <div
     class="py-gutter gap-gutter flex flex-col items-start sm:flex-row sm:items-center sm:justify-between"
   >
-    <a href="/" data-wordmark class="stencil text-lede text-ink uppercase">
-      {SITE.name}
-    </a>
+    <a href="/" data-wordmark class="text-lede text-ink font-semibold"> {SITE.name} </a>
     <nav
       class="gap-gutter flex flex-col items-start sm:flex-row sm:flex-wrap sm:items-center"
       aria-label="Site"
     >
       {
         NAV_LINKS.map((link) => (
-          <a href={link.href} class="stencil text-mark uppercase hover:underline">
+          <a href={link.href} class="text-meta text-ink-muted hover:text-ink hover:underline">
             {link.label}
           </a>
         ))
       }
     </nav>
   </div>
-  <div class="hazard-rule"></div>
+  <hr />
 </header>
 
 <script>

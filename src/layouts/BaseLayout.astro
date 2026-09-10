@@ -14,14 +14,9 @@ import Footer from '../shared/components/Footer.astro';
  * renders nothing, so SkipLink is still the first real element for keyboard
  * and screen-reader users despite following it in source.
  *
- * <main> owns the axis/measure (mx-auto max-w-stock), not each page. Nav and
- * Footer apply the same "axis" utility independently, so the registration
- * axis appears at the identical inset in all three landmarks — this is what
- * makes it a real site-wide alignment guide instead of per-page discipline
- * (the open item from Phase 3a's close-out). The three segments are not
- * required to paint as one unbroken stroke — a registration mark is a guide
- * every section references, not a single physical ruler — so normal spacing
- * between landmarks is fine.
+ * <main> owns the reading column (mx-auto max-w-column px-gutter), not each
+ * page. Nav and Footer apply the same column width and gutter so all three
+ * landmarks share one measure on every route.
  */
 interface Props {
   title: string;
@@ -36,100 +31,40 @@ const { title, description } = Astro.props;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!--
-      AMENDED 2026-09-10: the `html.js` progressive-enhancement flag this
-      script used to set is gone — its only consumer was MenuPanel.astro's
-      no-JS-fallback gating (Phase 3c), which is retired along with the
-      panel itself. Removed rather than left as dead code nothing reads.
-      If a future feature needs a JS-vs-no-JS CSS distinction again, this
-      is the pattern to bring back: synchronous, unprocessed (is:inline),
-      placed before anything that would need it, so the flag is present or
-      absent before first paint.
-    -->
     <title>{title}</title>
     <meta name="description" content={description} />
-
-    <!--
-      All three faces are preloaded because all three are used above the fold,
-      and a swap after first paint is exactly the flash the direction's tight
-      stencil tracking makes most obvious. Space Mono is included on the
-      contract's own terms: the FIRST VIEWPORT block below puts the lot/date
-      stamp in the opening frame, and that is set in Space Mono. 63 KB total.
-    -->
-    <link
-      rel="preload"
-      href="/fonts/archivo-latin-var.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
-    <link
-      rel="preload"
-      href="/fonts/archivo-narrow-700-latin.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
-    <link
-      rel="preload"
-      href="/fonts/space-mono-400-latin.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
   </head>
   <body>
     <!--
-    THESIS: Four shipped projects presented as consigned goods with placards,
-    each carrying its own lot code, consignee and stamped status. Refuses the
-    dark developer-portfolio card grid and its cream-editorial opposite alike.
+    DIRECTION CONTRACT — plain-text portfolio (reset 2026-09-10)
 
-    OWN-WORLD: Achromatic stock (was kraft/manila; see AMENDED 2026-09-07
-    below), black stencil ink, no accent — live/shipped status carries as a
-    solid ink fill instead of colour. Condensed grotesque caps; monospace
-    reserved for real codes only. Hazard-band rules, rubber-stamped status
-    marks, lot numbers, consignee lines. One label stock across all 7 routes;
-    a single vertical registration axis everything aligns to; density itself
-    is tone, never decoration.
+    Supersedes the shipping-manifest direction (seed d4e5136b), retired after
+    an affaanmustafa.com reference — Gary's call, the fourth and terminal
+    walk-back of that direction (orange accent -> full-screen menu -> hazard
+    bars -> the rest). Full history: PROJECT_FACTS.md "Visual direction".
 
-    STORY: A founder understands this person ships real things, believes they are
-    genuinely live, and opens a project brief.
+    THESIS: Four shipped projects, stated plainly. The work carries the
+    weight; the design gets out of its way. No metaphor, no ornament.
 
-    FIRST VIEWPORT: Consignment placard top-left — GARY REYES, INDUSTRIAL
-    ENGINEERING, DLSU, MANILA — set as a shipping mark against the registration
-    axis, lot/date stamp opposite. Work begins immediately below as placarded
-    units. Primary action: the first unit.
+    WORLD: The platform's own UI font, no web fonts. Near-black ink (#171717)
+    on off-white (#fbfbfb). One ~42rem reading column, left-aligned. Sections
+    divided by a 1px hairline rule and whitespace, nothing heavier. No accent
+    colour. Single light mode.
 
-    AMENDED 2026-09-07 (a): counts only (six->four projects, 11->7 routes,
-    case study->brief), to match the 2026-09-04 scope revision. No part of
-    the assigned direction was altered.
+    FIRST VIEWPORT: Name as a modest h1, then one plain sentence — "Third-year
+    Industrial Engineering student at De La Salle University. I ship
+    production software." — then the work list begins. Primary action: open
+    the first project.
 
-    AMENDED 2026-09-07 (b): the safety-orange accent is removed, not
-    recoloured — Gary's explicit call, made after being told this is one of
-    the single most common developer-portfolio palettes and would work
-    against this build's own "must not look like every other dev portfolio"
-    guardrail. Unlike amendment (a), this DOES alter the assigned direction;
-    recorded honestly rather than folded into the first note. Everything the
-    direction actually owes structurally — the manifest metaphor, the
-    registration axis, one continuous stock, density as tone — is unchanged.
-    Full reasoning: PROJECT_FACTS.md "Visual direction".
+    STORY: A founder reads two sentences, sees four real things shipped with
+    live links and browsable code, and opens a brief.
 
-    AMENDED 2026-09-10 (c): the full-screen menu docket (Phase 3c) — the
-    signature moment PROJECT_FACTS.md named as "load-bearing twice over" —
-    is retired. Gary's call, after an affaanmustafa.com reference: plain,
-    always-visible nav links instead. The manifest metaphor's other
-    load-bearing pieces (placards, stamps, the registration axis, one
-    continuous stock) are unchanged by this note; a broader visual pivot
-    toward that reference is tracked separately, not folded in here.
-
-    FORM: Shipping manifest / logistics labeling; candidate 3 of 7; seed d4e5136b.
-
-    FINISH: unreviewed and undocumented is unfinished; this build ends with the
-    finish review, the verdict, and DESIGN.md
+    FINISH: unreviewed and undocumented is unfinished; this build ends with
+    the finish review, the verdict, and DESIGN.md.
     -->
     <SkipLink />
     <Nav />
-    <main id="main-content" class="axis max-w-stock mx-auto">
+    <main id="main-content" class="px-gutter max-w-column mx-auto">
       <slot />
     </main>
     <Footer />

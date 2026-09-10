@@ -126,7 +126,63 @@ product truth (`docs/PRD.md`).
   flattering on every number. Not revisited unless the contribution
   numbers change substantially.
 
+## Visual direction — reset 2026-09-10
+
+**The shipping-manifest direction is retired. The site is now a plain-text
+portfolio.** Gary's call, after an affaanmustafa.com reference — "copy the
+elements and font of this since it looks so nonchalant and minimalist."
+
+- **This is the fourth and terminal walk-back of the assigned direction**
+  (seed `d4e5136b`): the safety-orange accent (2026-09-07), the full-screen
+  manifest menu (2026-09-10), the hazard bars, and now the rest. Four
+  successive rejections of pieces of a direction is the direction not
+  landing; the call is to reset it cleanly rather than keep chipping. The
+  sections below ("assigned 2026-08-28", the Phase 3a/3b/3c design-system
+  notes, the monochrome amendment) are kept as history — **they no longer
+  describe the site.**
+- **Not a clone of the reference.** affaanmustafa.com is Affaan's personal
+  brand; what was adopted is the *family* of choices — system UI font, near
+  black on off-white, one narrow reading column, hairline `<hr>` rules,
+  metrics/status stated plainly in text, zero ornament — fitted to this
+  content. The persuasive load still rests where "show, don't tell" (above)
+  already put it: real live links and browsable code, not visual style.
+- **The known risk, eyes open:** "nonchalant minimalist black-on-white dev
+  portfolio" is a well-worn cluster — the exact thing the Phase 2 seed roll
+  existed to avoid. Accepted because (a) it is the honest industry norm for
+  an early-career portfolio and (b) the four projects are real and carry it.
+  If the finished result reads as forgettable, that is the lever to revisit.
+- **The system, mechanically** (`src/styles/global.css`, rewritten):
+  - Colour: four achromatic tokens — `--color-page` `#fbfbfb` (the ground),
+    `--color-ink` `#171717`, `--color-ink-muted` `#5c5c5c` (AA on the
+    ground with margin), `--color-rule` `#e2e2e2`. No accent. One light mode.
+  - Type: `--font-sans` is the platform UI stack (`-apple-system`, Segoe UI,
+    Roboto…). **No web fonts** — `public/fonts/` deleted, no `@font-face`, no
+    preloads. Four sizes: `meta` 0.8125 / `body` 1 / `lede` 1.1875 /
+    `title` 1.75rem.
+  - Measure: three spacing tokens — `gutter` 1rem / `block` 2rem /
+    `section` 3rem — and `--container-column` 42rem (`max-w-column`).
+  - **All seven label-stock primitives are gone**: `axis` `hazard-rule`
+    `placard` `stencil` `mark` `lot` `stamp`. The only divider is `<hr>`,
+    styled once in the base layer.
+- **The direction contract** at the top of `<body>` in
+  `src/layouts/BaseLayout.astro` was rewritten to describe this world. It is
+  still the mandatory first child and still verified present in `dist/`.
+- **What did NOT change:** the honest-status logic in `ProjectCard`
+  (status word and link decided independently; never a dead "Live"
+  affordance — docs/PRD.md §10), the `Project` content schema, the "show,
+  don't tell" positioning, the route list, every safety rule.
+- **`DESIGN.md` is still written at finish (Phase 8d), from the built
+  world** — that principle survives the reset.
+- **Carried to the Phase 3 close design cadence** (`/impeccable critique` +
+  `polish`, still owed): the "Work" section heading looks orphaned in its
+  whitespace; the desktop reading column is centred with wide side margins
+  and may read better left-aligned.
+
 ## Visual direction — assigned 2026-08-28
+
+> **SUPERSEDED 2026-09-10 — see "Visual direction — reset 2026-09-10" above.**
+> Kept as history. The manifest metaphor, the three donated raises, the
+> registration axis and density-as-tone no longer apply to the site.
 
 **Shipping manifest / logistics labeling.** Seed key `d4e5136b`, candidate
 3 of 7, mode `experience`. The full contract lives as an HTML comment at
@@ -177,6 +233,12 @@ present in built output — **do not move or delete it.**
   metaphor fitting six unrelated projects).
 
 ## Design system — settled 2026-09-07 (Phase 3a)
+
+> **SUPERSEDED 2026-09-10 — see "Visual direction — reset 2026-09-10".**
+> The typefaces, the accent tokens, the primitives and the monochrome
+> amendment below are all history now. The two rules that still hold: no
+> dark mode, and never set `overflow-x: clip/hidden` on `html`/`body`
+> (verify overflow by measuring `scrollWidth == clientWidth`).
 
 - **Typefaces: Archivo Narrow 700 (display/labels), Archivo 400–600 (body),
   Space Mono 400 (codes only).** Self-hosted, latin subset, 63 KB total, SIL

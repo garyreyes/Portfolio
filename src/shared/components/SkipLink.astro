@@ -4,22 +4,22 @@
  * so a keyboard user does not have to tab through the nav to reach content.
  * Targets #main-content, which BaseLayout puts on <main>.
  *
- * -translate-y-16 is Tailwind's default transform scale, not the project's
+ * -translate-y-20 is Tailwind's default transform scale, not the project's
  * spacing tokens — it is exempt from the "no arbitrary values" rule because
  * it isn't a spacing/rhythm decision, just "far enough off-screen to hide."
- * Every value that IS spacing or type (position, padding, size) reads gutter
- * or the declared type scale instead.
+ * (Was -translate-y-16; that left a ~3px sliver of the ink fill peeking
+ * below the top edge — 4rem does not clear the 1rem top offset plus the
+ * link's own height. 5rem does.) Every value that IS spacing or type reads
+ * a token instead.
  *
- * AMENDED 2026-09-07: bg-ink/text-stock-100 (was the safety accent) — the
- * same solid ink-fill treatment @utility stamp uses for "live". No explicit
- * focus-visible outline override needed here; the global :focus-visible
- * rule in global.css already applies to every element, this one included.
+ * 2026-09-10, plain-text reset: ink fill kept (highest contrast, no accent
+ * to use); stencil/uppercase treatment dropped.
  */
 ---
 
 <a
   href="#main-content"
-  class="stencil bg-ink text-stock-100 duration-mark top-gutter left-gutter p-gutter text-mark fixed z-50 -translate-y-16 uppercase transition-transform focus:translate-y-0"
+  class="bg-ink text-page duration-quick top-gutter left-gutter p-gutter text-meta fixed z-50 -translate-y-20 font-semibold transition-transform focus:translate-y-0"
 >
   Skip to content
 </a>

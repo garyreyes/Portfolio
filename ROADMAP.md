@@ -7,6 +7,13 @@ runs on `*.pages.dev` and the custom domain attaches later (A5).
 and `PLAN-REVIEW-BRIEF.md`): roster is 3 hero briefs + 1 card, media is
 screenshots not video, the footer carries a stat block not a contribution
 graph, and Phase 7 (live proof) is removed.
+**Visual direction reset:** 2026-09-10 — the shipping-manifest direction
+(seed `d4e5136b`) is retired for a plain-text portfolio (system font, black
+on off-white, hairline rules, no ornament). Gary's call; see
+[`CHANGES.md`](CHANGES.md) and `PROJECT_FACTS.md` "Visual direction — reset
+2026-09-10". Manifest vocabulary below ("placard", "consignee", "density as
+tone") is stale history — the phases it appears in are done; the work each
+describes still shipped, only the styling changed.
 **Deadline:** ~3 weeks from build start. No imminent application is
 forcing it, but the launch guardrail (PRD §7 metric 1) stands regardless —
 "portfolio 90% done for months" is more likely without a deadline, not
@@ -62,8 +69,8 @@ Everything downstream inherits this phase. It lands first for that reason.
 
 | | Sub-phase | Status |
 | --- | --- | --- |
-| 3a | **done 2026-09-07.** Design tokens and label-stock primitives. Tailwind v4 `@theme`: kraft/manila ground, stencil ink, one safety accent, condensed grotesque scale, monospace reserved for real codes, the vertical registration axis, hazard-band rule, placard and stamp primitives. This *is* the "one continuous label stock" raise. | **done** |
-| 3b | **done 2026-09-07.** `BaseLayout`, persistent nav bar, footer shell. Wordmark left → homepage intro; hamburger trigger right. The direction contract already lives in `BaseLayout` and must not move. | **done** |
+| 3a | **done 2026-09-07; reset 2026-09-10.** Design tokens. Originally kraft ground, stencil ink, safety accent, registration axis, hazard-band / placard / stamp primitives. **Now:** four achromatic colour tokens, a four-step type scale on the platform UI font (no web fonts), three spacing tokens, one reading column, `<hr>` the only divider. All seven label-stock primitives removed. | **done** |
+| 3b | **done 2026-09-07; restyled 2026-09-10.** `BaseLayout`, persistent nav bar, footer shell. Wordmark left → homepage / scroll-to-top; plain always-visible links right. The direction contract lives in `BaseLayout` (rewritten for the plain-text world) and must not move. | **done** |
 | 3c | ~~Full-screen menu as a packing-list docket~~ — the signature moment. Lists the three hero briefs directly, plus Pahinga (→ its live site), Services, How I build, Contact, socials. Focus trap, `Esc` to close, scroll lock, `prefers-reduced-motion`, and a no-JS fallback to plain links. **Built 2026-09-07, retired 2026-09-10** — Gary's call after an affaanmustafa.com reference. Replaced by plain, always-visible nav links (`src/lib/site.ts`'s `NAV_LINKS`); no hamburger, no overlay, no focus-trap machinery left to maintain. | **retired** |
 | 3d | **Cloudflare Pages deploy on `*.pages.dev` + `_headers`** (CSP, `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`), and `site` set in `astro.config.mjs` to the `pages.dev` URL so canonical, OG and sitemap URLs resolve. **Blocked by nothing** — the custom domain attaches later as A5. | not started |
 
@@ -87,15 +94,11 @@ follow" in user-facing footer copy, and the recurring raw-Tailwind-spacing
 defect (`mt-2`) fixed in `index.astro`. Full report:
 `.impeccable/critique/2026-09-07T07-38-23Z__src-pages-index-astro.md`.
 
-**Raise 3 (density as tone) — partially addressed, not fully landed.**
-The three moves above are real but narrow: a tightened footer, one accent
-motif in the nav, a hierarchy split in the menu. None of them is "the
-shell reads dense throughout." The highest-visibility test of this raise —
-whether a lean 4-project roster reads as substantial — is the real
-homepage, which is Phase 5a and hasn't been built yet. Carrying this
-forward explicitly rather than letting "partially addressed" quietly read
-as "done": **Phase 5a inherits an open density obligation**, not a blank
-slate.
+**Raise 3 (density as tone) — void as of the 2026-09-10 direction reset.**
+It was a raise donated by a declined challenger to the shipping-manifest
+seed; with that direction retired the obligation retires with it. The
+plain-text world makes the opposite bet — whitespace and a narrow column,
+not density. Phase 5a no longer inherits anything here.
 
 ---
 
@@ -115,7 +118,7 @@ slate.
 
 | | Sub-phase | Status |
 | --- | --- | --- |
-| 5a | **Homepage.** Intro placard leads ("Hello, I'm Gary Reyes, a 3rd-year Industrial Engineering student"), then the work section, then the about/IE section. One obvious primary action: open the work. **Inherits the open density-as-tone obligation from the Phase 3 close checkpoint** — the real test of whether a lean 4-project roster reads as substantial happens here, not in the shell. | not started |
+| 5a | **Homepage.** Intro leads (`<h1>` name + tagline sentence — the interim version of this already ships in `index.astro`), then the work list, then the about/IE section. One obvious primary action: open the work. The density obligation that used to sit here is void (see the Phase 3 close note — direction reset 2026-09-10). | in progress |
 | 5b | **`/services`** — standalone business-owner page. Must read correctly as the only page seen. Pahinga and Saffron as the proof. May say *available for freelance*; must **not** imply *trusted by businesses*. | not started |
 | 5c | **`/how-i-build`** — the harness, skills, MCP setup, CI gates, planning docs. Honest, not a sales pitch. | not started |
 | 5d | **Contact form + `/404` + footer stat block.** Web3Forms in the sitewide footer: idle, submitting, inline success swap, visible failure with `mailto:` fallback, honeypot. Designed 404 with a route back to the homepage work section. Static spec-sheet stat block (projects shipped, live in production, real client work, peak commit day) from a hand-maintained `src/lib/stats.ts` — no API call. | not started |
@@ -218,5 +221,9 @@ been left to emerge.
 **Track A:** **A2 and A3** — they gate Phase 6 and are the real schedule
 risk. A1 (the domain) is no longer urgent: it blocks no build work and can
 be bought any time before the site goes on an application.
-**Track B:** `feature-planner` on **3a — design tokens and label-stock
-primitives**.
+**Track B:** `feature-planner` on **3d — Cloudflare Pages deploy on
+`*.pages.dev` + `_headers`** (the only Phase 3 sub-phase left, blocked by
+nothing). Then **4c — `/work/[slug]` brief template**. The 2026-09-10
+direction reset re-touched 3a/3b but did not add a sub-phase; the
+`/impeccable critique` + `polish` it deferred rolls into the Phase 4 close
+cadence.
