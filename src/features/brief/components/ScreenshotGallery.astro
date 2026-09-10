@@ -1,0 +1,40 @@
+---
+import type { Project } from '../../../shared/projects';
+
+interface Props {
+  gallery: Project['data']['media']['gallery'];
+  name: string;
+}
+
+const { gallery, name } = Astro.props;
+
+/**
+ * The "show" of "show, don't tell" (docs/PRD.md §9). Renders nothing at all
+ * until Track A2 produces the files and Phase 6 adds a `media.gallery` to the
+ * project's .mdx — no "coming soon" placeholder, which would read as
+ * unfinished to exactly the audience the briefs exist to persuade (and no
+ * visitor reaches these pages while WORK_BRIEFS_LIVE is false anyway).
+ *
+ * Each image reserves its layout box with explicit width/height (a11y floor,
+ * CLAUDE.md) and carries authored alt text, so a slow or failed load never
+ * shifts the page or breaks the read (PRD §10).
+ */
+---
+
+{
+  gallery && gallery.length > 0 && (
+    <section class="mt-section gap-block flex flex-col" aria-label={`${name} screenshots`}>
+      {gallery.map((shot) => (
+        <img
+          src={shot.src}
+          alt={shot.alt}
+          width={shot.width}
+          height={shot.height}
+          loading="lazy"
+          decoding="async"
+          class="border-rule h-auto w-full border"
+        />
+      ))}
+    </section>
+  )
+}

@@ -1,6 +1,9 @@
-import { getCollection, type CollectionEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
+import type { Project } from '../../shared/projects';
 
-export type Project = CollectionEntry<'projects'>;
+// Re-exported so existing importers (ProjectCard, ProjectGrid) keep working;
+// the type itself now lives in src/shared/projects.ts (used by two features).
+export type { Project };
 
 /**
  * The only place `getCollection('projects')` is called (CLAUDE.md layer

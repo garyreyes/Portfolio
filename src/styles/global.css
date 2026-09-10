@@ -204,3 +204,66 @@
     grid-template-columns: var(--rail) 1fr;
   }
 }
+
+/* ==========================================================================
+   PROSE — authored body copy (project briefs; later /services, /how-i-build)
+
+   Preflight strips all default margins and list markers, so rendered MDX
+   needs its rhythm restored here. Deliberately minimal, matching the
+   direction: one reading column, whitespace between blocks, hairline rule,
+   no accent. `<pre>` block styling is deferred until a brief actually
+   contains one (astro.config.mjs turns syntax highlighting off; no body has
+   a code block yet) — inline `code` is covered.
+   ========================================================================== */
+
+@layer base {
+  .prose {
+    max-width: var(--container-column);
+    /* Authored prose can carry a long URL or a slash-joined path with no
+       break point (the same failure the removed `lot` utility once fixed).
+       Let the browser break inside a word rather than push the body wide. */
+    overflow-wrap: break-word;
+  }
+
+  /* Vertical rhythm: one gutter between every pair of blocks... */
+  .prose > * + * {
+    margin-top: var(--spacing-gutter);
+  }
+  /* ...and more air above a heading that follows content. */
+  .prose > * + :is(h2, h3) {
+    margin-top: var(--spacing-block);
+  }
+
+  .prose h2 {
+    font-size: var(--text-name);
+    line-height: var(--text-name--line-height);
+    letter-spacing: var(--text-name--letter-spacing);
+  }
+  .prose h3 {
+    font-size: var(--text-lede);
+    line-height: var(--text-lede--line-height);
+  }
+
+  .prose ul {
+    list-style: disc;
+    /* Not a token: the marker hang is a typographic detail, not page
+       spacing. Enough to clear the disc at this font size. */
+    padding-left: 1.25rem;
+  }
+  .prose li + li {
+    margin-top: var(--spacing-tight);
+  }
+
+  .prose a {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .prose a:hover {
+    text-decoration-thickness: 2px;
+  }
+
+  .prose code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.9em;
+  }
+}

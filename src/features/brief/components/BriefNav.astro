@@ -1,0 +1,42 @@
+---
+import type { Project } from '../../../shared/projects';
+
+interface Props {
+  prev: Project | null;
+  next: Project | null;
+}
+
+const { prev, next } = Astro.props;
+
+/**
+ * Prev/next between the three hero briefs, ordered by `Project.order`.
+ * Bounded (from queries.ts): the first brief has no prev, the last no next —
+ * so one side can be empty. `justify-between` keeps next hard-right in that
+ * case without a spacer element.
+ */
+---
+
+<nav class="gap-gutter flex flex-wrap justify-between" aria-label="More projects">
+  {
+    prev && (
+      <a
+        href={`/work/${prev.id}`}
+        class="text-meta text-ink py-tight underline underline-offset-4 hover:decoration-2"
+      >
+        <span class="sr-only">Previous project: </span>
+        <span aria-hidden="true">←</span> {prev.data.name}
+      </a>
+    )
+  }
+  {
+    next && (
+      <a
+        href={`/work/${next.id}`}
+        class="text-meta text-ink py-tight ml-auto underline underline-offset-4 hover:decoration-2"
+      >
+        <span class="sr-only">Next project: </span>
+        {next.data.name} <span aria-hidden="true">→</span>
+      </a>
+    )
+  }
+</nav>

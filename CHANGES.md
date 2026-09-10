@@ -10,6 +10,60 @@ does that.
 
 ## Unreleased
 
+### 2026-09-10 — ROADMAP 4c: the `/work/[slug]` brief template
+
+The container for the three hero project briefs — structure only. The
+`.mdx` bodies still say "Brief pending — Track A3" and no screenshots
+exist; Phase 6 (6a/6b) writes the real briefs and flips
+`WORK_BRIEFS_LIVE`, which is what puts "View brief" links on the homepage.
+Until then the pages build and deploy but nothing links to them.
+
+- **`src/pages/work/[slug].astro`** — `getStaticPaths` from
+  `tier: 'hero'` only, so exactly three pages build
+  (`cornerman`, `ufc-scouting-app`, `saffron-web`); Pahinga (card) gets
+  none. Thin: two query calls, `render()`, pass to components. `render`
+  from `astro:content` is a routing-layer allowance (produces a
+  component, not a query); `getCollection` stays in `queries.ts`.
+- **`src/features/brief/`** — `queries.ts` (`getHeroBriefs`,
+  `getAdjacentHeroes` — **bounded** prev/next by `order`, first has no
+  prev, last no next) and three components: `BriefHeader` (name, one
+  line, status/client/platform, stack, and **every** link that exists —
+  unlike the ledger card, which picks one), `ScreenshotGallery` (renders
+  **nothing** until a `media.gallery` exists — no "coming soon"
+  placeholder), `BriefNav` (prev/next with visually-hidden
+  "Previous project:" / "Next project:" prefixes for screen readers).
+- **`src/shared/projects.ts`** — the `Project` type plus the enum labels
+  (`STATUS_LABEL` / `CLIENT_LABEL` / `PLATFORM_LABEL`) and link labels
+  (`LINK_LABEL`), lifted out of `ProjectCard` so the ledger and the brief
+  never word the same project differently. Post-review: started under
+  `features/projects/`; moved to `shared/` because two features consume
+  it (CLAUDE.md "Where new code goes"). Link text unified — the ledger
+  said "View repo", the brief "View repository"; both now the latter.
+- **`src/content.config.ts`** — `media.gallery` changed from `string[]`
+  to `{ src, alt, width, height }[]`. A bare path can't carry the
+  explicit dimensions + real alt the a11y floor requires; now enforced by
+  Zod at build. No `.mdx` file sets `gallery` yet, so nothing migrated.
+  `ARCHITECTURE.md` reconciled (entity table + folder tree; also noted
+  `BriefLayout` is deferred to 8a and there is no `StatusBadge` after the
+  plain-text reset).
+- **`.prose` in `global.css`** — restores vertical rhythm, list markers,
+  heading sizes and link underlines to rendered MDX (preflight strips all
+  of it). `overflow-wrap: break-word` so an authored URL or slash-joined
+  path can't push the body wide — a real 33px overflow at 320px from the
+  placeholder text, caught by the CDP `scrollWidth` check, not the
+  (known-buggy) CLI screenshot. `<pre>` block styling deferred until a
+  brief actually contains a code block.
+- **`astro.config.mjs`** — `redirects: { '/work': '/#work' }`; the
+  `/work/*` namespace now exists, so a bare `/work` resolves instead of
+  404ing (ARCHITECTURE.md route list).
+- Gates: `check`, `build`, `check:links`, `design:check` (0 findings) all
+  clean; CDP overflow check clean 320–1280px on all three briefs;
+  `dist/work/` confirmed to hold three hero pages + the redirect, no
+  Pahinga. Independent `reviewer` pass — five findings, all applied or
+  reconciled (the `shared/` move, the a11y prev/next labels, the link
+  wording, the doc drift) except two Phase 6 content-gap notes tracked
+  for later (UFC Scouting / Saffron are `status: live` with no `liveUrl`).
+
 ### 2026-09-10 — Ledger polish (/impeccable polish)
 
 Micro-craft pass on the ledger, no structural change:

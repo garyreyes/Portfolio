@@ -15,6 +15,15 @@ export default defineConfig({
   // real domain and nothing else changes.
   site: 'https://garyreyes.pages.dev',
 
+  // The /work/* namespace exists as of ROADMAP 4c (the hero brief pages).
+  // There is no /work index route — four projects don't need one — so a bare
+  // /work redirects to the homepage work section (ARCHITECTURE.md "Route
+  // list", docs/user-flows.md). Astro emits a dist/work/index.html with a
+  // <meta http-equiv="refresh"> and a canonical link.
+  redirects: {
+    '/work': '/#work',
+  },
+
   // Content-Security-Policy. Astro computes a per-build SHA-256 hash for its
   // own inline script (the wordmark scroll-to-top in Nav.astro) and for the
   // stylesheet, and emits a <meta http-equiv="content-security-policy">.

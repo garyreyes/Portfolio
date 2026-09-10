@@ -1,0 +1,53 @@
+---
+import {
+  type Project,
+  STATUS_LABEL,
+  CLIENT_LABEL,
+  PLATFORM_LABEL,
+  LINK_LABEL,
+} from '../../../shared/projects';
+
+interface Props {
+  project: Project;
+}
+
+const { data } = Astro.props.project;
+
+/**
+ * The masthead of a hero brief page. Same honest-status rule as the work
+ * ledger (docs/PRD.md §10): the status WORD and the LINKS are decided
+ * separately. Unlike the ledger card — which picks one link — the brief
+ * shows every link that exists (PRD §9: "live site and/or repository
+ * and/or APK").
+ */
+const facts = [STATUS_LABEL[data.status], CLIENT_LABEL[data.client], PLATFORM_LABEL[data.type]];
+
+const links: { href: string; label: string }[] = [];
+if (data.liveUrl) links.push({ href: data.liveUrl, label: LINK_LABEL.live });
+if (data.repoUrl) links.push({ href: data.repoUrl, label: LINK_LABEL.repo });
+---
+
+<header>
+  <h1 class="text-title">{data.name}</h1>
+  <p class="text-lede text-ink-muted max-w-column mt-gutter">{data.tagline}</p>
+
+  <p class="text-meta text-ink-muted mt-block">{facts.join(' · ')}</p>
+  <p class="text-meta text-ink-muted mt-tight">{data.stack.join(' · ')}</p>
+
+  {
+    links.length > 0 && (
+      <div class="gap-x-block gap-y-tight mt-gutter flex flex-wrap items-center">
+        {links.map((link) => (
+          <a
+            href={link.href}
+            class="text-meta text-ink -my-tight py-tight underline underline-offset-4 hover:decoration-2"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {link.label}
+          </a>
+        ))}
+      </div>
+    )
+  }
+</header>

@@ -31,9 +31,12 @@ export const NAV_LINKS = [
 ] as const;
 
 /**
- * Whether the `/work/[slug]` brief pages exist (ROADMAP 4c). While false,
- * ProjectCard renders no "View brief" link — the same discipline it
- * already applies to a missing `liveUrl`. Flip to `true` in the same
- * change that adds `src/pages/work/[slug].astro`.
+ * Whether the homepage links to the `/work/[slug]` brief pages. The pages
+ * themselves exist as of ROADMAP 4c — but their bodies still say "Brief
+ * pending — Track A3" and they have no screenshots, so a "View brief" link
+ * would lead a skeptical visitor to a stub. Stays `false` until Phase 6
+ * (6a/6b) writes the real briefs; flip it in that change. While false,
+ * ProjectCard renders no "View brief" link — the same discipline it already
+ * applies to a missing `liveUrl`.
  */
 export const WORK_BRIEFS_LIVE = false;

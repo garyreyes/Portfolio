@@ -1,0 +1,48 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BriefHeader from '../../features/brief/components/BriefHeader.astro';
+import ScreenshotGallery from '../../features/brief/components/ScreenshotGallery.astro';
+import BriefNav from '../../features/brief/components/BriefNav.astro';
+import { getHeroBriefs, getAdjacentHeroes } from '../../features/brief/queries';
+import { SITE } from '../../lib/site';
+
+/**
+ * One page per hero project (ROADMAP 4c). The template only — the .mdx
+ * bodies still say "Brief pending — Track A3" and no `media.gallery` exists
+ * yet; Phase 6 (6a/6b) fills both and flips `WORK_BRIEFS_LIVE`, which is
+ * what puts "View brief" links on the homepage. Until then these pages
+ * build and deploy but nothing links to them.
+ *
+ * Card-tier projects (Pahinga) are filtered out in getHeroBriefs() — they
+ * have no brief page (docs/PRD.md §9). OG tags for shareable deep links are
+ * Phase 8a; `description` here is an interim.
+ */
+export async function getStaticPaths() {
+  const heroes = await getHeroBriefs();
+  return heroes.map((project) => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { data } = project;
+const { Content } = await render(project);
+const { prev, next } = await getAdjacentHeroes(project.id);
+---
+
+<BaseLayout title={`${data.name} — ${SITE.name}`} description={data.tagline}>
+  <article class="py-section">
+    <BriefHeader project={project} />
+
+    <ScreenshotGallery gallery={data.media.gallery} name={data.name} />
+
+    <div class="prose mt-section">
+      <Content />
+    </div>
+
+    <hr class="mt-section mb-block" />
+    <BriefNav prev={prev} next={next} />
+  </article>
+</BaseLayout>
