@@ -214,14 +214,17 @@ plain-text homepage scored **21/32** (down from the manifest shell's
 dev portfolio" cluster with no authored design move yet.* Gary's call:
 make one deliberate structural move now (asymmetric / two-column layout,
 flagship breaking the grid) rather than wait for Phase 6 to carry it.
-Follow-up queue: `harden` (**done** — dead-link gate, `/404`, tap/link
-fixes) → `shape` + `layout` (**done** — the homepage is now a two-column
-ledger with a fixed metadata rail; see `PROJECT_FACTS.md` "Homepage
-ledger" and `CHANGES.md`) → `/impeccable polish` (**next** — spacing
-refinement) → re-`critique`. `clarify` (plain-language project one-liners)
-is partly done: draft `tagline` values from `docs/PRD.md` now ship,
-pending Track A3 review. Report:
-`.impeccable/critique/2026-09-10T00-46-13Z__src-pages-index-astro.md`.
+Follow-up queue: `harden` (**done**) → `shape` + `layout` (**done** — the
+two-column ledger) → `/impeccable polish` (**done**, commit `9058189`) →
+re-`critique` (**done** 2026-09-10, **24/32**; trend 26 → 21 → 24 /32).
+The re-critique found the ledger's aligned status column carried no
+information (`Live` three of four) — Gary's call was to **retire it**;
+`layout` + `clarify` collapsed each project to a single-column entry,
+made the nav one row at every width, and gave the footer an explicit
+contact line. The remaining P1/P2s (no primary action, jargon,
+screenshots) are content-blocked on Track A2 + A3. See `CHANGES.md` and
+`PROJECT_FACTS.md` "Homepage work list". Reports:
+`.impeccable/critique/2026-09-10T00-46-13Z…` and `…T09-27-55Z…`.
 
 **Token-risk check — clear.** Phase 3a defines the visual tokens and no
 later phase redefines them, so nothing is polished against a provisional
@@ -236,14 +239,16 @@ been left to emerge.
 **Track A:** **A2 and A3** — they gate Phase 6 and are the real schedule
 risk. A1 (the domain) is no longer urgent: it blocks no build work and can
 be bought any time before the site goes on an application.
-**Track B:** homepage `shape` → `layout` (done — the ledger) and **4c —
-`/work/[slug]` brief template** (done 2026-09-10, template only) are both
-in. Next: `/impeccable polish` on the homepage ledger (spacing
-refinement) → re-`critique`, then the Phase 4 close cadence
-(`/impeccable critique` + `polish` across the work surfaces, which also
-absorbs the 2026-09-10 reset's deferred pass). **Phase 6 (6a/6b)** then
-fills the brief bodies + screenshots and flips `WORK_BRIEFS_LIVE` — it is
-blocked on **Track A2 + A3** (Gary's screenshots and brief notes), the
-real schedule risk. Phase 3 is complete on the repo side — 3d's only
-remaining piece is Gary creating the `garyreyes` Cloudflare Pages project
-and a live header check.
+**Track B:** the homepage design cadence is closed for now — `shape` →
+`layout` → `polish` → re-`critique` → ledger retired → `layout` +
+`clarify` simplify (all done 2026-09-10). **4c — `/work/[slug]` brief
+template** is in (template only). Next: **5a** — the about / Industrial
+Engineering section + final homepage copy (needs no Track A input). The
+Phase 4 close cadence (`/impeccable critique` + `polish` across the work
+surfaces) waits until Phase 6 puts real content on the brief pages —
+polishing placeholder pages is premature. **Phase 6 (6a/6b)** fills the
+brief bodies + screenshots and flips `WORK_BRIEFS_LIVE` — blocked on
+**Track A2 + A3** (Gary's screenshots and brief notes), the real schedule
+risk. Phase 3 is complete on the repo side — 3d's only remaining piece is
+Gary creating the `garyreyes` Cloudflare Pages project and a live header
+check.

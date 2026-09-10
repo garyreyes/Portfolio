@@ -10,6 +10,54 @@ does that.
 
 ## Unreleased
 
+### 2026-09-10 — Homepage re-critique → retire the ledger, simplify
+
+Re-ran `/impeccable critique` (dual-agent) on the homepage after the
+ledger + polish. Scored **24/32** (trend: 26 → 21 → 24, all /32). Core
+finding: the two-column ledger did **not** land as the authored move the
+21/32 run asked for — its aligned status column read
+`Android APK / Live / Live / Live`, near-constant, so the alignment
+carried no information, and the rail was visually indistinct from body
+captions. Mechanically the page was spotless (0 detector findings, all
+contrast ≥6.46:1, focus rings everywhere, tap targets clear WCAG 2.5.8,
+no overflow, clean heading outline).
+
+Gary's call after the pros/cons: **retire the ledger, simplify.**
+`/impeccable layout` + `clarify`:
+
+- **`ledger-row` utility + `--rail` token deleted.** Each project is now a
+  single-column entry: `<h3>` name → one `text-meta` facts line
+  (`status · client · platform`) → the one-liner in full ink → a
+  `text-meta` "Built with …" stack line → the honest link(s). Name-first,
+  so a screen reader announces "Cornerman. Android APK …" rather than the
+  metadata before the thing it describes (an A11y finding from the
+  critique). `line-clamp-2` + the duplicate `title` attr on the stack line
+  are gone — the full stack just wraps.
+- **Nav is one row at every width.** The below-`sm` vertical link stack
+  (a leftover from when there were four links) is removed; "Gary Reyes ·
+  Work · Contact" fits past 320px. This also drops the mobile sticky
+  header from ~166px to ~69px (a P3 in the critique). When 5b/5c re-add
+  Services + How I build, that pass adds a mobile disclosure menu.
+  `scroll-padding-top` simplified to one 5rem value (was 11rem/5rem for
+  the wrapping nav).
+- **Footer reads as a contact point.** "Contact form to follow" (read as
+  unfinished to a skeptic) is gone; the footer now leads with
+  "Get in touch — garyludelq@gmail.com" as an explicit action, GitHub /
+  LinkedIn as profile links beside it. Derived from `SOCIALS` by
+  splitting the `mailto:` entry from the rest.
+- **Intro `<hr>`** margin `mt-section mb-gutter` → `my-section` (the first
+  entry was cramped under the rule — a critique minor).
+- Not done: **flagship-vs-practice emphasis** (P2). The critique wants
+  Cornerman visually weightier than the practice build; that contradicts
+  Gary's documented "all four peer entries" call, so it stays peers.
+- The remaining P1/P2s (no primary action, jargon, screenshots) are
+  content-blocked on Track A2 + A3 — recorded, not fixable by visual
+  iteration.
+- Gates: `check`, `build`, `check:links`, `design:check` (0 findings) all
+  clean; detector `--scope layout` clean; CDP screenshots + overflow at
+  320/375/1280 verified. Snapshot:
+  `.impeccable/critique/2026-09-10T09-27-55Z__src-pages-index-astro.md`.
+
 ### 2026-09-10 — ROADMAP 4c: the `/work/[slug]` brief template
 
 The container for the three hero project briefs — structure only. The

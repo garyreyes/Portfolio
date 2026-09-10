@@ -2,29 +2,45 @@
 import { SOCIALS } from '../../lib/site';
 
 /**
- * Sitewide footer shell (docs/user-flows.md "Footer — sitewide, on every
- * route"). Socials ship now — nothing blocks them. The contact form and
- * stat block are Phase 5d; until then the footer says so plainly rather
- * than looking unfinished.
+ * Sitewide footer (docs/user-flows.md "Footer — sitewide, on every route").
+ * The nav "Contact" link scrolls here, so this has to read as a contact
+ * point: an explicit "Email <address>" action on the left, the profile
+ * links (GitHub, LinkedIn) on the right.
  *
- * 2026-09-10, plain-text reset: hazard-rule and the rotated status stamp
- * are gone — a single <hr>, plain links, a plain © line.
+ * The real contact form + stat block are Phase 5d. Until then this is the
+ * contact surface — no "form to follow" placeholder (it read as unfinished
+ * to the skeptical audience the footer exists to persuade).
  */
+const email = SOCIALS.find((s) => s.href.startsWith('mailto:'));
+const profiles = SOCIALS.filter((s) => !s.href.startsWith('mailto:'));
+const emailAddress = email?.href.replace('mailto:', '');
 ---
 
 <footer id="site-footer" class="px-gutter max-w-page mx-auto">
   <hr class="mt-section" />
-  <div class="py-block gap-gutter flex flex-wrap items-center justify-between">
+  <div class="py-block gap-gutter flex flex-wrap items-baseline justify-between">
+    {
+      email && (
+        <p class="text-meta">
+          <span class="text-ink-muted">Get in touch — </span>
+          <a
+            href={email.href}
+            class="text-ink -my-tight py-tight underline underline-offset-4 hover:decoration-2"
+          >
+            {emailAddress}
+          </a>
+        </p>
+      )
+    }
     <ul class="gap-block flex">
       {
-        /* py-tight lifts the inline hit target to ~35px (WCAG 2.5.8). */
-        SOCIALS.map((social) => (
+        profiles.map((social) => (
           <li>
             <a
               href={social.href}
-              class="text-meta text-ink-muted hover:text-ink py-tight underline underline-offset-4 hover:decoration-2"
-              target={social.href.startsWith('http') ? '_blank' : undefined}
-              rel={social.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+              class="text-meta text-ink-muted hover:text-ink -my-tight py-tight underline underline-offset-4 hover:decoration-2"
+              target="_blank"
+              rel="noopener noreferrer"
             >
               {social.label}
             </a>
@@ -32,7 +48,6 @@ import { SOCIALS } from '../../lib/site';
         ))
       }
     </ul>
-    <p class="text-meta text-ink-muted">Contact form to follow</p>
   </div>
   <p class="text-meta text-ink-muted pb-section">© 2026 Gary Reyes — Manila, Philippines</p>
 </footer>
