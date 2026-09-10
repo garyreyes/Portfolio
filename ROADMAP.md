@@ -72,7 +72,7 @@ Everything downstream inherits this phase. It lands first for that reason.
 | 3a | **done 2026-09-07; reset 2026-09-10.** Design tokens. Originally kraft ground, stencil ink, safety accent, registration axis, hazard-band / placard / stamp primitives. **Now:** four achromatic colour tokens, a four-step type scale on the platform UI font (no web fonts), three spacing tokens, one reading column, `<hr>` the only divider. All seven label-stock primitives removed. | **done** |
 | 3b | **done 2026-09-07; restyled 2026-09-10.** `BaseLayout`, persistent nav bar, footer shell. Wordmark left → homepage / scroll-to-top; plain always-visible links right. The direction contract lives in `BaseLayout` (rewritten for the plain-text world) and must not move. | **done** |
 | 3c | ~~Full-screen menu as a packing-list docket~~ — the signature moment. Lists the three hero briefs directly, plus Pahinga (→ its live site), Services, How I build, Contact, socials. Focus trap, `Esc` to close, scroll lock, `prefers-reduced-motion`, and a no-JS fallback to plain links. **Built 2026-09-07, retired 2026-09-10** — Gary's call after an affaanmustafa.com reference. Replaced by plain, always-visible nav links (`src/lib/site.ts`'s `NAV_LINKS`); no hamburger, no overlay, no focus-trap machinery left to maintain. | **retired** |
-| 3d | **Cloudflare Pages deploy on `*.pages.dev` + `_headers`** (CSP, `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`), and `site` set in `astro.config.mjs` to the `pages.dev` URL so canonical, OG and sitemap URLs resolve. **Blocked by nothing** — the custom domain attaches later as A5. | not started |
+| 3d | **done (repo side) 2026-09-10.** `site` = `https://garyreyes.pages.dev` in `astro.config.mjs`; CSP via Astro `security.csp` (strict `'self'`, per-build script hashes, `<meta>` tag); `public/_headers` for `X-Frame-Options: DENY`, `X-Content-Type-Options`, `Referrer-Policy`, HSTS, `Permissions-Policy`. Gates + a headless CSP-enforced browser check all clean. **Open:** Gary creates the `garyreyes` Pages project in the dashboard, then a live `curl -sI` verifies the headers ship (see `PROJECT_FACTS.md` "Deploy and headers"). | **done** |
 
 **3b update:** raise 2 (registration axis) is now mechanized, not just a
 primitive — `Nav`, `main`, and `Footer` each apply `axis` independently, so
@@ -221,9 +221,8 @@ been left to emerge.
 **Track A:** **A2 and A3** — they gate Phase 6 and are the real schedule
 risk. A1 (the domain) is no longer urgent: it blocks no build work and can
 be bought any time before the site goes on an application.
-**Track B:** `feature-planner` on **3d — Cloudflare Pages deploy on
-`*.pages.dev` + `_headers`** (the only Phase 3 sub-phase left, blocked by
-nothing). Then **4c — `/work/[slug]` brief template**. The 2026-09-10
-direction reset re-touched 3a/3b but did not add a sub-phase; the
-`/impeccable critique` + `polish` it deferred rolls into the Phase 4 close
-cadence.
+**Track B:** `feature-planner` on **4c — `/work/[slug]` brief template**
+(the 3 hero pages). Phase 3 is complete on the repo side — 3d's only
+remaining piece is Gary creating the `garyreyes` Cloudflare Pages project
+and a live header check. The 2026-09-10 direction reset's deferred
+`/impeccable critique` + `polish` rolls into the Phase 4 close cadence.

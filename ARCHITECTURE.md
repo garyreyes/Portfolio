@@ -152,7 +152,7 @@ than inventing findings. What does apply:
 | **Web3Forms access key** | This is a **public, client-side key by design** — not a secret. It is safe in the bundle. No private key of any kind belongs in frontend code.                                                                                                   |
 | **Secrets in git**       | `.env` gitignored; `.env.example` committed with names only. Nothing else is secret in this project.                                                                                                                                             |
 | **Form spam**            | Honeypot field + Web3Forms' own filtering. Rate limiting is the provider's responsibility.                                                                                                                                                       |
-| **Security headers**     | `public/_headers` sets CSP, `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`. Cloudflare Pages serves these automatically.                                                         |
+| **Security headers**     | **CSP** is an Astro `<meta>` tag (`security.csp` in `astro.config.mjs`, per-build script hashes) — widen it there, never in `_headers`. `public/_headers` carries the rest as real HTTP headers: `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, HSTS, `Permissions-Policy`. Cloudflare Pages serves `_headers` automatically. Wired 2026-09-10 (Phase 3d); see `PROJECT_FACTS.md` "Deploy and headers". |
 | **External links**       | Every `target="_blank"` carries `rel="noopener noreferrer"`.                                                                                                                                                                                     |
 | **Supply chain**         | Dependencies pinned; `npm audit` in CI; Dependabot enabled.                                                                                                                                                                                      |
 | **MDX / XSS**            | MDX can render arbitrary HTML, but **all content is author-written and committed to git** — there is no user-submitted content anywhere. No injection vector. Recorded so a future contributor doesn't add user content without revisiting this. |
@@ -173,10 +173,10 @@ discipline**.
 portfolio/
 ├─ public/
 │  ├─ screenshots/                # per-project cover + gallery images
-│  ├─ fonts/
-│  ├─ _headers                    # CSP + security headers (Cloudflare Pages)
-│  ├─ robots.txt
+│  ├─ _headers                    # HTTP security headers, minus CSP (Cloudflare Pages)
+│  ├─ robots.txt                  # Phase 8a
 │  └─ favicon.svg
+│  # no fonts/ — the platform UI font stack is used, no web fonts (2026-09-10 reset)
 ├─ src/
 │  ├─ content.config.ts           # Zod schema — the Project entity, enforced at build
 │  ├─ content/
@@ -285,7 +285,7 @@ authoritative for screens. Corrections from the original plan:
 
 | #   | Decision                                                                                              | Owner  |
 | --- | --------------------------------------------------------------------------------------------------- | ------ |
-| 1   | **Domain name and registrar** — **launch blocker, not a build blocker** (2026-09-07); deploy runs on `*.pages.dev` until it is bought. Cloudflare Registrar assumed (~$12/yr) | Gary   |
+| 1   | **Domain name and registrar** — **launch blocker, not a build blocker** (2026-09-07); deploy runs on `garyreyes.pages.dev` until it is bought (`site` + `_headers` wired 2026-09-10, Phase 3d). Cloudflare Registrar assumed (~$12/yr) | Gary   |
 | 2   | ~~Visual design direction~~ — assigned 2026-08-28 (shipping manifest, seed `d4e5136b`), then **reset 2026-09-10** to a plain-text portfolio. See `PROJECT_FACTS.md` "Visual direction — reset 2026-09-10". | done |
 | 3   | Whether work-section filtering ships (PRD Could-have) — if yes, `TechTag` becomes a real relation      | Later  |
 | 4   | ~~Font choice~~ — settled 2026-09-07 (Archivo/Space Mono), then **reset 2026-09-10**: platform UI font stack, no web fonts. | done   |
