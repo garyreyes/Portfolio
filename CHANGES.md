@@ -10,6 +10,24 @@ does that.
 
 ## Unreleased
 
+### 2026-09-10 — Ledger polish (/impeccable polish)
+
+Micro-craft pass on the ledger, no structural change:
+
+- `align-items: baseline` on `ledger-row` — the rail's first line now sits
+  on the project name's baseline, so the status column reads level with
+  each row's heading instead of floating slightly above it.
+- `--rail` 12rem → 10rem — sized to the longest label; tightens the empty
+  channel between rail and content that made the rail read airy.
+- Intro→ledger gap tightened (`hr` `mb-block` → `mb-gutter`).
+- Em-dashes removed from the Cornerman and Pahinga draft descriptions
+  (`. ` and `: ` instead) — punctuation only.
+- Nav links get `underline-offset-4` so their hover underline matches the
+  offset used everywhere else.
+
+Gates clean; no overflow 320–1280px. Small enough that it rides the prior
+pass's reviewer coverage rather than its own.
+
 ### 2026-09-10 — Homepage ledger (/impeccable shape → layout)
 
 The authored structural move the 2026-09-10 critique said was missing. The
