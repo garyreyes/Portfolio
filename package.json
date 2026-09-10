@@ -16,6 +16,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "check": "npm run typecheck && npm run lint && npm run format:check",
+    "check:links": "astro build && node scripts/check-links.mjs",
     "prepare": "husky",
     "design:check": "npm run build && node scripts/design-check.mjs"
   },

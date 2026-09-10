@@ -90,11 +90,22 @@ Run automatically; do not bypass them.
 | When | What runs |
 |---|---|
 | **pre-commit** | `lint-staged` — ESLint `--fix` + Prettier on staged files |
-| **pre-push** | `npm run check` (typecheck → lint → format) then `npm run design:check` |
-| **CI, every PR** | `npm ci` → typecheck → lint → format:check → build |
+| **pre-push** | `npm run check` (typecheck → lint → format) → `npm run design:check` → `npm run check:links` |
+| **CI, every PR** | `npm ci` → typecheck → lint → format:check → build → `check:links` |
 
-`npm run check` is the whole gate suite locally. Run it before claiming
+`npm run check` is the fast local gate (no build). `check:links` and
+`design:check` both need a built `dist/`, so they run after a build in
+pre-push and CI, not inside `check`. Run all three before claiming
 anything is done.
+
+### Internal-link gate
+
+`npm run check:links` (`scripts/check-links.mjs`) scans every built page in
+`dist/` and fails on any in-site link to a path that was not built, or an
+`#anchor` with no matching `id` on the target page. A clean build and a
+green `design:check` both miss this — neither follows a link. Never ship a
+link to a route that doesn't exist yet; gate it (see `NAV_LINKS` /
+`WORK_BRIEFS_LIVE` in `src/lib/site.ts`).
 
 ### Design gate
 

@@ -1,5 +1,6 @@
 ---
 import type { Project } from '../queries';
+import { WORK_BRIEFS_LIVE } from '../../../lib/site';
 
 interface Props {
   project: Project;
@@ -45,15 +46,18 @@ const link = data.liveUrl
     <p class="text-meta text-ink-muted">{STATUS_LABEL[data.status]}</p>
   </div>
 
-  <p class="text-ink-muted mt-gutter line-clamp-2" title={data.stack.join(' · ')}>
+  <p class="text-meta text-ink-muted mt-gutter line-clamp-2" title={data.stack.join(' · ')}>
     {data.stack.join(' · ')}
   </p>
   <p class="text-meta text-ink-muted mt-gutter">{CLIENT_LABEL[data.client]}</p>
 
   <div class="mt-gutter gap-block flex flex-wrap items-center">
     {
-      data.tier === 'hero' && (
-        <a href={`/work/${slug}`} class="text-meta text-ink hover:underline">
+      data.tier === 'hero' && WORK_BRIEFS_LIVE && (
+        <a
+          href={`/work/${slug}`}
+          class="text-meta text-ink underline underline-offset-4 hover:decoration-2"
+        >
           View brief
         </a>
       )
@@ -62,7 +66,7 @@ const link = data.liveUrl
       link && (
         <a
           href={link.href}
-          class="text-meta text-ink hover:underline"
+          class="text-meta text-ink underline underline-offset-4 hover:decoration-2"
           target="_blank"
           rel="noopener noreferrer"
         >

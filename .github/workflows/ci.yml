@@ -39,6 +39,9 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Check internal links
+        run: npm run check:links
+
   # The Impeccable design-slop detector deliberately does NOT run here.
   # It lives in a local plugin cache that does not exist on a CI runner, and
   # vendoring ~1.2 MB of third-party JS into a public portfolio repo was
