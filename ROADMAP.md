@@ -118,7 +118,7 @@ not density. Phase 5a no longer inherits anything here.
 
 | | Sub-phase | Status |
 | --- | --- | --- |
-| 5a | **Homepage.** Intro leads (`<h1>` name + tagline sentence — the interim version of this already ships in `index.astro`), then the work list, then the about/IE section. One obvious primary action: open the work. The density obligation that used to sit here is void (see the Phase 3 close note — direction reset 2026-09-10). | in progress |
+| 5a | **Homepage.** Intro (`<h1>` + tagline) and the work **ledger** both ship in `index.astro` (built out in the 2026-09-10 shape→layout pass). Still owed for 5a: the about / Industrial Engineering section below the ledger, and final copy. One obvious primary action: open a project. | in progress |
 | 5b | **`/services`** — standalone business-owner page. Must read correctly as the only page seen. Pahinga and Saffron as the proof. May say *available for freelance*; must **not** imply *trusted by businesses*. | not started |
 | 5c | **`/how-i-build`** — the harness, skills, MCP setup, CI gates, planning docs. Honest, not a sales pitch. | not started |
 | 5d | **Contact form + ~~`/404`~~ + footer stat block.** Web3Forms in the sitewide footer: idle, submitting, inline success swap, visible failure with `mailto:` fallback, honeypot. ~~Designed 404~~ — **done 2026-09-10**, pulled forward in the `/impeccable harden` pass (`src/pages/404.astro`) because the homepage was shipping links to unbuilt routes. Static spec-sheet stat block (projects shipped, live in production, real client work, peak commit day) from a hand-maintained `src/lib/stats.ts` — no API call. | not started |
@@ -215,9 +215,12 @@ dev portfolio" cluster with no authored design move yet.* Gary's call:
 make one deliberate structural move now (asymmetric / two-column layout,
 flagship breaking the grid) rather than wait for Phase 6 to carry it.
 Follow-up queue: `harden` (**done** — dead-link gate, `/404`, tap/link
-fixes) → `/impeccable shape` (structure) → `layout` → `polish` →
-re-`critique`. `clarify` (plain-language project one-liners) is queued
-but blocked on Track A3. Report:
+fixes) → `shape` + `layout` (**done** — the homepage is now a two-column
+ledger with a fixed metadata rail; see `PROJECT_FACTS.md` "Homepage
+ledger" and `CHANGES.md`) → `/impeccable polish` (**next** — spacing
+refinement) → re-`critique`. `clarify` (plain-language project one-liners)
+is partly done: draft `tagline` values from `docs/PRD.md` now ship,
+pending Track A3 review. Report:
 `.impeccable/critique/2026-09-10T00-46-13Z__src-pages-index-astro.md`.
 
 **Token-risk check — clear.** Phase 3a defines the visual tokens and no

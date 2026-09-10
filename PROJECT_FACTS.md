@@ -157,10 +157,14 @@ elements and font of this since it looks so nonchalant and minimalist."
     ground with margin), `--color-rule` `#e2e2e2`. No accent. One light mode.
   - Type: `--font-sans` is the platform UI stack (`-apple-system`, Segoe UI,
     Roboto…). **No web fonts** — `public/fonts/` deleted, no `@font-face`, no
-    preloads. Four sizes: `meta` 0.8125 / `body` 1 / `lede` 1.1875 /
-    `title` 1.75rem.
-  - Measure: three spacing tokens — `gutter` 1rem / `block` 2rem /
-    `section` 3rem — and `--container-column` 42rem (`max-w-column`).
+    preloads. Sizes: `meta` 0.8125 / `body` 1 / `lede` 1.1875 / `name` 1.375
+    / `title` 1.75rem (`name` added in the ledger pass — see "Homepage
+    ledger" below).
+  - Measure: spacing tokens `tight` 0.5rem / `gutter` 1rem / `block` 2rem /
+    `section` 3rem; container tokens `--container-page` 52rem (the frame) and
+    `--container-column` 42rem (the prose cap). *(Originally three spacing
+    tokens + one 42rem column; `tight`, `--container-page` and `--rail` were
+    added in the 2026-09-10 ledger pass.)*
   - **All seven label-stock primitives are gone**: `axis` `hazard-rule`
     `placard` `stencil` `mark` `lot` `stamp`. The only divider is `<hr>`,
     styled once in the base layer.
@@ -473,6 +477,36 @@ present in built output — **do not move or delete it.**
   restructuring source detection for a few harmless bytes. If revisited,
   start from Tailwind's `source(none)` + explicit allow-list pattern rather
   than `@source not`.
+
+## Homepage ledger (2026-09-10, /impeccable shape → layout)
+
+- **The work list is a ledger.** The authored structural decision the
+  post-reset critique found missing. `@utility ledger-row` in `global.css`:
+  a fixed `--rail` (12rem) metadata column + a `1fr` content column, single
+  column below the 40rem breakpoint. The **status label aligning vertically
+  down every row** is the move — do not break that alignment (don't let the
+  rail width vary row to row).
+- **Two container roles.** `--container-page` (52rem) is the frame nav,
+  `<main>`, footer all align to. `--container-column` (42rem) is the prose
+  cap — used on the intro paragraph and the 404 body so a line never sets
+  wider than it reads. The old "one 42rem column" is superseded; the
+  direction contract in `BaseLayout.astro` was updated.
+- **Spacing scale is now four tokens** — `tight` (0.5rem) was added below
+  `gutter` for pairs that read as one unit (a name and its description).
+  `--text-name` (1.375rem) was added between `lede` and `title` for the
+  ledger project name.
+- **`year` is deliberately not rendered.** It's still placeholder data
+  (`2026` in all four `.mdx`). The rail shows status / client / platform
+  (`type`), all real. Add `year` to the rail when real values exist.
+- **The four `tagline` values are drafts**, adapted from `docs/PRD.md`
+  positioning and marked `# DRAFT (2026-09-10) … pending Track A3 review`
+  in each `.mdx`. A3 refines them against each project's own repo docs;
+  they are not invented facts but they are not final copy.
+- **All four projects are peer rows.** Gary's call in the shape pass.
+  `featured: true` is set on all three heroes (only Pahinga is false), so a
+  `featured`-gated size bump would have been a hero/practice tier split,
+  which contradicts "Pahinga as a full peer." Pahinga is distinguished
+  only by its honest "Practice build" rail label.
 
 ## Links and routes (2026-09-10, harden pass)
 

@@ -9,6 +9,6 @@ interface Props {
 const { projects } = Astro.props;
 ---
 
-<ul class="mt-block divide-rule flex flex-col divide-y">
+<ul class="divide-rule flex flex-col divide-y">
   {projects.map((project) => <ProjectCard project={project} />)}
 </ul>

@@ -20,8 +20,10 @@ import { z } from 'astro/zod';
 const projects = defineCollection({
   loader: glob({ pattern: '**/*.mdx', base: './src/content/projects' }),
   schema: z.object({
-    name: z.string(),
-    tagline: z.string(),
+    name: z.string().min(1),
+    // .min(1): ProjectCard renders the tagline unconditionally as the row's
+    // one-line description — an empty string would ship a blank paragraph.
+    tagline: z.string().min(1),
     year: z.number(),
     type: z.enum(['web', 'mobile']),
     // hero -> gets a /work/[slug] brief page; card -> renders only in the
