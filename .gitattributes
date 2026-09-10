@@ -1,0 +1,5 @@
+# Cloudflare Pages parses public/_headers line by line — force LF so a
+# Windows checkout (core.autocrlf=true) cannot introduce a CR into a header
+# value. CI and Cloudflare both build on Linux, but a local `wrangler pages
+# deploy ./dist` from Windows would otherwise ship CRLF.
+/public/_headers text eol=lf

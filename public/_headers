@@ -1,0 +1,12 @@
+# Cloudflare Pages response headers — https://developers.cloudflare.com/pages/configuration/headers/
+# Copied into dist/ at build time (it lives in public/). The Content-Security-
+# Policy is NOT here — Astro emits it as a <meta> tag with per-build script
+# hashes (see security.csp in astro.config.mjs). This file carries the headers
+# that must be sent as real HTTP headers.
+
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), browsing-topics=()

@@ -474,6 +474,45 @@ present in built output — **do not move or delete it.**
   start from Tailwind's `source(none)` + explicit allow-list pattern rather
   than `@source not`.
 
+## Deploy and headers (2026-09-10, Phase 3d)
+
+- **The Cloudflare Pages project is named `garyreyes`** → the free
+  subdomain is `garyreyes.pages.dev`. `site` in `astro.config.mjs` is set
+  to `https://garyreyes.pages.dev`; it becomes the custom domain at
+  ROADMAP A5 with no other code change.
+- **CSP is delivered by Astro's `security.csp`, not by `_headers`.** Astro
+  computes a per-build SHA-256 hash for its own inline script (the wordmark
+  scroll-to-top) and emits a `<meta http-equiv="content-security-policy">`.
+  The build currently emits ~8 script hashes and 2 style hashes — that is
+  Astro hashing its whole known script/style surface (React integration
+  bootstrap, an empty style block), not a sign of stray inline code. Only
+  one real inline `<script>` exists (`Nav.astro`). Verified in a headless
+  browser with CSP enforced: the script runs, zero violations.
+- **Widen the CSP per-feature, in `astro.config.mjs`:** Phase 5d adds
+  `connect-src https://api.web3forms.com`; Phase 8b adds
+  `script-src https://static.cloudflareinsights.com` and
+  `connect-src https://cloudflareinsights.com`. Do not pre-add them.
+- **`markdown.syntaxHighlight: false`** — Shiki emits inline `style=` spans
+  that the strict `style-src 'self'` blocks (Astro can't hash per-element
+  styles). Prism was the alternative but class-based colour highlighting
+  fights the achromatic direction anyway. Code blocks in project briefs
+  render as plain `<pre><code>`; style them monochrome in `global.css` when
+  4c first ships one. Re-decide only if a brief genuinely needs coloured
+  code.
+- **`frame-ancestors` is deliberately absent from the CSP** — it is ignored
+  inside a `<meta>` CSP. `X-Frame-Options: DENY` in `public/_headers`
+  carries clickjacking protection instead.
+- **`public/_headers` carries the non-CSP headers only:** `X-Frame-Options`,
+  `X-Content-Type-Options`, `Referrer-Policy`, `Strict-Transport-Security`
+  (`max-age=31536000; includeSubDomains`, no `preload`), `Permissions-Policy`.
+  **Re-check the HSTS `includeSubDomains`/`preload` decision when the custom
+  domain attaches (A5)** — the calculus is different on an apex domain.
+- **Post-deploy verification is owed once the project exists:**
+  `curl -sI https://garyreyes.pages.dev` must show all five `_headers`
+  entries, and a browser must show the `<meta>` CSP with no console
+  violations on the live site. Cloudflare Pages serving `_headers` correctly
+  is a documented contract but has not been verified live for this project.
+
 ## Testing
 
 - **No test runner is installed, deliberately** (decided 2026-08-28,

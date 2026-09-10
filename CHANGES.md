@@ -10,6 +10,45 @@ does that.
 
 ## Unreleased
 
+### 2026-09-10 — ROADMAP 3d: deploy config + security headers
+
+Prep for the first Cloudflare Pages deploy on the free `*.pages.dev`
+subdomain (the custom domain attaches later as ROADMAP A5).
+
+- **`site` set** in `astro.config.mjs` to `https://garyreyes.pages.dev` —
+  the Pages project is named `garyreyes`. This is the only place the URL
+  lives in code; it becomes the real domain at A5 with no other change.
+  Nothing consumes it yet — canonical/OG/sitemap plumbing is Phase 8a.
+- **Content-Security-Policy** via Astro's `security.csp` — Astro computes a
+  per-build SHA-256 hash for its own inline script (the wordmark
+  scroll-to-top) and emits a `<meta http-equiv="content-security-policy">`.
+  Directives are deliberately strict — `'self'` for everything, `data:` for
+  images, nothing else. Phase 5d (Web3Forms) and Phase 8b (Cloudflare
+  Analytics) each widen it by one line when those features land.
+  Verified in a headless browser with CSP enforced: inline script executes,
+  zero CSP violations, zero console errors.
+- **`public/_headers`** carries the non-CSP headers as real HTTP headers:
+  `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`,
+  `Referrer-Policy: strict-origin-when-cross-origin`,
+  `Strict-Transport-Security: max-age=31536000; includeSubDomains`,
+  `Permissions-Policy` locking camera/mic/geolocation/browsing-topics.
+  `frame-ancestors` is omitted from the CSP (ignored inside a `<meta>` tag);
+  `X-Frame-Options: DENY` covers clickjacking.
+- **`markdown.syntaxHighlight: false`** — Shiki's inline `style=` spans are
+  incompatible with the strict `style-src 'self'` (build warned about it).
+  Coloured code highlighting would fight the achromatic direction anyway;
+  briefs get plain `<pre><code>`, styled monochrome when 4c needs one.
+- Post-review fixes (reviewer agent): corrected `ARCHITECTURE.md`'s security
+  table + folder tree, which still said CSP lived in `_headers` and still
+  listed the deleted `public/fonts/`.
+- Gates: `npm run check`, `build` (now warning-free), `design:check` all clean.
+
+**Still Gary's to do (Cloudflare dashboard — CLAUDE.md confirmation gate):**
+create the `garyreyes` Pages project, connect this repo on `main`, build
+`npm run build`, output `dist`. Then confirm live:
+`curl -sI https://garyreyes.pages.dev` shows all five headers + the page
+serves. Re-check HSTS scope when the custom domain attaches.
+
 ### 2026-09-10 — Visual direction reset: the shipping-manifest world is retired
 
 Gary's call, after an affaanmustafa.com reference — "copy the elements and
