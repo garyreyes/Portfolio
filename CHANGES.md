@@ -10,6 +10,43 @@ does that.
 
 ## Unreleased
 
+### 2026-09-10 — Harden: no more links to routes that don't exist
+
+`/impeccable harden` on the homepage shell, addressing the P0 from the
+2026-09-10 critique (`.impeccable/critique/2026-09-10T00-46-13Z…`): the
+page shipped "View brief" and nav links to routes that 404
+(`/work/*`, `/services`, `/how-i-build`), with no `/404` to catch the
+fall. Not the structural redesign — that's a separate `/impeccable shape`
+pass.
+
+- **`scripts/check-links.mjs`** — new build-time gate. Scans every page in
+  `dist/` and fails on any in-site link to an unbuilt path or an
+  `#anchor` with no matching `id`. Wired into `npm run check:links`, the
+  pre-push hook (after `design:check`'s build), and CI (after build). A
+  clean build and a green `design:check` both missed the dead links —
+  neither follows one.
+- **`NAV_LINKS` trimmed to `Work` + `Contact`** (the only routes that
+  resolve today). `Services` (5b) and `How I build` (5c) are one-line
+  re-adds when their pages ship.
+- **`WORK_BRIEFS_LIVE = false`** in `src/lib/site.ts` — `ProjectCard`
+  renders no "View brief" link while `/work/[slug]` (4c) doesn't exist,
+  the same discipline it already applies to a missing `liveUrl`. Flip to
+  `true` in the change that adds the route.
+- **`src/pages/404.astro`** — designed 404 pulled forward from 5d. "Page
+  not found" + one plain action back to the work. Astro builds it to
+  `dist/404.html`; Cloudflare Pages serves it for any unmatched path.
+- **Rest-state underlines** on the card action links and footer socials —
+  on touch they never looked like links (`hover:underline` only). Card
+  links also get `hover:decoration-2` for feedback.
+- **`ProjectCard` stack line** was missing a size token, rendering at 16px
+  between its 13px siblings — looked like a bug. Now `text-meta`.
+- Post-review (reviewer agent): `check:links` now runs `astro build` itself
+  (a manual run can't check a stale `dist/`); it also scans `src`, not just
+  `href`, so a mistyped screenshot path (Track A2) can't 404 silently;
+  relative internal refs are reported (constraint noted in `PROJECT_FACTS.md`
+  for `.mdx` authoring); footer + card link hover treatments aligned.
+- Gates: `check`, `design:check`, `check:links`, `build` all clean.
+
 ### 2026-09-10 — ROADMAP 3d: deploy config + security headers
 
 Prep for the first Cloudflare Pages deploy on the free `*.pages.dev`

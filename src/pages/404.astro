@@ -1,0 +1,25 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+/**
+ * Designed 404 (ROADMAP 5d, pulled forward — the homepage links to routes
+ * that don't exist yet, and the 2026-09-10 critique flagged a fall with no
+ * catch as a P0). Astro builds this to dist/404.html; Cloudflare Pages
+ * serves it for any unmatched path automatically.
+ *
+ * One obvious action: back to the work. The nav wordmark is a second way
+ * home, from BaseLayout.
+ */
+---
+
+<BaseLayout title="Page not found — Gary Reyes" description="That page doesn't exist.">
+  <div class="py-section">
+    <h1 class="text-title">Page not found</h1>
+    <p class="text-lede text-ink-muted mt-gutter">That page doesn't exist. The work is this way.</p>
+    <p class="mt-block">
+      <a href="/#work" class="text-meta text-ink underline underline-offset-4 hover:decoration-2">
+        See the work
+      </a>
+    </p>
+  </div>
+</BaseLayout>

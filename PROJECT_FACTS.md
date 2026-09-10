@@ -474,6 +474,29 @@ present in built output — **do not move or delete it.**
   start from Tailwind's `source(none)` + explicit allow-list pattern rather
   than `@source not`.
 
+## Links and routes (2026-09-10, harden pass)
+
+- **Never ship an internal link to a route that isn't built.**
+  `scripts/check-links.mjs` (`npm run check:links`, in pre-push + CI) fails
+  the build on any in-site `href`/`src` to an unbuilt path or a dead
+  `#anchor`. It caught the homepage shipping "View brief" → `/work/*` and
+  nav → `/services` / `/how-i-build`, all 404 — a P0 in the post-reset
+  critique that a green build and `design:check` both missed. `check:links`
+  runs `astro build` itself, so a manual run never checks a stale `dist/`.
+- **Internal `href`/`src` must be root-absolute** (`/work/x`,
+  `/screenshots/y.png`) — `check-links.mjs` reports a relative ref
+  (`../foo`) rather than resolving it. This is a constraint on `.mdx` brief
+  authoring (Phase 4c): write `[repo](/work/...)`, not `[repo](../...)`.
+- **Two gates in `src/lib/site.ts`:** `NAV_LINKS` holds only routes that
+  resolve today (trimmed to Work + Contact — re-add Services at 5b, How I
+  build at 5c); `WORK_BRIEFS_LIVE` (bool) gates every "View brief" link and
+  flips to `true` in the same change that adds `src/pages/work/[slug].astro`
+  (4c). This mirrors `ProjectCard`'s existing "no dead `liveUrl` affordance"
+  rule.
+- **`/404` shipped early** (`src/pages/404.astro`, pulled from 5d). Astro
+  builds it to `dist/404.html`; Cloudflare Pages serves it for any
+  unmatched path with no config.
+
 ## Deploy and headers (2026-09-10, Phase 3d)
 
 - **The Cloudflare Pages project is named `garyreyes`** → the free

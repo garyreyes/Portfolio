@@ -16,17 +16,24 @@ export const SOCIALS = [
 ] as const;
 
 /**
- * AMENDED 2026-09-10: replaces WORK_ITEMS/MENU_LINKS, which fed the
- * full-screen menu docket (Phase 3c) — retired in favor of plain,
- * always-visible nav links (Gary's call, after an affaanmustafa.com
- * reference). Real, final hrefs — not placeholders. `/services` and
- * `/how-i-build` don't exist yet, so those two 404 until they're built;
- * expected mid-build, same precedent as every other forward-referencing
- * link in this project. `/#work` and Contact work today.
+ * Persistent nav links. Only routes that actually resolve today —
+ * `scripts/check-links.mjs` fails the build on any internal link that
+ * 404s, and the 2026-09-10 critique flagged shipping dead nav items to a
+ * skeptical audience as a P0.
+ *
+ * Add back as each route ships: `{ label: 'Services', href: '/services' }`
+ * (ROADMAP 5b) and `{ label: 'How I build', href: '/how-i-build' }`
+ * (ROADMAP 5c). Both are one-line re-adds here once the page exists.
  */
 export const NAV_LINKS = [
   { label: 'Work', href: '/#work' },
-  { label: 'Services', href: '/services' },
-  { label: 'How I build', href: '/how-i-build' },
   { label: 'Contact', href: '/#site-footer' },
 ] as const;
+
+/**
+ * Whether the `/work/[slug]` brief pages exist (ROADMAP 4c). While false,
+ * ProjectCard renders no "View brief" link — the same discipline it
+ * already applies to a missing `liveUrl`. Flip to `true` in the same
+ * change that adds `src/pages/work/[slug].astro`.
+ */
+export const WORK_BRIEFS_LIVE = false;

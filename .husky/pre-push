@@ -1,5 +1,7 @@
 # Full gate suite before anything leaves the machine.
 # design:check builds first, so it lives here rather than in pre-commit
 # where a full build on every commit would be too slow to tolerate.
+# check:links runs last — it reads the dist/ that design:check just built.
 npm run check
 npm run design:check
+npm run check:links

@@ -121,7 +121,7 @@ not density. Phase 5a no longer inherits anything here.
 | 5a | **Homepage.** Intro leads (`<h1>` name + tagline sentence — the interim version of this already ships in `index.astro`), then the work list, then the about/IE section. One obvious primary action: open the work. The density obligation that used to sit here is void (see the Phase 3 close note — direction reset 2026-09-10). | in progress |
 | 5b | **`/services`** — standalone business-owner page. Must read correctly as the only page seen. Pahinga and Saffron as the proof. May say *available for freelance*; must **not** imply *trusted by businesses*. | not started |
 | 5c | **`/how-i-build`** — the harness, skills, MCP setup, CI gates, planning docs. Honest, not a sales pitch. | not started |
-| 5d | **Contact form + `/404` + footer stat block.** Web3Forms in the sitewide footer: idle, submitting, inline success swap, visible failure with `mailto:` fallback, honeypot. Designed 404 with a route back to the homepage work section. Static spec-sheet stat block (projects shipped, live in production, real client work, peak commit day) from a hand-maintained `src/lib/stats.ts` — no API call. | not started |
+| 5d | **Contact form + ~~`/404`~~ + footer stat block.** Web3Forms in the sitewide footer: idle, submitting, inline success swap, visible failure with `mailto:` fallback, honeypot. ~~Designed 404~~ — **done 2026-09-10**, pulled forward in the `/impeccable harden` pass (`src/pages/404.astro`) because the homepage was shipping links to unbuilt routes. Static spec-sheet stat block (projects shipped, live in production, real client work, peak commit day) from a hand-maintained `src/lib/stats.ts` — no API call. | not started |
 
 **Phase 5 close:** `/impeccable critique` + `polish` across all surfaces.
 
@@ -208,6 +208,18 @@ cover image and add gallery shots later.
   related screens together rather than one sub-phase in isolation.
 - **Phase 8d:** full-app polish, finish review, `DESIGN.md`.
 
+**Post-reset critique — 2026-09-10.** `/impeccable critique` on the
+plain-text homepage scored **21/32** (down from the manifest shell's
+26/32, judging a different world). Core finding: *landed in the "minimal
+dev portfolio" cluster with no authored design move yet.* Gary's call:
+make one deliberate structural move now (asymmetric / two-column layout,
+flagship breaking the grid) rather than wait for Phase 6 to carry it.
+Follow-up queue: `harden` (**done** — dead-link gate, `/404`, tap/link
+fixes) → `/impeccable shape` (structure) → `layout` → `polish` →
+re-`critique`. `clarify` (plain-language project one-liners) is queued
+but blocked on Track A3. Report:
+`.impeccable/critique/2026-09-10T00-46-13Z__src-pages-index-astro.md`.
+
 **Token-risk check — clear.** Phase 3a defines the visual tokens and no
 later phase redefines them, so nothing is polished against a provisional
 look and no re-polish item is required. This holds only because the
@@ -221,8 +233,10 @@ been left to emerge.
 **Track A:** **A2 and A3** — they gate Phase 6 and are the real schedule
 risk. A1 (the domain) is no longer urgent: it blocks no build work and can
 be bought any time before the site goes on an application.
-**Track B:** `feature-planner` on **4c — `/work/[slug]` brief template**
-(the 3 hero pages). Phase 3 is complete on the repo side — 3d's only
-remaining piece is Gary creating the `garyreyes` Cloudflare Pages project
-and a live header check. The 2026-09-10 direction reset's deferred
+**Track B:** `/impeccable shape` on the homepage structure (the authored
+move the post-reset critique called for), then `layout` to build it. Then
+**4c — `/work/[slug]` brief template**. Phase 3 is complete on the repo
+side — 3d's only remaining piece is Gary creating the `garyreyes`
+Cloudflare Pages project and a live header check. The 2026-09-10 direction
+reset's deferred
 `/impeccable critique` + `polish` rolls into the Phase 4 close cadence.
