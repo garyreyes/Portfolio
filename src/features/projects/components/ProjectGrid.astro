@@ -9,10 +9,6 @@ interface Props {
 const { projects } = Astro.props;
 ---
 
-<ul class="mt-gutter gap-gutter grid sm:grid-cols-2">
-  {
-    projects.map((project, index) => (
-      <ProjectCard project={project} lot={String(index + 1).padStart(2, '0')} />
-    ))
-  }
+<ul class="mt-block divide-rule flex flex-col divide-y">
+  {projects.map((project) => <ProjectCard project={project} />)}
 </ul>

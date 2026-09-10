@@ -10,6 +10,54 @@ does that.
 
 ## Unreleased
 
+### 2026-09-10 — Visual direction reset: the shipping-manifest world is retired
+
+Gary's call, after an affaanmustafa.com reference — "copy the elements and
+font of this since it looks so nonchalant and minimalist," plus two named
+eyesores (the hazard-band dividers, and a giant "GARY REYES" stacked above
+the tagline while the nav already carries the wordmark). This is the fourth
+and terminal walk-back of the assigned direction (seed `d4e5136b`): orange
+accent → full-screen menu → hazard bars → the rest. Recorded honestly as a
+direction change, not folded into a polish note. Full reasoning:
+`PROJECT_FACTS.md` "Visual direction — reset 2026-09-10".
+
+Not a clone of the reference — the same *family* of choices, fitted to this
+content: system UI font, near-black ink on off-white, one ~42rem reading
+column, 1px `<hr>` rules and whitespace between sections, no ornament.
+
+- **`global.css` rewritten.** Four achromatic colour tokens
+  (`page`/`ink`/`ink-muted`/`rule`), a four-step type scale
+  (`meta`/`body`/`lede`/`title`), three spacing tokens
+  (`gutter`/`block`/`section`), one `max-w-column`. All seven label-stock
+  primitives removed (`axis` `hazard-rule` `placard` `stencil` `mark` `lot`
+  `stamp`). `<hr>` styled once in the base layer as the only divider.
+- **Web fonts dropped entirely.** `public/fonts/` (Archivo, Archivo Narrow,
+  Space Mono — 63 KB + `@font-face` + three `<head>` preloads) deleted.
+  `--font-sans` is now the platform UI stack; first paint waits on no font.
+  Simplifies the Phase 3d CSP (no font origin needed).
+- **The direction contract in `BaseLayout.astro` rewritten** to describe the
+  plain world. Still the first child of `<body>`, still verified in `dist/`.
+- **Nav / Footer / SkipLink / index / ProjectGrid / ProjectCard** restyled
+  to the new tokens. The work section is now a single-column list with
+  hairline dividers, not a two-column placard grid; lot numbers dropped.
+  The honest-status logic (status word and link decided independently, no
+  dead "Live" affordance) is unchanged — it was real logic, not decoration.
+- **Hero fixed (option A):** `<h1>` "Gary Reyes" at `text-title` (~1.75rem,
+  no longer a 5.5rem clamp), the tagline sentence directly under it.
+- **Skip link tuck fixed** — `-translate-y-16` left a ~3px sliver of the ink
+  fill below the top edge (4rem doesn't clear the 1rem offset plus the
+  link's height); now `-translate-y-20`. Pre-existing since 3b, newly
+  visible on a clean page. `:focus` reveal verified against the built CSS.
+- Gates: `npm run check` clean, `npm run build` clean, `npm run design:check`
+  clean (0 findings). Overflow measured clean (`scrollWidth == clientWidth`)
+  at 320/360/375/390/414/480/768/1280 via CDP — the CLI `--screenshot` flag
+  misrendered mobile as overflowing, exactly the known bug `PROJECT_FACTS.md`
+  documents.
+
+Deferred to the Phase 3 close design cadence (`/impeccable critique` +
+`polish`): the orphaned-looking "Work" heading spacing, and whether the
+desktop column should left-align rather than centre.
+
 ### 2026-09-10 — Layout polish: margins, mobile nav, long stacks, overflow
 
 Direct feedback against the just-shipped plain nav, checked with real
