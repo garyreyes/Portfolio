@@ -19,10 +19,13 @@
    PROJECT_FACTS.md "Visual direction — reset 2026-09-10", and the direction
    contract at the top of <body> in src/layouts/BaseLayout.astro.
 
-   The world now: a system font, near-black ink on off-white, one ~42rem
-   reading column, hairline <hr> rules and whitespace between sections, no
-   ornament and no accent colour. Components read these tokens — never a raw
-   hex, a raw px size, or a one-off margin (CLAUDE.md, "Design and
+   The world now: a system font, near-black ink on off-white; a ~52rem page
+   frame every landmark aligns to (--container-page) with prose capped
+   narrower (--container-column, ~42rem); hairline <hr> rules and whitespace
+   between sections; no ornament and no accent colour. The homepage work
+   list is a two-column ledger (see the LEDGER block below and
+   PROJECT_FACTS.md "Homepage ledger"). Components read these tokens — never
+   a raw hex, a raw px size, or a one-off margin (CLAUDE.md, "Design and
    accessibility floor").
    ========================================================================== */
 
@@ -46,9 +49,10 @@
      -------------------------------------------------------------------- */
   --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 
-  /* Scale. Four steps, deliberately uneven — a geometric ramp reads as
-     generated. --text-meta is small print (status, stack, dates, nav);
-     --text-title is the only genuinely large size and appears once per page. */
+  /* Scale. Five steps, deliberately uneven — a geometric ramp reads as
+     generated. --text-meta is small print (status, stack, nav, the ledger
+     rail); --text-name is the work-ledger project name; --text-title is the
+     one genuinely large size and appears once per page (the intro). */
   --text-meta: 0.8125rem;
   --text-meta--line-height: 1.5;
 
@@ -58,19 +62,33 @@
   --text-lede: 1.1875rem;
   --text-lede--line-height: 1.6;
 
+  --text-name: 1.375rem;
+  --text-name--line-height: 1.25;
+  --text-name--letter-spacing: -0.01em;
+
   --text-title: 1.75rem;
   --text-title--line-height: 1.2;
   --text-title--letter-spacing: -0.01em;
 
-  /* --- Measure: three spacing tokens -----------------------------------
+  /* --- Measure: four spacing tokens -----------------------------------
+     tight — a pair that reads as one unit (a name and its description).
      gutter — within a component. block — list-row rhythm, gaps between
      related blocks. section — between major page sections, the <hr> margin.
      -------------------------------------------------------------------- */
+  --spacing-tight: 0.5rem;
   --spacing-gutter: 1rem;
   --spacing-block: 2rem;
   --spacing-section: 3rem;
 
+  /* Two container roles. --container-page is the frame every landmark (nav,
+     main, footer) aligns to. --container-column is the narrower cap for
+     running prose so a paragraph never sets wider than it reads well. The
+     work ledger fills the page frame; the intro paragraph stays at column. */
+  --container-page: 52rem;
   --container-column: 42rem;
+
+  /* The work ledger's fixed metadata rail. */
+  --rail: 12rem;
 
   /* Motion is feedback only, and short. No bounce, no spring. */
   --ease-out: cubic-bezier(0.2, 0, 0, 1);
@@ -95,6 +113,17 @@
        makes CLAUDE.md's "no horizontal scroll at any width" pass vacuously.
        Overflow is verified by measuring scrollWidth == clientWidth instead. */
     -webkit-text-size-adjust: 100%;
+    /* Anchor jumps (#work, #site-footer) clear the sticky Nav instead of
+       landing under it. The Nav wraps taller below sm, so the offset is
+       larger there. (Whether the Nav should stay sticky on mobile at all is
+       a polish/adapt question — see PROJECT_FACTS.md "Homepage ledger".) */
+    scroll-padding-top: 11rem;
+  }
+
+  @media (width >= 40rem) {
+    html {
+      scroll-padding-top: 5rem;
+    }
   }
 
   body {
@@ -142,5 +171,29 @@
       transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
     }
+  }
+}
+
+/* ==========================================================================
+   THE WORK LEDGER
+
+   One structural utility, not a component style. Each project row is a grid:
+   a fixed metadata rail (status / client / platform), then the content
+   column (name, description, stack, link). The rail width is constant down
+   the whole list, so the status label lines up vertically row to row — that
+   alignment IS the authored move (see PROJECT_FACTS.md "Homepage ledger").
+
+   Below the 40rem breakpoint (where the rest of the layout also collapses)
+   it is a single column and the rail facts render as an inline row above
+   the name.
+   ========================================================================== */
+
+@utility ledger-row {
+  display: grid;
+  align-items: start;
+  gap: var(--spacing-gutter) var(--spacing-block);
+
+  @media (width >= 40rem) {
+    grid-template-columns: var(--rail) 1fr;
   }
 }

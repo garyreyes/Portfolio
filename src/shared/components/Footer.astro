@@ -12,16 +12,17 @@ import { SOCIALS } from '../../lib/site';
  */
 ---
 
-<footer id="site-footer" class="px-gutter max-w-column mx-auto">
+<footer id="site-footer" class="px-gutter max-w-page mx-auto">
   <hr class="mt-section" />
   <div class="py-block gap-gutter flex flex-wrap items-center justify-between">
     <ul class="gap-block flex">
       {
+        /* py-tight lifts the inline hit target to ~35px (WCAG 2.5.8). */
         SOCIALS.map((social) => (
           <li>
             <a
               href={social.href}
-              class="text-meta text-ink-muted hover:text-ink underline underline-offset-4 hover:decoration-2"
+              class="text-meta text-ink-muted hover:text-ink py-tight underline underline-offset-4 hover:decoration-2"
               target={social.href.startsWith('http') ? '_blank' : undefined}
               rel={social.href.startsWith('http') ? 'noopener noreferrer' : undefined}
             >

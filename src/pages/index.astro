@@ -5,9 +5,9 @@ import { getOrderedProjects } from '../features/projects/queries';
 import ProjectGrid from '../features/projects/components/ProjectGrid.astro';
 
 /**
- * Interim homepage — the hero intro and the work list. Phase 5a adds the
+ * Interim homepage — the intro and the work ledger. Phase 5a adds the
  * about / Industrial Engineering section and finalizes the copy. The intro
- * sentence here is real (docs/PRD.md positioning), not placeholder text.
+ * sentence is real (docs/PRD.md positioning), not placeholder text.
  */
 
 const projects = await getOrderedProjects();
@@ -17,16 +17,16 @@ const projects = await getOrderedProjects();
   <div class="py-section">
     <header>
       <h1 class="text-title">Gary Reyes</h1>
-      <p class="text-lede text-ink-muted mt-gutter">
+      <p class="text-lede text-ink-muted max-w-column mt-gutter">
         Third-year Industrial Engineering student at De La Salle University. I ship production
         software.
       </p>
     </header>
 
-    <hr class="my-section" />
+    <hr class="mt-section mb-block" />
 
     <section id="work">
-      <h2 class="text-meta text-ink-muted">Work</h2>
+      <h2 class="sr-only">Selected work</h2>
       <ProjectGrid projects={projects} />
     </section>
   </div>

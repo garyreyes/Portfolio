@@ -10,6 +10,43 @@ does that.
 
 ## Unreleased
 
+### 2026-09-10 — Homepage ledger (/impeccable shape → layout)
+
+The authored structural move the 2026-09-10 critique said was missing. The
+work list is now a **ledger**, not a single-column feed or a card grid:
+
+- **Two-column row** (`@utility ledger-row`, `global.css`): a fixed ~12rem
+  metadata rail (status / client / platform) on the left, the content
+  column (name, one-line description, stack, link) on the right. The rail
+  width is constant, so the **status label aligns vertically down the
+  whole list** — a founder's eye reads `Android APK / Live / Live / Live`
+  in one movement. That alignment is the point.
+- Below `sm` it collapses to one column with the rail facts as an inline
+  `·`-separated row above the name.
+- **Page frame widened** to `--container-page` 52rem (was one 42rem
+  column); nav, main, footer all align to it. Running prose caps narrower
+  at `--container-column` 42rem (the intro paragraph).
+- **Project name** is a real `<h3>` at the new `--text-name` (1.375rem)
+  step, not a `<p>`. Description renders in full ink at body size — the
+  readable payload — tight to the name (`--spacing-tight`, new). Stack
+  demoted to `text-meta`.
+- **"Work" heading** → `sr-only`. It read as an orphan; the ledger is
+  self-evidently the work.
+- **Real one-line descriptions** drafted into the four `.mdx` `tagline`
+  fields from `docs/PRD.md` positioning, each marked `# DRAFT … pending
+  Track A3 review`. `year` stays unrendered (still placeholder data).
+- All four projects stay peer rows (Gary's call); Pahinga is labelled
+  "Practice build" in the rail, no size demotion. `featured` is set on all
+  three heroes, so a featured-only emphasis would have meant a tier split
+  that contradicts that — went uniform.
+- Tap targets: `py-1` pad on card / nav / footer links → ~28px hit height,
+  clearing WCAG 2.5.8, without changing visible type size.
+- Gates: `check`, `check:links`, `design:check` (0 findings), `build` all
+  clean; no horizontal overflow 320–1280px.
+
+Hands off to `/impeccable polish` for spacing refinement (the rail reads
+airy on tall rows; the intro→ledger gap).
+
 ### 2026-09-10 — Harden: no more links to routes that don't exist
 
 `/impeccable harden` on the homepage shell, addressing the P0 from the

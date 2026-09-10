@@ -14,9 +14,10 @@ import Footer from '../shared/components/Footer.astro';
  * renders nothing, so SkipLink is still the first real element for keyboard
  * and screen-reader users despite following it in source.
  *
- * <main> owns the reading column (mx-auto max-w-column px-gutter), not each
- * page. Nav and Footer apply the same column width and gutter so all three
- * landmarks share one measure on every route.
+ * <main> owns the page frame (mx-auto max-w-page px-gutter), not each page.
+ * Nav and Footer apply the same width and gutter so all three landmarks
+ * share one left edge on every route. Running prose inside caps itself
+ * narrower with max-w-column (see index.astro's intro).
  */
 interface Props {
   title: string;
@@ -47,14 +48,16 @@ const { title, description } = Astro.props;
     weight; the design gets out of its way. No metaphor, no ornament.
 
     WORLD: The platform's own UI font, no web fonts. Near-black ink (#171717)
-    on off-white (#fbfbfb). One ~42rem reading column, left-aligned. Sections
-    divided by a 1px hairline rule and whitespace, nothing heavier. No accent
-    colour. Single light mode.
+    on off-white (#fbfbfb). A ~52rem page frame every landmark aligns to,
+    left-aligned; running prose caps narrower (~42rem). Sections divided by a
+    1px hairline rule and whitespace, nothing heavier. No accent colour.
+    Single light mode.
 
     FIRST VIEWPORT: Name as a modest h1, then one plain sentence — "Third-year
     Industrial Engineering student at De La Salle University. I ship
-    production software." — then the work list begins. Primary action: open
-    the first project.
+    production software." — then the work ledger begins: each project a row
+    with a fixed metadata rail (status / client / platform) whose status
+    label aligns down the whole list. Primary action: open the first project.
 
     STORY: A founder reads two sentences, sees four real things shipped with
     live links and browsable code, and opens a brief.
@@ -64,7 +67,7 @@ const { title, description } = Astro.props;
     -->
     <SkipLink />
     <Nav />
-    <main id="main-content" class="px-gutter max-w-column mx-auto">
+    <main id="main-content" class="px-gutter max-w-page mx-auto">
       <slot />
     </main>
     <Footer />

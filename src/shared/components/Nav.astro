@@ -14,7 +14,7 @@ import { SITE, NAV_LINKS } from '../../lib/site';
  */
 ---
 
-<header class="bg-page px-gutter max-w-column sticky top-0 z-40 mx-auto">
+<header class="bg-page px-gutter max-w-page sticky top-0 z-40 mx-auto">
   <div
     class="py-gutter gap-gutter flex flex-col items-start sm:flex-row sm:items-center sm:justify-between"
   >
@@ -24,8 +24,13 @@ import { SITE, NAV_LINKS } from '../../lib/site';
       aria-label="Site"
     >
       {
+        /* py-tight lifts the hit target to ~35px (WCAG 2.5.8). No negative
+           margin here — below sm the links stack and it would eat the gap. */
         NAV_LINKS.map((link) => (
-          <a href={link.href} class="text-meta text-ink-muted hover:text-ink hover:underline">
+          <a
+            href={link.href}
+            class="text-meta text-ink-muted hover:text-ink py-tight hover:underline"
+          >
             {link.label}
           </a>
         ))
