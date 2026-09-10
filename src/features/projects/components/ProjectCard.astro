@@ -1,5 +1,6 @@
 ---
 import type { Project } from '../queries';
+import { STATUS_LABEL, CLIENT_LABEL, PLATFORM_LABEL, LINK_LABEL } from '../../../shared/projects';
 import { WORK_BRIEFS_LIVE } from '../../../lib/site';
 
 interface Props {
@@ -12,36 +13,16 @@ const { data, id: slug } = project;
 /**
  * One row of the work ledger: a metadata rail, then the content column.
  *
- * Honest status labels (docs/PRD.md §10, ARCHITECTURE.md "Project" table):
- * the STATUS WORD and the ACTUAL LINK are two separate decisions. The label
- * always shows the real status. The link only ever points at something that
+ * Honest status labels (docs/PRD.md §10): the STATUS WORD and the ACTUAL
+ * LINK are two separate decisions. The label always shows the real status
+ * (from shared/projects.ts). The link only ever points at something that
  * actually exists — never a "Live" affordance with nowhere to go (Cornerman
  * has no liveUrl; this must not render one anyway).
  */
-const STATUS_LABEL: Record<typeof data.status, string> = {
-  live: 'Live',
-  'android-apk': 'Android APK',
-  archived: 'Archived',
-};
-
-// "Real client (unpaid)" stays on the card, not just in internal docs — the
-// binding honesty constraint (PROJECT_FACTS.md) is that this site may say
-// available for freelance but must never imply trusted by businesses.
-const CLIENT_LABEL: Record<typeof data.client, string> = {
-  self: 'Self-directed',
-  'real-client': 'Real client (unpaid)',
-  practice: 'Practice build',
-};
-
-const PLATFORM_LABEL: Record<typeof data.type, string> = {
-  web: 'Web',
-  mobile: 'Mobile',
-};
-
 const link = data.liveUrl
-  ? { href: data.liveUrl, label: 'Live site' }
+  ? { href: data.liveUrl, label: LINK_LABEL.live }
   : data.repoUrl
-    ? { href: data.repoUrl, label: 'View repo' }
+    ? { href: data.repoUrl, label: LINK_LABEL.repo }
     : null;
 ---
 

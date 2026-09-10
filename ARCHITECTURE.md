@@ -88,7 +88,8 @@ is the brief (hero tier) or is unused (card tier).
 
 ```
 Project  1───1  brief body   →  the .mdx file's Markdown content (hero only)
-Project  1───*  screenshot    →  media.gallery, string paths under public/
+Project  1───*  screenshot    →  media.gallery, { src, alt, width, height }
+                                 objects (src = root-absolute path under public/)
 Project  *───*  TechTag       →  stack[]; promote to a real relation only if
                                  work-section filtering is built (PRD Could-have)
 ```
@@ -106,7 +107,7 @@ Project  *───*  TechTag       →  stack[]; promote to a real relation onl
 | `stack`    | string[]                                | required, non-empty                                                                                       |
 | `liveUrl`  | string (url)                            | optional — Cornerman has none                                                                             |
 | `repoUrl`  | string (url)                            | optional                                                                                                  |
-| `media`    | `{ cover: string, gallery?: string[] }` | **required** — `cover` for the work section and OG; `gallery` (screenshots) shown on a hero brief page    |
+| `media`    | `{ cover: string, gallery?: { src, alt, width, height }[] }` | **required** — `cover` for the work section and OG; `gallery` (screenshots) shown on a hero brief page. Gallery entries carry their own dimensions + alt so the a11y floor (explicit width/height, real alt) is enforced at build. Amended 2026-09-10 (4c) from `string[]`. |
 | `order`    | number                                  | required — controls work-section sequence                                                                 |
 | `featured` | boolean                                 | default `false`                                                                                           |
 
@@ -190,17 +191,20 @@ portfolio/
 │  │  │  ├─ components/           # ProjectCard.astro, ProjectGrid.astro, HoverPreview.tsx
 │  │  │  └─ queries.ts            # getCollection wrappers, sorting, hero/card split
 │  │  ├─ brief/
-│  │  │  ├─ components/           # ScreenshotGallery.astro, StatusBadge.astro, BriefHeader.astro
-│  │  │  └─ queries.ts            # single-project lookup, prev/next (heroes only)
+│  │  │  ├─ components/           # BriefHeader.astro, ScreenshotGallery.astro, BriefNav.astro
+│  │  │  └─ queries.ts            # hero-brief list + bounded prev/next (heroes only)
 │  │  └─ contact/
 │  │     ├─ components/           # ContactForm.tsx  (React island)
 │  │     └─ service.ts            # Web3Forms submit — THE ONLY OUTBOUND CALL IN THE APP
 │  ├─ shared/
-│  │  ├─ components/              # Nav, Footer, StatBlock.astro, Prose, Button, SkipLink
+│  │  ├─ components/              # Nav, Footer, StatBlock.astro, Button, SkipLink
+│  │  │                           #   (MDX body copy is styled by `.prose` in global.css, not a component)
+│  │  ├─ projects.ts              # Project type + enum/link labels (used by projects + brief)
 │  │  └─ utils/
 │  ├─ layouts/
 │  │  ├─ BaseLayout.astro         # <head>, SEO/OG, skip link
-│  │  └─ BriefLayout.astro
+│  │  └─ BriefLayout.astro        # NOT YET BUILT — /work/[slug] uses BaseLayout directly;
+│  │                              #   deferred to Phase 8a when it gains per-brief OG tags
 │  ├─ lib/
 │  │  ├─ seo.ts                   # OG/meta builder
 │  │  ├─ site.ts                  # site constants (name, url, socials)

@@ -108,7 +108,7 @@ not density. Phase 5a no longer inherits anything here.
 | --- | --- | --- |
 | 4a | **done 2026-09-09.** Content collection schema. `src/content.config.ts` (not `src/content/config.ts` — the installed Astro version requires the sibling location) Zod schema for the `Project` entity (`tier`, `media: { cover, gallery? }`, `status`, `client`, `stack[]`, …), all four real project entries, plus proof the build fails correctly when a required field is missing (verified live, not asserted). | **done** |
 | 4b | **done 2026-09-09 (static grid only).** Work section renders on the homepage at `/#work` (the id/anchor mismatch this depended on is now fixed) — the placard grid reads real content-collection data, honest status labels (stamp text and the actual link are computed independently, so a `live` project with no recorded URL yet shows a true "Live" stamp beside an honest "View repo" link, never a dead affordance). **Hover-preview React island deliberately deferred** — a confirmed Should-have with no real screenshots to preview yet (Track A2); ROADMAP's own pre-committed cut list already names "static placard cards" as this exact fallback. `/work` redirect still owed to 4c, which is where `/work/[slug]` starts existing. | **done** |
-| 4c | **`/work/[slug]` brief template** (3 hero pages) — placard header, stamped `status`, consignee line from `client`, contents manifest from `stack[]`, screenshot gallery (`loading="lazy"`, reserved dimensions, alt text), prev/next. | not started |
+| 4c | **done 2026-09-10 (template only).** `/work/[slug]` generates 3 hero pages (`getStaticPaths` filters `tier: 'hero'`; Pahinga gets none). `BriefHeader` (name, one line, status/client/platform, stack, every real link), `ScreenshotGallery` (renders nothing until a `media.gallery` exists — a11y-enforced `{src,alt,width,height}` schema), `BriefNav` (bounded prev/next, SR-labelled). `.prose` styles added for the MDX body; `/work` → `/#work` redirect. **`WORK_BRIEFS_LIVE` stays `false`** — the bodies are still "Brief pending" and there are no screenshots, so the homepage does not link here until Phase 6 fills both. Gates + CDP overflow + `reviewer` all clean. | **done** |
 
 **Phase 4 close:** `/impeccable critique` + `polish` across the work surfaces.
 
@@ -236,10 +236,14 @@ been left to emerge.
 **Track A:** **A2 and A3** — they gate Phase 6 and are the real schedule
 risk. A1 (the domain) is no longer urgent: it blocks no build work and can
 be bought any time before the site goes on an application.
-**Track B:** `/impeccable shape` on the homepage structure (the authored
-move the post-reset critique called for), then `layout` to build it. Then
-**4c — `/work/[slug]` brief template**. Phase 3 is complete on the repo
-side — 3d's only remaining piece is Gary creating the `garyreyes`
-Cloudflare Pages project and a live header check. The 2026-09-10 direction
-reset's deferred
-`/impeccable critique` + `polish` rolls into the Phase 4 close cadence.
+**Track B:** homepage `shape` → `layout` (done — the ledger) and **4c —
+`/work/[slug]` brief template** (done 2026-09-10, template only) are both
+in. Next: `/impeccable polish` on the homepage ledger (spacing
+refinement) → re-`critique`, then the Phase 4 close cadence
+(`/impeccable critique` + `polish` across the work surfaces, which also
+absorbs the 2026-09-10 reset's deferred pass). **Phase 6 (6a/6b)** then
+fills the brief bodies + screenshots and flips `WORK_BRIEFS_LIVE` — it is
+blocked on **Track A2 + A3** (Gary's screenshots and brief notes), the
+real schedule risk. Phase 3 is complete on the repo side — 3d's only
+remaining piece is Gary creating the `garyreyes` Cloudflare Pages project
+and a live header check.

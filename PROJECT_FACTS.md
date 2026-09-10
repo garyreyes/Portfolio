@@ -335,13 +335,46 @@ present in built output — **do not move or delete it.**
   reading the CSS alone. The JS-active `position:fixed` state needs its own
   inset since fixed positioning escapes the header's padding entirely.
 
+## Brief pages (2026-09-10, Phase 4c)
+
+- **The `/work/[slug]` pages exist but the homepage does not link to
+  them.** `WORK_BRIEFS_LIVE` in `src/lib/site.ts` stays `false` until
+  Phase 6 writes the real brief bodies and adds screenshots — a "View
+  brief" link to a "Brief pending — Track A3" stub is worse than no link
+  for the skeptical hiring audience. Flip the flag in the 6a/6b change,
+  not before. Nothing links to the pages while it is false, but they
+  still build and deploy.
+- **`src/shared/projects.ts` is the home for the `Project` type and all
+  label maps** (status/client/platform + `LINK_LABEL`). Both
+  `features/projects` and `features/brief` import from here — do not
+  re-add a per-feature `labels.ts`. `features/*/queries.ts` re-export the
+  `Project` type for their existing importers.
+- **Prev/next between briefs is bounded, not cyclic** — ordered by
+  `Project.order`, the first hero has no prev and the last no next.
+  Deliberate: three briefs are a short ordered list, not a carousel.
+- **`media.gallery` is `{ src, alt, width, height }[]`, not `string[]`**
+  (schema change this phase). The a11y floor requires explicit
+  dimensions + real alt on every screenshot; a bare path can't carry
+  them, so it is enforced by Zod at build. `ScreenshotGallery` renders
+  nothing at all while `gallery` is absent (all three heroes today) —
+  Phase 6 adds the arrays.
+- **No `BriefLayout.astro`** — `[slug].astro` uses `BaseLayout` directly.
+  `ARCHITECTURE.md` names one; it is deferred to Phase 8a, when per-brief
+  OG tags give it a real job. An empty pass-through now would be the
+  premature structure the project otherwise avoids.
+- **`.prose` (in `global.css`) styles all rendered MDX bodies** — briefs
+  now, `/services` and `/how-i-build` later. `overflow-wrap: break-word`
+  is load-bearing: authored prose carries URLs and slash-joined paths
+  with no break point (a real 320px overflow was caught here). `<pre>`
+  block styling is still deferred — no brief body has a code block yet.
+
 ## Work section (2026-09-09, Phase 4b)
 
 - **UFC Scouting and Saffron are missing real `liveUrl` values** — both
   are genuinely `status: live` (a real, sourced fact), but no confirmed
   URL was available when the content was written, so their cards
-  correctly show a true "Live" stamp alongside a "View repo" link instead
-  of a dead "Live site" link. **Give me the real URLs and I'll add them**
+  correctly show a true "Live" label alongside a "View repository" link
+  instead of a dead "Live site" link. **Give me the real URLs and I'll add them**
   — a one-line change per file, nothing structural.
 - **Static grid only — no hover-preview island.** Confirmed decision, not
   an oversight: it's a Should-have per docs/PRD.md, there are no real

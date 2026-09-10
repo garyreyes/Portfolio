@@ -42,9 +42,23 @@ const projects = defineCollection({
     media: z.object({
       // Work-section card + OG image.
       cover: z.string(),
-      // Screenshots shown on a hero brief page (Phase 6). Absent for card
-      // tier, which has no brief page to show them on.
-      gallery: z.array(z.string()).optional(),
+      // Screenshots shown on a hero brief page. Absent for card tier (no
+      // brief page) and absent on the heroes until Track A2 produces the
+      // files — ScreenshotGallery renders nothing while it is missing.
+      // Each entry carries its own dimensions and alt text: the a11y floor
+      // (CLAUDE.md) mandates explicit width/height to reserve layout, which
+      // a bare path string cannot express. `src` is a root-absolute path
+      // under public/ (e.g. /screenshots/cornerman/01.png).
+      gallery: z
+        .array(
+          z.object({
+            src: z.string(),
+            alt: z.string().min(1),
+            width: z.number().int().positive(),
+            height: z.number().int().positive(),
+          }),
+        )
+        .optional(),
     }),
     // Controls work-section sequence.
     order: z.number(),
