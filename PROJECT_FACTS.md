@@ -41,6 +41,19 @@ product truth (`docs/PRD.md`).
 
 ## Technical
 
+- **`npm install` on this Windows machine has twice produced a
+  `package-lock.json` that fails `npm ci` on Linux CI** — 2026-08-28 (the
+  original project harness) and 2026-09-12 (adding `@types/node`), both
+  times missing top-level `@emnapi/core`/`@emnapi/runtime` entries needed
+  by Tailwind's native bindings. `npm install` alone never catches this
+  locally, because a local dev/build run uses whatever's already resolved
+  in `node_modules`, not a clean install from the lockfile — only `npm
+  ci` (or the Linux CI runner) exercises that path. **After any
+  `package.json` change, run `rm -rf node_modules package-lock.json &&
+  npm install`, then verify with `rm -rf node_modules && npm ci` locally
+  before pushing** — this catches it before CI does, for free. Recurred
+  once already; if it recurs a third time, this is worth turning into an
+  actual pre-push step rather than a habit to remember.
 - **ESLint is pinned to v9, deliberately.** ESLint 10 is current, but
   `eslint-plugin-jsx-a11y@6.10.2` caps at v9, and `eslint-plugin-astro`
   exposes its `jsx-a11y/*` rules only when that package is installed.
