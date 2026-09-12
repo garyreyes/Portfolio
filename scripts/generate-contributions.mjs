@@ -17,6 +17,12 @@
  * account's `contributionsCollection` (a documented GraphQL API limit, not
  * a design choice here — verified live 2026-09-12, see PROJECT_FACTS.md
  * "Contribution graph").
+ *
+ * Also writes src/data/contributions-peak.json (peak single-day count +
+ * date) — the footer stat block's "peak commit day" figure reads this at
+ * build time instead of being hand-typed, so it can't go stale the way a
+ * hardcoded number would (ROADMAP 5d). This file lives under src/, not
+ * public/, so it's a plain Vite JSON import, not a served asset.
  */
 import fs from 'node:fs';
 
@@ -135,4 +141,18 @@ ${cells}
 fs.writeFileSync('public/contributions.svg', svg);
 console.log(
   `[contributions] wrote public/contributions.svg — ${total} contributions across ${weeks.length} weeks`,
+);
+
+const allDays = weeks.flatMap((week) => week.contributionDays);
+const peak = allDays.reduce((max, day) =>
+  day.contributionCount > max.contributionCount ? day : max,
+);
+
+fs.mkdirSync('src/data', { recursive: true });
+fs.writeFileSync(
+  'src/data/contributions-peak.json',
+  JSON.stringify({ count: peak.contributionCount, date: peak.date }, null, 2) + '\n',
+);
+console.log(
+  `[contributions] wrote src/data/contributions-peak.json — ${peak.contributionCount} on ${peak.date}`,
 );

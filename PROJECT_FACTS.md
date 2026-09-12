@@ -669,12 +669,71 @@ present in built output — **do not move or delete it.**
   2026-09-12, but it grants access to every repo the account can touch,
   broader than this needs (caught in review). The workflow's git commits
   use `garyreyes@users.noreply.github.com`, not the real address, so the
-  personal email doesn't sit in a public workflow file. Until the secret
-  exists, the scheduled workflow fails loud at the generation step (no
-  PR opens, nothing merges) — the SVG already committed in this change is
-  a real, live-fetched snapshot (generated 2026-09-12 using a local
-  authenticated session), so the site isn't broken in the meantime; it
-  just won't auto-update until the secret is added.
+  personal email doesn't sit in a public workflow file.
+- **`CONTRIBUTIONS_TOKEN` secret added 2026-09-12** — a fine-grained PAT,
+  scoped to just this repo, Contents + Pull requests read/write. The
+  workflow is live on `main` and will pick it up on its normal 12-hour
+  cron with no further action; not yet dispatched manually to avoid
+  branching a test run off an unmerged feature branch (would have
+  bundled unrelated commits into a confusing PR — see "the clean way to
+  test this is after merge" reasoning from that session).
+
+## Contact form + stat block (2026-09-12, Phase 5d)
+
+- **Web3Forms free tier rejects non-browser requests.** Verified live: a
+  plain `curl` POST to `api.web3forms.com/submit` with the real access
+  key returned HTTP 403, `"This method is not allowed... (Pro plan is
+  required)"`. Adding a browser-like `Origin`/`Referer`/`User-Agent` made
+  the identical payload succeed (HTTP 200, `"Form submitted
+  successfully!"`). Real browsers always send `Origin` on a cross-origin
+  `fetch()`, and a plain `<form>` POST does too — so the actual site
+  works with zero special handling; this was purely an artifact of
+  testing with `curl`, not a defect. Recorded so a future "the form isn't
+  working" investigation starts from the real cause, not this red herring.
+- **The real response body includes a `success` boolean** (`{"success":
+  true, "data": {...}, "message": "..."}`), richer than Web3Forms' own
+  docs page showed. `service.ts` doesn't depend on that field — it keys
+  off the HTTP status (`res.ok`) and falls back to a generic message if
+  `data.message` is absent — so it doesn't matter if that field's shape
+  ever changes.
+- **`PUBLIC_WEB3FORMS_KEY` lives in `.env`** (gitignored; `.env.example`
+  committed with the name only), not hardcoded in source — not because
+  it's a secret (it isn't; see `ARCHITECTURE.md`), purely so the
+  repository's source doesn't hardcode one specific account's key. Real
+  key: created 2026-09-12 at web3forms.com under `garyludelq@gmail.com`
+  (Pahinga-Coffee's own key was checked first and doesn't exist — that
+  project never actually got a real one configured, per its own
+  `PROJECT_FACTS.md` and `ROADMAP.md`).
+- **A live test submission was sent and received** during this build
+  (subject "New message from garyreyes.pages.dev", from "Claude Code
+  (live verification)") — "done" here means an actual message arrived,
+  not that the code looks like it should work.
+- **This is the site's first React island** (`ContactForm.tsx`,
+  `client:visible` — hydrates once scrolled into view, since it's below
+  the fold). The form is a real `<form action="https://api.web3forms.com/submit"
+  method="POST">` first, so it fully works with zero JavaScript; the
+  island's `onSubmit` handler intercepts for the polished inline
+  idle/submitting/success/error states when JS is available. Both paths
+  hit the same Web3Forms endpoint with the same fields.
+- **Honeypot field (`botcheck`) is `display:none`, not `sr-only`** —
+  `sr-only` would let a real screen-reader user perceive and fill in the
+  fake field (defeating its purpose and creating a real accessibility
+  trap); `display:none` hides it from everyone, sighted or not, so only
+  an automated filler ever touches it.
+- **Stat-block figures are all derived, never hand-typed**: three come
+  from `getProjectStats()` reading the real `.mdx` collection
+  (`features/projects/queries.ts`); the fourth (peak commit day) reads
+  `src/data/contributions-peak.json`, written by
+  `scripts/generate-contributions.mjs` — the same pipeline that already
+  computes this for the contribution graph. `ROADMAP.md`'s original plan
+  named `src/lib/stats.ts` as "hand-maintained" for this figure; building
+  it, the derived version was strictly better (can't go stale) at no
+  extra cost, so that's what shipped instead.
+- **`main`'s CSP widened two directives, not one** — `connect-src` for
+  the JS `fetch()` path and `form-action` for the plain `<form>`'s
+  `action` attribute (the no-JS fallback). These are separate CSP
+  directives governing different browser behaviors; widening only
+  `connect-src` would have silently blocked the no-JS submission path.
 
 ## Links and routes (2026-09-10, harden pass)
 
@@ -745,6 +804,18 @@ present in built output — **do not move or delete it.**
   is enforced by Zod failing the build (stronger than a test), and every
   other surface is judgment/presentation work with no single correct
   output to assert.
+- **Re-examined 2026-09-12 for `getProjectStats()`** (the footer stat
+  block's counting logic) — this genuinely is "event counting," which the
+  personal workflow rules call correctness-critical and normally
+  test-first. Deliberately not tested anyway: the filters
+  (`status === 'live'`, `client === 'real-client'`) compare against
+  `content.config.ts`'s Zod-enforced string-literal unions, and
+  `astro/tsconfigs/strict` makes a typo'd literal (e.g. `'Live'`) a
+  **compile error**, not a silent miscount — the exact failure mode a
+  test would exist to catch is already caught earlier, by the type
+  system, for free. Revisit if this function's logic ever grows past a
+  literal-union comparison (e.g. a date range, a threshold, an OR of
+  multiple fields) — that's where the type system stops being enough.
 - **Phase 7 was removed from v1** (2026-09-04). It held the only
   correctness-critical logic — the contribution graph's date bucketing
   and the Monte Carlo simulator's statistical maths — and both were cut.

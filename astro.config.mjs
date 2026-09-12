@@ -30,10 +30,15 @@ export default defineConfig({
   // The directives below are everything ELSE — script-src/style-src are added
   // automatically with 'self' + the hashes.
   //
-  // Deliberately strict: only what the site uses today. Phase 5d (Web3Forms
-  // contact form) adds `connect-src https://api.web3forms.com`; Phase 8b
-  // (Cloudflare Web Analytics) adds its script/connect origins. Each is a
-  // one-line edit here, in that phase's plan.
+  // Deliberately strict: only what the site uses today. Phase 8b (Cloudflare
+  // Web Analytics) adds its own script/connect origins when it ships.
+  //
+  // Phase 5d (Web3Forms contact form) widened two directives, not one:
+  // `connect-src` for the JS-enhanced fetch() path, AND `form-action` for
+  // the plain <form action="https://api.web3forms.com/submit"> the same
+  // form falls back to with no JavaScript — form-action governs where a
+  // real <form> submit may go, a separate directive from connect-src, and
+  // the no-JS path would have been silently blocked without it.
   //
   // frame-ancestors is intentionally absent — it is ignored inside a <meta>
   // CSP; `X-Frame-Options: DENY` in public/_headers carries clickjacking
@@ -44,9 +49,9 @@ export default defineConfig({
         "default-src 'self'",
         "img-src 'self' data:",
         "font-src 'self'",
-        "connect-src 'self'",
+        "connect-src 'self' https://api.web3forms.com",
         "base-uri 'self'",
-        "form-action 'self'",
+        "form-action 'self' https://api.web3forms.com",
         "object-src 'none'",
         'upgrade-insecure-requests',
       ],

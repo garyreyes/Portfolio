@@ -1,0 +1,25 @@
+---
+import { getProjectStats } from '../../features/projects/queries';
+import { getPeakCommitDay } from '../../lib/stats';
+
+/**
+ * The footer stat block (ROADMAP 5d) — the static spec-sheet alternative to
+ * a GitHub contribution graph read alone (PROJECT_FACTS.md "The GitHub
+ * contribution graph was cut 2026-09-04"). Three of the four figures are
+ * derived from the real project data at build time; the fourth reads the
+ * contribution-graph pipeline's own output. Nothing here is hand-typed.
+ */
+const projectStats = await getProjectStats();
+const peak = getPeakCommitDay();
+
+const facts = [
+  `${projectStats.shipped} projects shipped`,
+  `${projectStats.liveInProduction} live in production`,
+  // "real client work" reads oddly as a count ("1 real client work") —
+  // caught in review. Pluralizes correctly at any value, not just today's 1.
+  `${projectStats.realClientWork} real-client project${projectStats.realClientWork === 1 ? '' : 's'}`,
+  `Peak commit day: ${peak.count} (${peak.label})`,
+];
+---
+
+<p class="text-meta text-ink-muted">{facts.join(' · ')}</p>
