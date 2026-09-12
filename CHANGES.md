@@ -10,6 +10,20 @@ does that.
 
 ## Unreleased
 
+### 2026-09-12 — `/services` placeholder
+
+Gary's call: ship a stub rather than block on the real page. `src/pages/services.astro`
+— "Services" heading, one honest line ("This page isn't written yet."), a
+direct `mailto:` action so a prospect who lands here isn't stuck. **Not
+added to `NAV_LINKS`** — this audience arrives via a link Gary sends
+directly while pitching and often sees only this page (docs/user-flows.md
+"Flow 2"), so it must never be reachable from the site itself while
+half-built. No `noindex` (BaseLayout's `<head>` is fixed and there's no
+sitemap yet, so discovery risk is low — same precedent as the unlinked
+`/work/[slug]` briefs). Real content is still owed: Pahinga + Saffron as
+proof, "available for freelance" without implying "trusted by businesses."
+Gates clean.
+
 ### 2026-09-10 — ROADMAP 5a: homepage about section + "Work" → "Projects"
 
 The last structural piece of the homepage.

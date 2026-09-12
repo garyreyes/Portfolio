@@ -1,0 +1,40 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SOCIALS } from '../lib/site';
+
+/**
+ * ROADMAP 5b — placeholder only. The real page (business-owner landing,
+ * Pahinga + Saffron as proof, "available for freelance" without implying
+ * "trusted by businesses" — docs/PRD.md §Flow 2) is not built yet.
+ *
+ * Deliberately NOT in `NAV_LINKS` — this audience arrives via a link Gary
+ * sends directly while pitching and frequently sees only this page
+ * (docs/user-flows.md "Flow 2"), so it must never be the first thing a
+ * prospect hits half-built. Add to NAV_LINKS in the same change that
+ * writes the real page. No `noindex` — BaseLayout's <head> is fixed and
+ * doesn't take one (same as the unlinked /work/[slug] briefs); there is
+ * no sitemap yet (Phase 8a) so accidental discovery risk is low.
+ */
+const email = SOCIALS.find((s) => s.href.startsWith('mailto:'));
+---
+
+<BaseLayout title="Services — Gary Reyes" description="Website work for small businesses.">
+  <div class="py-section">
+    <h1 class="text-title">Services</h1>
+    <p class="text-lede text-ink-muted max-w-column mt-gutter">This page isn't written yet.</p>
+    {
+      email && (
+        <p class="mt-block">
+          Looking to commission a website?{' '}
+          <a
+            href={email.href}
+            class="text-ink py-tight underline underline-offset-4 hover:decoration-2"
+          >
+            Email me
+          </a>{' '}
+          directly and I'll get back to you.
+        </p>
+      )
+    }
+  </div>
+</BaseLayout>
