@@ -10,6 +10,75 @@ does that.
 
 ## Unreleased
 
+### 2026-09-12 — Real GitHub contribution graph in the footer
+
+Partially reverses the 2026-09-04 cut. That decision was recorded as "not
+revisited unless the numbers change substantially" — they did (418 → 564
+contributions), but the underlying pattern didn't (still ~91% empty,
+concentrated in the current build sprint). Shown that pattern plainly,
+Gary's call was to add the real graph **alongside** the stat block rather
+than replace it, or not do it.
+
+- **`scripts/generate-contributions.mjs`** — queries GitHub's GraphQL
+  `contributionsCollection` for real per-day data and renders a plain SVG
+  in the site's own achromatic tokens (5-step grayscale, not GitHub
+  green). Writes `public/contributions.svg` — a normal static asset, no
+  client-side fetch, no CSP change.
+- **`.github/workflows/update-contributions.yml`** — twice-daily cron
+  (matching `ufc-scouting-app`'s own cadence) + manual dispatch. Opens a
+  PR with the regenerated file and auto-merges it once the required CI
+  check passes.
+- **Verified live before building, not assumed:** the default Actions
+  `GITHUB_TOKEN` cannot run this GraphQL query (needs a real PAT); a PR
+  opened with the default token would never trigger the required status
+  check (GitHub's own anti-loop rule), so `CONTRIBUTIONS_TOKEN` — a PAT
+  belonging to Gary — is used for the git/PR steps too, not just the
+  data fetch. Full reasoning: `PROJECT_FACTS.md` "Contribution graph".
+- **`Footer.astro`** — the graph renders after "Get in touch" + the
+  socials row, before the copyright line.
+- **`CLAUDE.md` amended**: the "no secret but Web3Forms" hard-stop now
+  carves out CI-only secrets that never reach client code or the built
+  site — confirmed explicitly with Gary before proceeding, not assumed.
+- **Gary's manual step, still owed:** create the `CONTRIBUTIONS_TOKEN`
+  PAT (fine-grained, scoped to this repo, tried first — see
+  `PROJECT_FACTS.md`) and add it as a repo secret. The committed SVG is a
+  real snapshot (generated 2026-09-12 via an authenticated local session)
+  — the site isn't broken without the secret, it just won't auto-update yet.
+- Gates clean; overflow-checked 320–1280px; repo setting
+  `allow_auto_merge` flipped `false` → `true` (Gary's explicit call).
+
+**Fixed after independent review**, before this ever reached `main`:
+
+- **The accessibility design was factually wrong.** An `<img src="*.svg">`
+  never exposes the SVG's internal `<title>` to a screen reader or a mouse
+  tooltip — only inline `<svg>` markup does. The 371 per-cell `<title>`
+  tooltips were inert dead weight (~doubling the file size for nothing).
+  Fixed: new `src/lib/contributions.ts` reads the generated file's real
+  `<title>`/`width`/`height` at Astro build time; `Footer.astro`'s `alt`
+  and dimensions come from there instead of a static string and hardcoded
+  numbers that could drift if GitHub's calendar returns 52 weeks instead
+  of 53. Required adding `@types/node` (devDependency) for the `node:fs`
+  import to typecheck.
+- **The palette overclaimed "5 tokens."** Only 3 of the 5 grays are real
+  `global.css` tokens; the other 2 are now honestly documented as
+  computed midpoints, not additional tokens.
+- **PAT scope was broader than needed.** Docs now recommend a
+  fine-grained, repo-scoped token first, falling back to the broader
+  classic `repo`-scope token (what was actually verified live) only if
+  the fine-grained one can't run the `contributionsCollection` query.
+- **The workflow's git commits no longer use Gary's real email** —
+  `garyreyes@users.noreply.github.com` instead of the address that was
+  hardcoded into a public workflow file.
+- **The workflow now closes stale PRs/branches before opening a new
+  one** — a required-check failure on one run would otherwise leave
+  `chore/update-contributions-*` PRs accumulating every 12 hours forever.
+  Added a `concurrency` group too, for an overlapping manual dispatch.
+- **False-positive design-hook finding on `Footer.astro`'s doc comment**
+  (`broken-image`, L23) — the detector matched the literal text
+  `src="*.svg"` inside prose describing how the image tag works, not an
+  actual placeholder image. Reworded the comment to avoid tag-shaped
+  substrings; confirmed clean on re-scan. No suppression needed.
+
 ### 2026-09-12 — `/services` placeholder
 
 Gary's call: ship a stub rather than block on the real page. `src/pages/services.astro`

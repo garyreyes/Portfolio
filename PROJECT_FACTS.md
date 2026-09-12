@@ -115,16 +115,18 @@ product truth (`docs/PRD.md`).
   sends while pitching, so it is frequently the first and only page seen.
 - **Contact is footer-only, sitewide.** One surface, both audiences.
 
-- **The GitHub contribution graph was cut 2026-09-04; the footer carries
-  a static spec-sheet stat block instead** (projects shipped, live in
-  production, real client work, peak commit day — hand-maintained, no API
-  call). Real contribution data, fetched 2026-08-28: **418 contributions
-  across 23 active days out of 370** (94% empty; busiest day 53) — a
-  sparse monochrome matrix would read "inactive" to exactly the audience
-  the footer exists to persuade. The stat block was the alternative
-  already on the table; it fits the technical-drawing world better and is
-  flattering on every number. Not revisited unless the contribution
-  numbers change substantially.
+- **The GitHub contribution graph was cut 2026-09-04** as the sole
+  proof-of-activity element — the footer got a static spec-sheet stat
+  block instead (projects shipped, live in production, real client work,
+  peak commit day — hand-maintained, no API call). Real contribution
+  data, fetched 2026-08-28: **418 contributions across 23 active days out
+  of 370** (94% empty; busiest day 53) — a sparse monochrome matrix would
+  read "inactive" to exactly the audience the footer exists to persuade.
+  **Re-decided 2026-09-12 (see "Contribution graph" below): the graph
+  ships alongside the eventual stat block, not instead of it** — Gary's
+  call, after seeing the pattern was unchanged (still mostly grey, a
+  recent burst from this exact build sprint) and deciding it was still
+  worth showing next to something flattering rather than alone.
 
 ## Visual direction — reset 2026-09-10
 
@@ -581,6 +583,98 @@ present in built output — **do not move or delete it.**
 - **Section headings stay `sr-only`** ("About", "Projects") — the `<hr>`
   rules and the content type (prose vs. the project list) self-identify.
   Consistent with the rest of the austere direction.
+
+## Contribution graph (2026-09-12)
+
+- **Ships alongside the eventual stat block, not instead of it** —
+  overturns half of the 2026-09-04 cut (see "Flows and navigation"
+  above). The pattern that led to the original cut hasn't changed: a live
+  pull the same day showed **564 contributions, 34 of 371 days active**
+  (~9%), concentrated almost entirely in the last two weeks — literally
+  this build sprint. Gary's call, with that pattern shown to him plainly
+  first: show it anyway, next to something flattering, rather than not
+  at all.
+- **`public/contributions.svg` is generated, never hand-maintained or
+  fetched client-side.** `scripts/generate-contributions.mjs` queries
+  GitHub's GraphQL `contributionsCollection` and renders a plain SVG,
+  **not GitHub's green.** No CSP change, no client-side network call, no
+  third-party runtime dependency: Astro serves it as a normal static
+  asset, same as any screenshot.
+- **The 5-step palette is 3 real tokens + 2 computed midpoints, not 5
+  tokens** (`--color-rule` #e2e2e2, midpoint #9f9f9f, `--color-ink-muted`
+  #5c5c5c, midpoint #3a3a3a, `--color-ink` #171717) — caught in review: an
+  earlier version of this file and the script's own comment both
+  overclaimed "all five match tokens." If `global.css`'s palette ever
+  changes, only 3 of the 5 script values move with it automatically;
+  the 2 midpoints need a manual re-check (there's no build step that
+  derives them from `global.css`, since the script runs outside Astro's
+  build entirely).
+- **Verified live, not assumed, before building:**
+  - The GraphQL query needs `weeks { contributionDays { date
+    contributionCount } }` under `contributionCalendar` for real
+    per-day data — confirmed returning 53 weeks × 7 days = 371 cells.
+  - **The default Actions `GITHUB_TOKEN` cannot run this query** for an
+    arbitrary user's `contributionsCollection` — a documented GraphQL
+    API limitation (the same reason every "contribution graph" README
+    tool asks for a personal token). A real PAT belonging to
+    `@garyreyes`, stored as the repo secret `CONTRIBUTIONS_TOKEN`, is
+    required. See `CLAUDE.md` "Project-specific safety rules" for the
+    carve-out this needed (a CI-only secret, never shipped to the
+    client, is not the hard-stop that rule guards against).
+  - **`main`'s branch protection blocks a direct push** from the
+    workflow (`required_pull_request_reviews` is configured, 0 approvals
+    required but PRs are mandatory) and requires the "Type-check, lint,
+    format, build" check to pass, `strict: true` (branch must be
+    up to date). A PR opened using the default `GITHUB_TOKEN` would
+    **never** get that check to run at all — GitHub's own anti-loop rule
+    is that events from the default token don't trigger further
+    workflows — which would leave `gh pr merge --auto` stalled forever.
+    Fixed by using `CONTRIBUTIONS_TOKEN` (a real PAT) for checkout *and*
+    the git/PR steps, not just the GraphQL call.
+  - **Repo setting `allow_auto_merge` was `false`; flipped to `true`**
+    (2026-09-12, Gary's explicit call) so the scheduled PR merges itself
+    once the required check passes. Doesn't weaken branch protection —
+    only lets a PR that already satisfies every requirement skip the
+    manual click.
+- **An `<img src="*.svg">` never exposes the SVG's internal `<title>`
+  to anything** — not a screen reader, not a mouse tooltip; only inline
+  `<svg>` markup in the HTML gets that. An earlier version of this
+  feature assumed otherwise (the "accessible name lives in the SVG's own
+  title" claim was wrong — caught in review) and shipped 371 per-cell
+  `<title>` tooltips that were pure inert dead weight (they roughly
+  doubled the file size for zero benefit). Fixed: `src/lib/contributions.ts`
+  reads the generated file's top-level `<title>` and real `width`/`height`
+  at Astro **build** time (a static file read, not a live call) and
+  `Footer.astro` uses those for the `<img alt>` and dimensions — real,
+  accurate, and never drifts from what the script actually wrote,
+  including if GitHub's calendar ever returns 52 weeks instead of 53.
+- **Cadence: twice-daily cron** (`0 */12 * * *`), matching the pattern
+  `ufc-scouting-app` already uses to keep its own free-tier Supabase
+  project awake (docs/PRD.md §9). `workflow_dispatch` is also enabled for
+  an on-demand run. The workflow closes and deletes any previous
+  `chore/update-contributions-*` PR/branch still open before creating a
+  new one — otherwise a required-check failure on one run would leave
+  abandoned PRs accumulating every 12 hours forever (caught in review).
+- **Placement:** footer, after the "Get in touch" / socials row, before
+  the copyright line (Gary's call).
+- **Setup still owed (Gary, manual — cannot be scripted):** create a
+  GitHub personal access token for `@garyreyes` and add it as the repo
+  secret `CONTRIBUTIONS_TOKEN`. **Try a fine-grained token scoped to just
+  this repository first** (Contents: Read and write, Pull requests: Read
+  and write) — least privilege, and it should cover both the git/PR steps
+  and the `contributionsCollection` query since that's public profile
+  data, not a repo resource. **Fall back to a classic PAT with `repo`
+  scope only if the "Generate contribution graph" step errors on
+  permissions** — a classic token is what was actually proven live
+  2026-09-12, but it grants access to every repo the account can touch,
+  broader than this needs (caught in review). The workflow's git commits
+  use `garyreyes@users.noreply.github.com`, not the real address, so the
+  personal email doesn't sit in a public workflow file. Until the secret
+  exists, the scheduled workflow fails loud at the generation step (no
+  PR opens, nothing merges) — the SVG already committed in this change is
+  a real, live-fetched snapshot (generated 2026-09-12 using a local
+  authenticated session), so the site isn't broken in the meantime; it
+  just won't auto-update until the secret is added.
 
 ## Links and routes (2026-09-10, harden pass)
 

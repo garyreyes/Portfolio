@@ -151,7 +151,7 @@ than inventing findings. What does apply:
 | Item                     | Decision                                                                                                                                                                                                                                         |
 | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **Web3Forms access key** | This is a **public, client-side key by design** — not a secret. It is safe in the bundle. No private key of any kind belongs in frontend code.                                                                                                   |
-| **Secrets in git**       | `.env` gitignored; `.env.example` committed with names only. Nothing else is secret in this project.                                                                                                                                             |
+| **Secrets in git**       | `.env` gitignored; `.env.example` committed with names only. `CONTRIBUTIONS_TOKEN` (added 2026-09-12) is a GitHub Actions repo secret — CI-only, never in `.env`, never shipped to the client or the built site. See `CLAUDE.md`'s carve-out and `PROJECT_FACTS.md` "Contribution graph".                                                                                                                                             |
 | **Form spam**            | Honeypot field + Web3Forms' own filtering. Rate limiting is the provider's responsibility.                                                                                                                                                       |
 | **Security headers**     | **CSP** is an Astro `<meta>` tag (`security.csp` in `astro.config.mjs`, per-build script hashes) — widen it there, never in `_headers`. `public/_headers` carries the rest as real HTTP headers: `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, HSTS, `Permissions-Policy`. Cloudflare Pages serves `_headers` automatically. Wired 2026-09-10 (Phase 3d); see `PROJECT_FACTS.md` "Deploy and headers". |
 | **External links**       | Every `target="_blank"` carries `rel="noopener noreferrer"`.                                                                                                                                                                                     |
@@ -174,10 +174,18 @@ discipline**.
 portfolio/
 ├─ public/
 │  ├─ screenshots/                # per-project cover + gallery images
+│  ├─ contributions.svg           # generated — see scripts/generate-contributions.mjs
 │  ├─ _headers                    # HTTP security headers, minus CSP (Cloudflare Pages)
 │  ├─ robots.txt                  # Phase 8a
 │  └─ favicon.svg
 │  # no fonts/ — the platform UI font stack is used, no web fonts (2026-09-10 reset)
+├─ .github/workflows/
+│  ├─ ci.yml                      # typecheck, lint, format, build, check:links
+│  └─ update-contributions.yml    # scheduled — regenerates contributions.svg, opens a PR
+├─ scripts/
+│  ├─ check-links.mjs             # internal-link gate (npm run check:links)
+│  ├─ design-check.mjs            # Impeccable detector over dist/ (local-only)
+│  └─ generate-contributions.mjs  # fetches the GitHub contribution calendar, renders the SVG
 ├─ src/
 │  ├─ content.config.ts           # Zod schema — the Project entity, enforced at build
 │  ├─ content/
@@ -208,7 +216,8 @@ portfolio/
 │  ├─ lib/
 │  │  ├─ seo.ts                   # OG/meta builder
 │  │  ├─ site.ts                  # site constants (name, url, socials)
-│  │  └─ stats.ts                 # the footer stat-block figures (hand-maintained)
+│  │  ├─ stats.ts                 # the footer stat-block figures (hand-maintained)
+│  │  └─ contributions.ts         # reads contributions.svg's own title/dimensions at build time
 │  ├─ styles/
 │  │  └─ global.css               # @theme design tokens — the design system
 │  └─ pages/                      # routing only — thin
