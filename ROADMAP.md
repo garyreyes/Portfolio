@@ -121,7 +121,7 @@ not density. Phase 5a no longer inherits anything here.
 | 5a | **done 2026-09-10.** Homepage: intro → **about** → **projects** → footer. Intro (`<h1>` + tagline) and the project list shipped earlier; 5a added the about `<section>` and renamed "Work" → "Projects" (`#work` → `#projects`; brief routes unchanged). The about copy is an **interim factual** paragraph — a fuller first-person bio is a tracked follow-up (`PROJECT_FACTS.md` "Homepage about section"); it's a plain edit, no structure change. One obvious primary action: open a project. | **done** |
 | 5b | **Placeholder shipped 2026-09-12.** `src/pages/services.astro` exists — heading + "not written yet" + a direct `mailto:` action — so the route resolves instead of 404ing if Gary shares it early. **Not in `NAV_LINKS` yet.** Real page still owed: standalone business-owner content, Pahinga + Saffron as proof, honest "available for freelance" without implying "trusted by businesses." | in progress |
 | 5c | **`/how-i-build`** — the harness, skills, MCP setup, CI gates, planning docs. Honest, not a sales pitch. | not started |
-| 5d | **Contact form + ~~`/404`~~ + footer stat block.** Web3Forms in the sitewide footer: idle, submitting, inline success swap, visible failure with `mailto:` fallback, honeypot. ~~Designed 404~~ — **done 2026-09-10**, pulled forward in the `/impeccable harden` pass (`src/pages/404.astro`) because the homepage was shipping links to unbuilt routes. Static spec-sheet stat block (projects shipped, live in production, real client work, peak commit day) from a hand-maintained `src/lib/stats.ts` — no API call. | not started |
+| 5d | **done 2026-09-12.** Contact form + ~~`/404`~~ + footer stat block. Real Web3Forms integration (`ContactForm.tsx`, the site's first React island): idle/submitting/success/error states, honeypot, `mailto:` fallback on error, works with zero JS via a real `<form action>`. Live-verified with a real sent-and-received test message, not just code review. ~~Designed 404~~ — **done 2026-09-10**, pulled forward in the `/impeccable harden` pass (`src/pages/404.astro`). Stat block (projects shipped, live in production, real client work, peak commit day) shipped **derived, not hand-maintained** — three figures read the real `.mdx` collection, the fourth reads the contribution-graph pipeline's own output; better than the originally-planned hand-typed version at no extra cost. | **done** |
 
 **Phase 5 close:** `/impeccable critique` + `polish` across all surfaces.
 
@@ -241,11 +241,15 @@ risk. A1 (the domain) is no longer urgent: it blocks no build work and can
 be bought any time before the site goes on an application.
 **Track B:** the homepage is structurally done — intro → about → projects,
 ledger retired, "Work" → "Projects", **5a** in (about section, interim
-copy). **4c — `/work/[slug]` brief template** is in (template only). Next:
-**5b — `/services`** (standalone business-owner page; needs no Track A
-input), then **5c — `/how-i-build`**. Both re-add a nav link and together
-trigger the mobile disclosure-menu work. Still owed on the homepage: the
-real first-person bio (a plain edit to the about `<p>`, not blocking). The
+copy). **4c — `/work/[slug]` brief template** is in (template only).
+**5d** is done — real Web3Forms contact form + derived stat block +
+contribution graph, all live in the footer. **5b — `/services`** is a
+placeholder only (real business-owner content still owed). Next: **write
+the real `/services` page**, or **5c — `/how-i-build`** (explicitly the
+last thing the pre-committed cut list wants cut, so build it before
+anything optional). Both re-add a nav link and together trigger the
+mobile disclosure-menu work. Still owed on the homepage: the real
+first-person bio (a plain edit to the about `<p>`, not blocking). The
 Phase 4 close cadence (`/impeccable critique` + `polish` across the work
 surfaces) waits until Phase 6 puts real content on the brief pages —
 polishing placeholder pages is premature. **Phase 6 (6a/6b)** fills the

@@ -150,10 +150,10 @@ than inventing findings. What does apply:
 
 | Item                     | Decision                                                                                                                                                                                                                                         |
 | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Web3Forms access key** | This is a **public, client-side key by design** — not a secret. It is safe in the bundle. No private key of any kind belongs in frontend code.                                                                                                   |
+| **Web3Forms access key** | This is a **public, client-side key by design** — not a secret. It is safe in the bundle. No private key of any kind belongs in frontend code. Held as `PUBLIC_WEB3FORMS_KEY` in `.env` (real value never committed) purely so the source doesn't hardcode one account's key — not because it needs hiding. |
 | **Secrets in git**       | `.env` gitignored; `.env.example` committed with names only. `CONTRIBUTIONS_TOKEN` (added 2026-09-12) is a GitHub Actions repo secret — CI-only, never in `.env`, never shipped to the client or the built site. See `CLAUDE.md`'s carve-out and `PROJECT_FACTS.md` "Contribution graph".                                                                                                                                             |
-| **Form spam**            | Honeypot field + Web3Forms' own filtering. Rate limiting is the provider's responsibility.                                                                                                                                                       |
-| **Security headers**     | **CSP** is an Astro `<meta>` tag (`security.csp` in `astro.config.mjs`, per-build script hashes) — widen it there, never in `_headers`. `public/_headers` carries the rest as real HTTP headers: `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, HSTS, `Permissions-Policy`. Cloudflare Pages serves `_headers` automatically. Wired 2026-09-10 (Phase 3d); see `PROJECT_FACTS.md` "Deploy and headers". |
+| **Form spam**            | Honeypot field (`botcheck`, `display:none` so a screen reader never perceives it — a bot's own naive autofill is what trips it) + Web3Forms' own filtering. Rate limiting is the provider's responsibility.                                     |
+| **Security headers**     | **CSP** is an Astro `<meta>` tag (`security.csp` in `astro.config.mjs`, per-build script hashes) — widen it there, never in `_headers`. `public/_headers` carries the rest as real HTTP headers: `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, HSTS, `Permissions-Policy`. Cloudflare Pages serves `_headers` automatically. Wired 2026-09-10 (Phase 3d); see `PROJECT_FACTS.md` "Deploy and headers". `connect-src` and `form-action` both widened to `https://api.web3forms.com` for Phase 5d — two directives, not one, since the contact form has both a JS `fetch()` path and a plain `<form action>` no-JS fallback. |
 | **External links**       | Every `target="_blank"` carries `rel="noopener noreferrer"`.                                                                                                                                                                                     |
 | **Supply chain**         | Dependencies pinned; `npm audit` in CI; Dependabot enabled.                                                                                                                                                                                      |
 | **MDX / XSS**            | MDX can render arbitrary HTML, but **all content is author-written and committed to git** — there is no user-submitted content anywhere. No injection vector. Recorded so a future contributor doesn't add user content without revisiting this. |
@@ -194,18 +194,20 @@ portfolio/
 │  │     ├─ ufc-scouting-app.mdx  # hero
 │  │     ├─ saffron-web.mdx       # hero
 │  │     └─ pahinga-coffee.mdx    # card (frontmatter only, body unused)
+│  ├─ data/
+│  │  └─ contributions-peak.json  # generated — peak commit day, read by lib/stats.ts
 │  ├─ features/
 │  │  ├─ projects/
-│  │  │  ├─ components/           # ProjectCard.astro, ProjectGrid.astro, HoverPreview.tsx
-│  │  │  └─ queries.ts            # getCollection wrappers, sorting, hero/card split
+│  │  │  ├─ components/           # ProjectCard.astro, ProjectGrid.astro, HoverPreview.tsx (not built)
+│  │  │  └─ queries.ts            # getCollection wrappers, sorting, hero/card split, getProjectStats
 │  │  ├─ brief/
 │  │  │  ├─ components/           # BriefHeader.astro, ScreenshotGallery.astro, BriefNav.astro
 │  │  │  └─ queries.ts            # hero-brief list + bounded prev/next (heroes only)
 │  │  └─ contact/
-│  │     ├─ components/           # ContactForm.tsx  (React island)
+│  │     ├─ components/           # ContactForm.tsx — the site's first React island (ROADMAP 5d)
 │  │     └─ service.ts            # Web3Forms submit — THE ONLY OUTBOUND CALL IN THE APP
 │  ├─ shared/
-│  │  ├─ components/              # Nav, Footer, StatBlock.astro, Button, SkipLink
+│  │  ├─ components/              # Nav, Footer, StatBlock.astro, SkipLink
 │  │  │                           #   (MDX body copy is styled by `.prose` in global.css, not a component)
 │  │  ├─ projects.ts              # Project type + enum/link labels (used by projects + brief)
 │  │  └─ utils/
@@ -216,7 +218,7 @@ portfolio/
 │  ├─ lib/
 │  │  ├─ seo.ts                   # OG/meta builder
 │  │  ├─ site.ts                  # site constants (name, url, socials)
-│  │  ├─ stats.ts                 # the footer stat-block figures (hand-maintained)
+│  │  ├─ stats.ts                 # reads data/contributions-peak.json for the peak-day figure
 │  │  └─ contributions.ts         # reads contributions.svg's own title/dimensions at build time
 │  ├─ styles/
 │  │  └─ global.css               # @theme design tokens — the design system

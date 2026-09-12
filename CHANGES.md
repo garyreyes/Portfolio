@@ -10,6 +10,81 @@ does that.
 
 ## Unreleased
 
+### 2026-09-12 — ROADMAP 5d: real contact form + derived stat block
+
+The footer's remaining pieces. Web3Forms wired for real, and the stat
+block shipped as generated data instead of the originally-planned
+hand-typed constants.
+
+- **`src/features/contact/service.ts`** — the one outbound call
+  (ARCHITECTURE.md "Structure checks"). Posts to Web3Forms' API; success
+  is determined by HTTP status, not a body field, since that's what a
+  live test actually returned reliably.
+- **`src/features/contact/components/ContactForm.tsx`** — the site's
+  first React island (`client:visible`, hydrates once scrolled into
+  view). Idle → submitting (button disabled, no double-submit) → success
+  (inline swap, no navigation) → error (visible message + `mailto:`
+  fallback) — the full state set docs/PRD.md §10 requires. A real
+  `<form action="https://api.web3forms.com/submit" method="POST">` means
+  it fully works with zero JavaScript; the JS handler only upgrades the
+  experience. Honeypot field is `display:none` (not `sr-only`, which
+  would expose the fake field to screen readers).
+- **Verified live, not assumed:** a bare `curl` POST got HTTP 403 —
+  Web3Forms' free tier rejects requests without browser-like headers.
+  Adding `Origin`/`Referer` made the identical payload succeed (HTTP 200,
+  a real "Form submitted successfully!"). Confirmed this is a non-issue
+  for the real form (browsers always send `Origin`) by sending an actual
+  test message through the built site's markup and receiving it.
+- **CSP widened on two directives**, not one — `connect-src` for the JS
+  fetch, `form-action` for the plain `<form>`'s no-JS fallback. Missing
+  either would have silently broken one of the two paths.
+- **`PUBLIC_WEB3FORMS_KEY`** lives in `.env` (gitignored) /
+  `.env.example` (name only) — not a secret (Web3Forms keys are
+  public-by-design), just avoiding a hardcoded account-specific value in
+  source.
+- **`getProjectStats()`** (`features/projects/queries.ts`) derives 3 of
+  the 4 footer stat-block figures from the real `.mdx` collection; the
+  4th (peak commit day) comes from `src/data/contributions-peak.json`,
+  a new output of `scripts/generate-contributions.mjs` (the same
+  contribution-graph pipeline, extended rather than duplicated). Nothing
+  in the stat block is hand-typed, an upgrade over the originally-planned
+  "hand-maintained `src/lib/stats.ts`."
+- **Footer reorganized**: the form is now the primary action ("Get in
+  touch" as a visible heading — the one departure from this site's
+  otherwise sr-only section headings, justified because it's the first
+  real task being asked of a visitor, not just content to read), with
+  the stat block, socials, contribution graph, and a quiet "prefer
+  email?" fallback all demoted to supporting position beneath it.
+- **Fixed during the build**: a `<textarea>`'s default border wasn't
+  fully overridden by `border-b` alone (`border-0 border-b` needed to
+  reset all four sides first) — confirmed via computed-style inspection,
+  not just a screenshot, after the rendered result looked boxed even
+  though the intended CSS should have produced a bottom-only hairline.
+- Gates clean; overflow-checked 320–1280px.
+
+**Fixed after independent review**, before this ever reached `main`:
+
+- **`service.ts`'s `fetch` had no timeout.** A hung Web3Forms response
+  (not an error, just no response) would have left the button on
+  "Sending…" indefinitely — the exact "infinite spinner" PRD §10 bans.
+  Added a 15s `AbortController` timeout with its own error message.
+- **The error-state `mailto:` was a hardcoded literal**, duplicating
+  `lib/site.ts`'s `SOCIALS` (the source Footer's own "Prefer email?"
+  link already reads from). If the address ever changes, this one — only
+  visible on a failed submission, easy to miss in QA — would have kept
+  pointing at the old one. Now reads from `SOCIALS` too.
+- **The honeypot used an inline `style` attribute** — the only one
+  anywhere in `src/`, everything else is Tailwind classes. Swapped for
+  the `hidden` utility (same `display:none` effect); dropped the
+  now-redundant `aria-hidden` since a `display:none` element is already
+  out of the accessibility tree.
+- **"1 real client work" read oddly as a count.** Pluralizes correctly
+  now ("1 real-client project" / "N real-client projects").
+- **`getProjectStats()`'s counting logic re-examined against the
+  personal test-first rule** for correctness-critical work (event
+  counting) — deliberately still untested; see `PROJECT_FACTS.md`
+  "Testing" for why the reasoning holds here specifically.
+
 ### 2026-09-12 — Real GitHub contribution graph in the footer
 
 Partially reverses the 2026-09-04 cut. That decision was recorded as "not
