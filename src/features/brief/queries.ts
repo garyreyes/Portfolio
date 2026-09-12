@@ -9,7 +9,7 @@ import type { Project } from '../../shared/projects';
  * stays in the page per Astro convention.
  *
  * Only `tier: 'hero'` projects get a brief page. Pahinga (card) renders in
- * the work ledger and links to its live site — it has no brief (ARCHITECTURE.md
+ * the project list and links to its live site — it has no brief (ARCHITECTURE.md
  * "Project" table, docs/PRD.md §9).
  */
 async function orderedHeroes(): Promise<Project[]> {

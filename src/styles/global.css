@@ -111,9 +111,9 @@
        makes CLAUDE.md's "no horizontal scroll at any width" pass vacuously.
        Overflow is verified by measuring scrollWidth == clientWidth instead. */
     -webkit-text-size-adjust: 100%;
-    /* Anchor jumps (#work, #site-footer) clear the sticky Nav instead of
-       landing under it. The Nav is a single ~4.3rem row at every width now
-       (wordmark + two links, no wrap), so one offset covers it. */
+    /* Anchor jumps (#projects, #site-footer) clear the sticky Nav instead
+       of landing under it. The Nav is a single ~4.3rem row at every width
+       now (wordmark + two links, no wrap), so one offset covers it. */
     scroll-padding-top: 5rem;
   }
 

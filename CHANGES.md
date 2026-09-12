@@ -10,6 +10,36 @@ does that.
 
 ## Unreleased
 
+### 2026-09-10 — ROADMAP 5a: homepage about section + "Work" → "Projects"
+
+The last structural piece of the homepage.
+
+- **New section order: intro → about → projects → footer** (Gary's call,
+  overriding the documented intro → work → about). The reader meets who
+  Gary is before scanning the projects.
+- **`src/pages/index.astro`** gains `<section id="about">` — one paragraph
+  of **interim factual** copy ("I'm self-taught. Cornerman was the first
+  project I shipped. …"). A fuller first-person bio (the self-taught path,
+  IE-as-systems, boxing → Cornerman, coffee → Pahinga) is a tracked
+  follow-up; swap it in as a plain edit. The homepage still makes no claim
+  about the AI-assisted build method (docs/PRD.md §4).
+- **"Work" → "Projects" everywhere it's user-facing:** the nav link, the
+  section `id` (`#work` → `#projects`), the `/work` redirect target, the
+  `/404` link and copy, the direction contract. **The `/work/[slug]` brief
+  URLs are unchanged** — those are "briefs"; the prefix is incidental.
+- **`ProjectGrid`** first/last row drop their outer `py-block`
+  (`[&>li:first-child]:pt-0`, `:last-child]:pb-0`) so the list sits one
+  clean section below the rule above it, not a section plus a row's pad —
+  and the trailing gap before the footer tightens.
+- Both inter-section `<hr>` are `my-section`, so hero→about and
+  about→projects read as equal breaks.
+- Docs reconciled: `docs/user-flows.md` (section order, `#projects`, the
+  stale nav-links list), `ARCHITECTURE.md`, `PROJECT_FACTS.md`
+  ("Homepage about section").
+- Gates: `check`, `build`, `check:links`, `design:check` (0 findings) all
+  clean; detector on `index.astro` clean; CDP screenshots + overflow at
+  320/375/1280 verified.
+
 ### 2026-09-10 — Homepage re-critique → retire the ledger, simplify
 
 Re-ran `/impeccable critique` (dual-agent) on the homepage after the

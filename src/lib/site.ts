@@ -26,7 +26,7 @@ export const SOCIALS = [
  * (ROADMAP 5c). Both are one-line re-adds here once the page exists.
  */
 export const NAV_LINKS = [
-  { label: 'Work', href: '/#work' },
+  { label: 'Projects', href: '/#projects' },
   { label: 'Contact', href: '/#site-footer' },
 ] as const;
 

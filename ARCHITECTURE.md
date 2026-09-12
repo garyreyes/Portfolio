@@ -274,7 +274,8 @@ authoritative for screens. Corrections from the original plan:
   own; it must stand alone without homepage context.
 - **`/work` index removed** (2026-09-04) — four projects do not need an
   index page; the homepage work section is the full list, and the menu
-  lists projects directly. `/work` redirects to `/#work`.
+  lists projects directly. `/work` redirects to `/#projects` (the
+  homepage project-list anchor, renamed from `#work` in 5a).
 - **Case-study pages down to 3** (2026-09-04) — one per hero project.
   Pahinga (card) has no `/work/[slug]` page; its card links to its live
   site.

@@ -118,7 +118,7 @@ not density. Phase 5a no longer inherits anything here.
 
 | | Sub-phase | Status |
 | --- | --- | --- |
-| 5a | **Homepage.** Intro (`<h1>` + tagline) and the work **ledger** both ship in `index.astro` (built out in the 2026-09-10 shape→layout pass). Still owed for 5a: the about / Industrial Engineering section below the ledger, and final copy. One obvious primary action: open a project. | in progress |
+| 5a | **done 2026-09-10.** Homepage: intro → **about** → **projects** → footer. Intro (`<h1>` + tagline) and the project list shipped earlier; 5a added the about `<section>` and renamed "Work" → "Projects" (`#work` → `#projects`; brief routes unchanged). The about copy is an **interim factual** paragraph — a fuller first-person bio is a tracked follow-up (`PROJECT_FACTS.md` "Homepage about section"); it's a plain edit, no structure change. One obvious primary action: open a project. | **done** |
 | 5b | **`/services`** — standalone business-owner page. Must read correctly as the only page seen. Pahinga and Saffron as the proof. May say *available for freelance*; must **not** imply *trusted by businesses*. | not started |
 | 5c | **`/how-i-build`** — the harness, skills, MCP setup, CI gates, planning docs. Honest, not a sales pitch. | not started |
 | 5d | **Contact form + ~~`/404`~~ + footer stat block.** Web3Forms in the sitewide footer: idle, submitting, inline success swap, visible failure with `mailto:` fallback, honeypot. ~~Designed 404~~ — **done 2026-09-10**, pulled forward in the `/impeccable harden` pass (`src/pages/404.astro`) because the homepage was shipping links to unbuilt routes. Static spec-sheet stat block (projects shipped, live in production, real client work, peak commit day) from a hand-maintained `src/lib/stats.ts` — no API call. | not started |
@@ -239,11 +239,13 @@ been left to emerge.
 **Track A:** **A2 and A3** — they gate Phase 6 and are the real schedule
 risk. A1 (the domain) is no longer urgent: it blocks no build work and can
 be bought any time before the site goes on an application.
-**Track B:** the homepage design cadence is closed for now — `shape` →
-`layout` → `polish` → re-`critique` → ledger retired → `layout` +
-`clarify` simplify (all done 2026-09-10). **4c — `/work/[slug]` brief
-template** is in (template only). Next: **5a** — the about / Industrial
-Engineering section + final homepage copy (needs no Track A input). The
+**Track B:** the homepage is structurally done — intro → about → projects,
+ledger retired, "Work" → "Projects", **5a** in (about section, interim
+copy). **4c — `/work/[slug]` brief template** is in (template only). Next:
+**5b — `/services`** (standalone business-owner page; needs no Track A
+input), then **5c — `/how-i-build`**. Both re-add a nav link and together
+trigger the mobile disclosure-menu work. Still owed on the homepage: the
+real first-person bio (a plain edit to the about `<p>`, not blocking). The
 Phase 4 close cadence (`/impeccable critique` + `polish` across the work
 surfaces) waits until Phase 6 puts real content on the brief pages —
 polishing placeholder pages is premature. **Phase 6 (6a/6b)** fills the

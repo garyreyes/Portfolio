@@ -552,6 +552,36 @@ present in built output — **do not move or delete it.**
   "contact form to follow" placeholder (read as unfinished). The real form
   is still Phase 5d.
 
+## Homepage about section (2026-09-10, 5a)
+
+- **Section order is intro → about → projects → footer.** Gary's call,
+  overriding `docs/user-flows.md`'s original intro → work → about. The
+  reader meets who Gary is before scanning the projects; the trade-off
+  (projects sit one screen lower on mobile) was accepted.
+- **The section is `#projects`, not `#work`.** Renamed in 5a — the nav
+  link reads "Projects", the anchor is `#projects`, the `/work` redirect
+  points at `/#projects`, the 404 link too. **The `/work/[slug]` brief
+  routes are unchanged** — those are *briefs*; the `/work/` prefix is
+  incidental and renaming live routes right after 4c wasn't worth it.
+  `PRODUCT.md`'s "projects are referred to as *work*" terminology note is
+  superseded for the visible label; "work" persists only in the brief
+  route path.
+- **The about copy shipped is INTERIM and factual** — "I'm self-taught.
+  Cornerman was the first project I shipped. Three of the four projects
+  here are built for real use; the fourth I built to learn. I'm open to
+  startup internships." Gary rejected a fuller first-person draft; a real
+  bio is a tracked follow-up (self-taught path, IE-as-systems angle,
+  boxing → Cornerman, coffee → Pahinga, "casual but precise" voice). Swap
+  it into `index.astro`'s about `<p>` as a plain edit — no structural
+  change. It must **not** repeat the hero's "third-year IE student at
+  DLSU" line verbatim (the first draft did; caught in review).
+- **No photo** — text-only for now (Gary's call). A photo would be the
+  site's first image and change the character; addable later as a normal
+  committed file with explicit dimensions + alt.
+- **Section headings stay `sr-only`** ("About", "Projects") — the `<hr>`
+  rules and the content type (prose vs. the project list) self-identify.
+  Consistent with the rest of the austere direction.
+
 ## Links and routes (2026-09-10, harden pass)
 
 - **Never ship an internal link to a route that isn't built.**
