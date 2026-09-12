@@ -53,9 +53,18 @@ the code.
 ## Project-specific safety rules
 
 - **The Web3Forms access key is public by design** and belongs in client
-  code. No other key ever does. If a future integration needs a secret,
-  that is a hard stop — this is a static site with no server to hide it
-  behind.
+  code. No other key ever does. If a future integration needs a secret
+  **that would ship to the browser or the built site**, that is a hard
+  stop — this is a static site with no server to hide it behind.
+  **Carve-out, confirmed 2026-09-12:** a secret used ONLY inside a GitHub
+  Actions workflow, to pre-generate a static asset before deploy, is not
+  this — it never reaches client code or the built output, only the
+  generated artifact does. `CONTRIBUTIONS_TOKEN` (a PAT belonging to
+  Gary, stored as a repo secret, used by
+  `.github/workflows/update-contributions.yml` to fetch contribution data
+  and commit `public/contributions.svg`) is the first instance. If the
+  next one is genuinely runtime/client-facing, the hard stop still
+  applies in full — this carve-out is narrow, not a general exception.
 - **All content is author-written.** There is no user-submitted content
   anywhere, which is the only reason MDX rendering arbitrary HTML is
   safe. **If user content is ever introduced, that assumption breaks and

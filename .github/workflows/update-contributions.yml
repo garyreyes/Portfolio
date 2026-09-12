@@ -1,0 +1,73 @@
+name: Update contribution graph
+
+# Regenerates public/contributions.svg from the real GitHub contribution
+# calendar (scripts/generate-contributions.mjs) and opens a PR with the
+# change. main's branch protection requires a PR (0 approvals, but no direct
+# pushes) and a passing "Type-check, lint, format, build" check — so this
+# uses CONTRIBUTIONS_TOKEN (a PAT belonging to @garyreyes) for checkout AND
+# the git/PR steps, not the default GITHUB_TOKEN: a PR authored by the
+# default token does not trigger other workflows (a documented Actions
+# anti-loop rule), which would leave the required check permanently
+# unsatisfied and auto-merge stuck forever. See PROJECT_FACTS.md
+# "Contribution graph" for the full reasoning and the live verification.
+on:
+  schedule:
+    - cron: '0 */12 * * *'
+  workflow_dispatch: {}
+
+# One run at a time — a manual dispatch overlapping the scheduled trigger
+# would otherwise risk two branches/PRs for the same underlying change.
+concurrency:
+  group: update-contributions
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.CONTRIBUTIONS_TOKEN }}
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - name: Generate contribution graph
+        env:
+          CONTRIBUTIONS_TOKEN: ${{ secrets.CONTRIBUTIONS_TOKEN }}
+        run: node scripts/generate-contributions.mjs
+
+      - name: Open a PR if the graph changed
+        env:
+          GH_TOKEN: ${{ secrets.CONTRIBUTIONS_TOKEN }}
+        run: |
+          if git diff --quiet -- public/contributions.svg; then
+            echo "No change — skipping."
+            exit 0
+          fi
+
+          # Close any previous update-contributions PR still open (a stuck
+          # required check would otherwise leave these piling up forever —
+          # caught in review). Self-heals on the very next run either way.
+          for old in $(gh pr list --state open --json headRefName,number \
+              --jq '.[] | select(.headRefName | startswith("chore/update-contributions-")) | .number'); do
+            gh pr close "$old" --delete-branch
+          done
+
+          BRANCH="chore/update-contributions-$(date +%Y%m%d%H%M%S)"
+          git config user.name "Gary Reyes"
+          git config user.email "garyreyes@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add public/contributions.svg
+          git commit -m "chore: update contribution graph"
+          git push origin "$BRANCH"
+
+          gh pr create \
+            --title "Update contribution graph" \
+            --body "Automated: regenerated public/contributions.svg from the live GitHub contribution calendar." \
+            --base main \
+            --head "$BRANCH"
+          gh pr merge "$BRANCH" --auto --squash
