@@ -9,6 +9,11 @@ interface Props {
 const { projects } = Astro.props;
 ---
 
-<ul class="divide-rule flex flex-col divide-y">
+{
+  /* first/last row drop their outer py-block so the list sits a clean
+     section's-worth below the rule above it, not a section + a row's pad.
+     divide-y already omits the border above the first row / below the last. */
+}
+<ul class="divide-rule flex flex-col divide-y [&>li:first-child]:pt-0 [&>li:last-child]:pb-0">
   {projects.map((project) => <ProjectCard project={project} />)}
 </ul>

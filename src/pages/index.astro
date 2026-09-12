@@ -5,9 +5,16 @@ import { getOrderedProjects } from '../features/projects/queries';
 import ProjectGrid from '../features/projects/components/ProjectGrid.astro';
 
 /**
- * Interim homepage — the intro and the work list. Phase 5a adds the
- * about / Industrial Engineering section and finalizes the copy. The intro
- * sentence is real (docs/PRD.md positioning), not placeholder text.
+ * Homepage: intro → about → projects → footer. That order is Gary's call
+ * (2026-09-10), overriding docs/user-flows.md's original intro → work →
+ * about — the reader meets who Gary is before scanning the projects.
+ *
+ * The about paragraph is an INTERIM factual version. A fuller first-person
+ * bio (the self-taught path, IE-as-systems, boxing → Cornerman, coffee →
+ * Pahinga) is a tracked follow-up (PROJECT_FACTS.md "Homepage about
+ * section"). Swap it in as a plain edit to this block — no structural
+ * change. The homepage never claims the AI-assisted build method
+ * (docs/PRD.md §4 — that is /how-i-build's job).
  */
 
 const projects = await getOrderedProjects();
@@ -25,8 +32,18 @@ const projects = await getOrderedProjects();
 
     <hr class="my-section" />
 
-    <section id="work">
-      <h2 class="sr-only">Selected work</h2>
+    <section id="about">
+      <h2 class="sr-only">About</h2>
+      <p class="max-w-column">
+        I'm self-taught. Cornerman was the first project I shipped. Three of the four projects here
+        are built for real use; the fourth I built to learn. I'm open to startup internships.
+      </p>
+    </section>
+
+    <hr class="my-section" />
+
+    <section id="projects">
+      <h2 class="sr-only">Projects</h2>
       <ProjectGrid projects={projects} />
     </section>
   </div>

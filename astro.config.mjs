@@ -17,11 +17,11 @@ export default defineConfig({
 
   // The /work/* namespace exists as of ROADMAP 4c (the hero brief pages).
   // There is no /work index route — four projects don't need one — so a bare
-  // /work redirects to the homepage work section (ARCHITECTURE.md "Route
-  // list", docs/user-flows.md). Astro emits a dist/work/index.html with a
+  // /work redirects to the homepage project list (#projects, renamed from
+  // #work in 5a). Astro emits a dist/work/index.html with a
   // <meta http-equiv="refresh"> and a canonical link.
   redirects: {
-    '/work': '/#work',
+    '/work': '/#projects',
   },
 
   // Content-Security-Policy. Astro computes a per-build SHA-256 hash for its

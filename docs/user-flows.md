@@ -22,7 +22,7 @@ Counted explicitly so a partial list is visibly incomplete.
 
 | # | Route | Purpose |
 | --- | --- | --- |
-| 1 | `/` | Home — intro, **work section (the full project list)**, about/IE, footer |
+| 1 | `/` | Home — intro, **about/IE**, **project list (`#projects`, the full list)**, footer |
 | 2 | `/work/cornerman` | Hero project brief |
 | 3 | `/work/ufc-scouting-app` | Hero project brief |
 | 4 | `/work/saffron-web` | Hero project brief |
@@ -31,11 +31,18 @@ Counted explicitly so a partial list is visibly incomplete.
 | 7 | `/404` | Not found |
 
 **Changed 2026-09-04:** the `/work` **index route is removed** — four
-projects do not need an index; the homepage work section is the full
-list. `/work` redirects to `/#work`. Case-study routes are down to **3**
-(one per hero). **Pahinga Coffee is a card**, not a route — it renders in
-the homepage work section and on `/services`, and its card links to its
-live site. `nfc-side-hustle` and `sports-bet-tracker` are off v1.
+projects do not need an index; the homepage project list is the full
+list. `/work` redirects to `/#projects`. Case-study routes are down to
+**3** (one per hero). **Pahinga Coffee is a card**, not a route — it
+renders in the homepage project list and on `/services`, and its card
+links to its live site. `nfc-side-hustle` and `sports-bet-tracker` are
+off v1.
+
+**Changed 2026-09-10 (5a):** the homepage section order is **intro →
+about → projects → footer** (Gary's call, was intro → work → about); the
+section and its anchor are named **`#projects`** (was `#work`), and the
+nav link reads **"Projects"**. The `/work/[slug]` brief URLs are
+unchanged — those are *briefs*, the `/work/` prefix is incidental.
 
 **Earlier changes still standing:** `/about` folded into a homepage
 section; `/services` added.
@@ -64,14 +71,17 @@ current fact.
   Reyes, a 3rd-year Industrial Engineering student"). From a brief page
   this navigates to `/` and then scrolls to the intro; on `/` itself it
   scrolls to top.
-- **Right — plain links, always visible**, no menu/overlay: Work,
-  Services, How I build, Contact. Every destination is one click from
-  every route, with nothing hidden behind a click first — recognition
-  over recall holds by construction rather than by mitigation.
+- **Right — plain links, always visible**, no menu/overlay. Currently
+  **Projects, Contact** (the only routes that resolve today — see the
+  `NAV_LINKS` gate in `src/lib/site.ts`). **Services** re-adds at 5b and
+  **How I build** at 5c; at four links, one of them long, that pass adds
+  a mobile disclosure menu (a simple button + panel, not the retired
+  full-screen docket). Every destination stays one click from every
+  route — recognition over recall by construction.
 
 Individual project links (the 3 hero briefs + Pahinga's live site) are
-not in the nav bar — they live in the homepage work section itself
-(`/#work`), which the "Work" link points to.
+not in the nav bar — they live in the homepage project list itself
+(`/#projects`), which the "Projects" link points to.
 
 ### Retired 2026-09-10 — kept as history, not current fact
 
