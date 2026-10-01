@@ -2,6 +2,7 @@
 import type { Project } from '../queries';
 import { STATUS_LABEL, CLIENT_LABEL, PLATFORM_LABEL, LINK_LABEL } from '../../../shared/projects';
 import { WORK_BRIEFS_LIVE } from '../../../lib/site';
+import ProjectMedia from './ProjectMedia.astro';
 
 interface Props {
   project: Project;
@@ -36,21 +37,54 @@ const facts = [STATUS_LABEL[data.status], CLIENT_LABEL[data.client], PLATFORM_LA
     /* Name first, then the facts — so AT announces "Cornerman. Android APK …",
       not the metadata before the thing it describes. */
   }
-  <h3 class="text-name font-semibold">{data.name}</h3>
+  <h3 class="text-name font-semibold">
+    {
+      link ? (
+        <a
+          href={link.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="underline underline-offset-4 hover:decoration-2"
+        >
+          {data.name}
+        </a>
+      ) : (
+        data.name
+      )
+    }
+  </h3>
   <p class="text-meta text-ink-muted mt-tight">{facts.join(' · ')}</p>
 
   {
     /* The one-liner is the payload — full ink, body size, a gutter clear of
-      the facts above it. */
+      the facts above it. Capped at --container-column (42rem, the prose
+      token), not the wider --container-page frame the <li> itself sits in
+      — otherwise these lines run to ~100+ chars, past comfortable reading
+      measure (caught by /impeccable critique 2026-09-13). */
   }
-  <p class="mt-gutter">{data.tagline}</p>
-  <p class="text-meta text-ink-muted mt-tight">Built with {data.stack.join(' · ')}</p>
+  <p class="mt-gutter max-w-column">{data.tagline}</p>
+  <p class="text-meta text-ink-muted mt-tight max-w-column">Built with {data.stack.join(' · ')}</p>
+
+  {
+    /* Media spans the full page frame, not max-w-column: a bordered box has
+      a hard right edge, and stopping it at 42rem left it visibly short of
+      the nav and <hr> edges it sits between (reverted 2026-10-01 — the
+      text cap above only reads as aligned because text is ragged). mt-block (not
+      mt-gutter) gives the transition into a ~380px visual object its own
+      beat instead of the same 1rem gap used between two lines of small
+      print (/impeccable layout 2026-09-13). */
+  }
+  <div class="mt-block">
+    <ProjectMedia demoVideo={data.media.demoVideo} cover={data.media.cover} name={data.name} />
+  </div>
 
   {
     /* py-tight lifts the hit target to ~35px (WCAG 2.5.8); -my-tight keeps
-      the visible rhythm unchanged. */
+      the visible rhythm unchanged. mt-block matches the beat entering the
+      media box above — exiting a ~380px visual object gets the same
+      weight as entering it, not the tighter metadata-line rhythm. */
   }
-  <div class="gap-x-block gap-y-tight mt-gutter flex flex-wrap items-center">
+  <div class="gap-x-block gap-y-tight mt-block flex flex-wrap items-center">
     {
       data.tier === 'hero' && WORK_BRIEFS_LIVE && (
         <a

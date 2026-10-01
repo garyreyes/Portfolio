@@ -54,6 +54,24 @@ product truth (`docs/PRD.md`).
   before pushing** — this catches it before CI does, for free. Recurred
   once already; if it recurs a third time, this is worth turning into an
   actual pre-push step rather than a habit to remember.
+- **A long-running `astro dev` background server can corrupt itself**
+  (found 2026-09-13, after ~5 hours of continuous HMR across one edit
+  session) — symptom was a real browser console error,
+  `_jsxDEV is not a function`, crashing every React island (`ContactForm`
+  silently stopped rendering). `astro dev stop` + a fresh
+  `astro dev --background` fixed it. If a React island mysteriously
+  vanishes from the page during a long session and the code looks
+  right, restart the dev server before debugging the component.
+- **`inline-block` wrapping an `<img>` that relies on Tailwind's default
+  `img{max-width:100%}` can hit a real Chromium sizing bug** (found
+  2026-09-13, `Footer.astro`'s contribution-graph link) — an auto-width
+  `inline-block` whose content's own width resolves via a percentage
+  `max-width` creates a circular dependency Chromium sometimes resolves
+  to a tiny fraction of the real size (634px → ~32px here) instead of
+  falling back to intrinsic size. Confirmed live in a real browser, not
+  guessed. **Fix pattern: `block` + an explicit pixel `max-width` (not
+  shrink-to-fit) on the wrapper, `w-full h-auto` on the image** — avoid
+  `inline-block` around a plain `<img>` anywhere else in this codebase.
 - **ESLint is pinned to v9, deliberately.** ESLint 10 is current, but
   `eslint-plugin-jsx-a11y@6.10.2` caps at v9, and `eslint-plugin-astro`
   exposes its `jsx-a11y/*` rules only when that package is installed.
@@ -69,10 +87,29 @@ product truth (`docs/PRD.md`).
 - **Markdown is excluded from Prettier.** Planning documents are authored
   prose; a code formatter rewrapping their tables creates churn with no
   benefit.
-- **Media is screenshots, not video** (2026-09-04). Committed as normal
-  files under `public/screenshots/`. If a short Cornerman clip is ever
-  added it is a normal file too — never Git LFS (Cloudflare Pages does not
-  fetch LFS objects at build time).
+- **Media video decision reversed (2026-09-13).** The 2026-09-04 "cut"
+  above was about long-form case-study video as a persuasive-content
+  dependency for hiring, not about whether a project card can show a demo
+  clip. Gary is separately learning to produce short demo clips (useful
+  for hackathons regardless of this site), so `content.config.ts`'s
+  `media.demoVideo` (optional) and `ProjectCard`'s `ProjectMedia` slot
+  exist now, ahead of any real clip. **No project has one yet** — every
+  card renders the "coming soon" placeholder branch until a real file
+  lands. Convention, matching `cover`/`gallery`: root-absolute path under
+  `public/screenshots/<slug>/`, e.g. `/screenshots/cornerman/demo.mp4` —
+  landing the file and setting the one frontmatter field is the whole
+  job, no code change. Still a normal committed file, never Git LFS
+  (Cloudflare Pages does not fetch LFS objects at build time) — keep well
+  under 25 MiB per `CLAUDE.md`'s large-binary confirmation rule.
+- **Typography contrast widened (2026-09-13).** Reference portfolios
+  (Bryl Lim, Affaan Mustafa) run a visibly lighter nav wordmark against a
+  much heavier/larger hero name — this site's nav and `text-title` used
+  to share the same 600 weight, just different sizes. `Nav.astro`'s
+  wordmark is now `font-normal`; the `--text-title` token
+  (`global.css`) is now `2.25rem`/`700`/`-0.02em`, up from
+  `1.75rem`/inherited-600/`-0.01em`. Token-level, so it applies uniformly
+  to every page's `<h1>` (home, `/services`, `404`), not a homepage-only
+  override.
 - **Deploy runs on `*.pages.dev` first; the custom domain attaches later**
   (2026-09-07). Cloudflare Pages serves a free permanent subdomain, so
   nothing in the build waits on a purchase. `site` in `astro.config.mjs`
@@ -563,9 +600,10 @@ present in built output — **do not move or delete it.**
   (four links, one long), that pass adds a mobile disclosure menu — not a
   full-screen docket (retired 2026-09-10), a simple button + panel.
 - **Footer reads as a contact point** — "Get in touch — <email address>"
-  as an explicit action, GitHub/LinkedIn as profile links beside it. No
-  "contact form to follow" placeholder (read as unfinished). The real form
-  is still Phase 5d.
+  as an explicit action. No "contact form to follow" placeholder (read
+  as unfinished). The real form is still Phase 5d. **Superseded
+  2026-09-13:** GitHub/LinkedIn no longer sit "beside" the email line —
+  see "GitHub/LinkedIn split across two placements" below.
 
 ## Homepage about section (2026-09-10, 5a)
 
@@ -583,13 +621,21 @@ present in built output — **do not move or delete it.**
   route path.
 - **The about copy shipped is INTERIM and factual** — "I'm self-taught.
   Cornerman was the first project I shipped. Three of the four projects
-  here are built for real use; the fourth I built to learn. I'm open to
-  startup internships." Gary rejected a fuller first-person draft; a real
-  bio is a tracked follow-up (self-taught path, IE-as-systems angle,
-  boxing → Cornerman, coffee → Pahinga, "casual but precise" voice). Swap
-  it into `index.astro`'s about `<p>` as a plain edit — no structural
-  change. It must **not** repeat the hero's "third-year IE student at
-  DLSU" line verbatim (the first draft did; caught in review).
+  here are built for real use; the fourth I built to learn." Gary rejected
+  a fuller first-person draft; a real bio is a tracked follow-up
+  (self-taught path, IE-as-systems angle, boxing → Cornerman, coffee →
+  Pahinga, "casual but precise" voice). Swap it into `index.astro`'s about
+  `<p>` as a plain edit — no structural change. It must **not** repeat the
+  hero's "third-year IE student at DLSU" line verbatim (the first draft
+  did; caught in review).
+- **The internship line split out of the about paragraph (2026-09-13,
+  `/impeccable critique` P1)** — it used to be that paragraph's last
+  clause, same visual weight as everything else in it, easy for a
+  2-minute skimmer to miss. Now its own `text-lede`-sized line right
+  after: "Looking for a startup internship — reach out if this looks
+  like a fit," "reach out" linking to `/#site-footer`. Wording is Gary's
+  own pick from drafted options — a warmer nudge over a bare status line,
+  but still one sentence.
 - **No photo** — text-only for now (Gary's call). A photo would be the
   site's first image and change the character; addable later as a normal
   committed file with explicit dimensions + alt.
@@ -614,14 +660,39 @@ present in built output — **do not move or delete it.**
   third-party runtime dependency: Astro serves it as a normal static
   asset, same as any screenshot.
 - **The 5-step palette is 3 real tokens + 2 computed midpoints, not 5
-  tokens** (`--color-rule` #e2e2e2, midpoint #9f9f9f, `--color-ink-muted`
-  #5c5c5c, midpoint #3a3a3a, `--color-ink` #171717) — caught in review: an
-  earlier version of this file and the script's own comment both
-  overclaimed "all five match tokens." If `global.css`'s palette ever
-  changes, only 3 of the 5 script values move with it automatically;
-  the 2 midpoints need a manual re-check (there's no build step that
-  derives them from `global.css`, since the script runs outside Astro's
-  build entirely).
+  tokens** (originally `--color-rule` #e2e2e2, midpoint #9f9f9f,
+  `--color-ink-muted` #5c5c5c, midpoint #3a3a3a, `--color-ink` #171717) —
+  caught in review: an earlier version of this file and the script's own
+  comment both overclaimed "all five match tokens." If `global.css`'s
+  palette ever changes, only 3 of the 5 script values move with it
+  automatically; the 2 midpoints need a manual re-check (there's no build
+  step that derives them from `global.css`, since the script runs outside
+  Astro's build entirely). **Zero-count changed to #c7c7c7 (2026-09-13)**,
+  a genuinely new step not tied to any token at all — see "Contribution
+  graph as dots" below.
+- **Cells are dot-matrix (`<circle>`), not flat `<rect>` squares, as of
+  2026-09-13.** A flat `--color-rule` square at zero contributions was
+  nearly invisible against `--color-page`, and Gary's real calendar is
+  ~91% zero-count days (see below) — so the graph read as mostly blank
+  with a small dark cluster, not as a full year. Radius now encodes count
+  too (1.5px at zero → 5px at the top bucket), the same principle
+  Bryl Lim's (`800k.dev`) dot-matrix contribution graph uses — every day
+  is a visible mark regardless of value, so sparse real data still reads
+  as a complete graphic. Requires the next scheduled Action run (or a
+  manual `workflow_dispatch`) to regenerate `public/contributions.svg` —
+  not run locally, since `CONTRIBUTIONS_TOKEN` only exists as a repo
+  secret.
+- **GitHub/LinkedIn split across two placements (2026-09-13), after
+  Gary pointed at affaanmustafa.com's actual layout** — the earlier
+  same-day fix (grouping them under the footer's email line) undersold
+  what the reference does: GitHub/LinkedIn sit right under Affaan's
+  name at the very top, and a separate row of every "connect" link
+  lives at the bottom of the page. `src/pages/index.astro` now renders
+  GitHub/LinkedIn directly under the `<h1>`/tagline; `Footer.astro`'s
+  "Get in touch" cluster is back to just the form + "Prefer email?",
+  and a new row below `public/contributions.svg` holds LinkedIn → GitHub
+  → the real email address, in that order — Gary's explicit ask, not
+  `SOCIALS`' own GitHub-first order (which the hero keeps).
 - **Verified live, not assumed, before building:**
   - The GraphQL query needs `weeks { contributionDays { date
     contributionCount } }` under `contributionCalendar` for real

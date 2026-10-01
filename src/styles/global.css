@@ -67,9 +67,10 @@
   --text-name--line-height: 1.25;
   --text-name--letter-spacing: -0.01em;
 
-  --text-title: 1.75rem;
-  --text-title--line-height: 1.2;
-  --text-title--letter-spacing: -0.01em;
+  --text-title: 2.25rem;
+  --text-title--line-height: 1.15;
+  --text-title--letter-spacing: -0.02em;
+  --text-title--font-weight: 700;
 
   /* --- Measure: four spacing tokens -----------------------------------
      tight — a pair that reads as one unit (a name and its description).

@@ -10,6 +10,210 @@ does that.
 
 ## Unreleased
 
+### 2026-10-01 — Contact form removed; media box spans the page frame
+
+- **Contact form removed** at Gary's call. The footer's "Get in touch"
+  section and `src/features/contact/` (the `ContactForm.tsx` island and
+  the Web3Forms `service.ts`) are gone; the email address in the footer's
+  "Connect" row is the contact path. The nav "Contact" link and the
+  homepage "reach out" link still land on the footer. The CSP in
+  `astro.config.mjs` narrowed back: `connect-src` and `form-action` are
+  `'self'` only. (This supersedes the 2026-09-13 form-collapse entry
+  below and ROADMAP 5d's form.)
+- **`ProjectCard.astro`** — the media box drops `max-w-column` and spans
+  the full page frame again, reverting that part of the 2026-09-13 layout
+  pass. A bordered box has a visible right edge; stopping it at 42rem left
+  it short of the nav and `<hr>` edges around it, which read as
+  misaligned. Text stays capped at `max-w-column`.
+- Removed a duplicated block of bullets from the 2026-09-13 critique
+  entry below.
+
+### 2026-09-13 — `/impeccable layout` structural fixes
+
+Ran a dual-agent layout assessment (`/impeccable layout portfolio`) —
+mechanical scan came back clean (no off-scale spacing, no overflow,
+stacking, or focus-ring defects at 375px/1440px), confirming the real
+issues here are structural/rhythm, not mechanical bugs a detector catches.
+
+- **`ContactForm.tsx`** — success no longer unmounts the ~370px form
+  instantly. It now collapses via a `grid-template-rows` transition
+  (`0fr`/`1fr`, `duration-quick`), with `inert` applied once collapsed so
+  it can't be tabbed into while still technically mounted (same pattern
+  `MenuPanel.astro` already uses for a closed panel). This was the single
+  biggest layout event on the page, landing at the exact moment — right
+  after submit — where a jarring shift most costs trust. Verified live:
+  the transition genuinely animates (captured mid-transition at
+  ~1px height, not an instant jump), ends fully collapsed, and the form
+  is confirmed `inert`.
+- **`ProjectCard.astro`** — the media placeholder wrapper gets
+  `max-w-column`, matching the tagline/stack line above it; it used to
+  stretch to the wider page frame, the only element in the card not
+  sharing that right edge. Confirmed live: tagline and media box now
+  share the exact same right edge (807px in a 1070px viewport test).
+  Also: the gaps immediately before and after the media box bumped from
+  `mt-gutter` to `mt-block` — entering/exiting a ~380px visual object
+  was getting the same 1rem rhythm as two lines of small print.
+- **`Footer.astro`** — the contribution-graph scroll container now opens
+  scrolled to its right edge (most recent activity) instead of its left
+  (the sparsest months) on load, via a small inline script. Verified
+  live at 375px: `scrollLeft` sits at its maximum (291 of 291 possible).
+  A mobile visitor's first view is now the graph's actual proof, not its
+  emptiest stretch.
+- **Not changed, flagged instead**: the assessment suggested visually
+  differentiating Pahinga Coffee (the "practice build") from the three
+  hero projects. `PROJECT_FACTS.md` already records this as a deliberate,
+  previously-litigated call — Gary chose to keep all four as visual peers
+  after an earlier re-critique raised the identical concern. Not re-opened
+  here without being asked.
+
+### 2026-09-13 — `/impeccable critique` fixes (P1/P2/P3)
+
+Ran a dual-agent design critique (`/impeccable critique portfolio`, score
+29/32) and fixed the P1/P2/P3 findings Gary asked for. The P0 (empty
+project media) stays as-is — deliberate, pending real screenshots.
+
+- **`index.astro`** — "I'm open to startup internships" used to be the
+  last clause of the About paragraph, same visual weight as "Cornerman
+  was the first project I shipped," easy for a skimmer to miss entirely.
+  Pulled onto its own line at `text-lede` size. Wording changed too, to
+  Gary's own pick from a set of drafted options (a warmer nudge over a
+  bare status line): "Looking for a startup internship — reach out if
+  this looks like a fit," with "reach out" as a real link to the
+  footer's contact form, not decorative text.
+- **`ProjectCard.astro`** — the one-liner and "Built with…" stack line
+  now cap at `max-w-column` (42rem, the existing prose token) instead of
+  the wider `--container-page` frame the `<li>` sits in. The detector
+  had flagged ~100–123 char lines on these exact elements; confirmed the
+  fix live (672px computed max-width, matching the token).
+- **`Nav.astro`** — the wordmark gets `hover:underline`, matching its own
+  row's nav links (hover-only, not the footer's always-on underline). It
+  was the one real link on the site with no hover affordance at all —
+  confirmed live that hovering now shows the underline.
+- **`Footer.astro`** — the contribution graph no longer shrinks on narrow
+  viewports. It used to (`max-width` + `w-full h-auto`), which shrank the
+  SVG's own baked-in month-label text below legible size on mobile. Now
+  a fixed `width` (never shrinks) inside an `overflow-x-auto` wrapper —
+  the same pattern GitHub's own contribution calendar uses — so the
+  graph scrolls horizontally within its own box instead of squishing.
+  Confirmed at 380px: labels stay fully legible, and the page body itself
+  still has zero horizontal overflow (`scrollWidth === clientWidth`,
+  380 === 380) — this is a scoped scroll container, not a body-scroll
+  regression.
+
+### 2026-09-13 — A real Chromium sizing bug, and a corrupted long-running dev server
+
+Gary reported the contact form and the contribution graph both missing
+from the live page — confirmed real with a headless-Chrome check (no
+`chromium-cli` available in this environment; used Playwright pointed
+at the machine's own installed Chrome instead, since downloading a
+bundled browser had no network access). Two separate, unrelated causes:
+
+- **The `astro dev` server had been running ~5 hours** across a long
+  edit session and had gotten into a broken state — the page was
+  throwing `_jsxDEV is not a function` in the browser console, which
+  crashed the `ContactForm` React island (hence "missing" — it never
+  rendered). `astro dev stop` + a fresh `astro dev --background`
+  cleared it. Not a code bug; a known way Vite's dev-mode React
+  transform state degrades under heavy HMR churn.
+- **A real, separate Chromium layout bug**, unmasked once the form was
+  back: the contribution graph's `<a>` wrapper (added earlier this
+  session to make the image clickable) used `inline-block` around an
+  `<img>` relying on Tailwind's default `max-width:100%`. Confirmed
+  live in the browser that this specific combination — an
+  auto-width `inline-block` whose only content resolves its own width
+  via a percentage `max-width` — creates a circular sizing dependency
+  Chromium resolves to ~32px instead of the image's real 634px. Fixed
+  by making the `<a>` `block` with an explicit pixel `max-width`
+  (`contributions.width`, not a guessed value) instead of relying on
+  shrink-to-fit, plus `w-full h-auto` on the image. Verified fixed at
+  both 1070px and a 380px mobile width (scales down correctly, no
+  horizontal overflow) with real screenshots, not just computed-style
+  checks.
+
+### 2026-09-13 — Contribution graph links out; a broken ::selection rule fixed
+
+- **`Footer.astro`** — the contribution graph image is now wrapped in a
+  link to Gary's real GitHub profile (`github.com/garyreyes`, where the
+  actual interactive calendar lives), `target="_blank"`. A subtle
+  `hover:opacity-70` gives the click affordance the static image
+  otherwise wouldn't have.
+- **`src/styles/global.css`'s `::selection` rule had a syntax error**
+  (stray extra `}`, mangled indentation) discovered mid-session — not
+  from any edit made this session, and not present at the last passing
+  `npm run check` earlier the same session. Restored to its original,
+  valid form (inverted ink/page colors on selected text) — confirmed
+  with Gary this was an accidental mid-edit, not an intended style
+  change, before touching it.
+- **The redundant "Prefer email? &lt;address&gt;" line removed from "Get
+  in touch"** — the email address already appears in the bottom
+  "Connect" row (LinkedIn/GitHub/email), so this was now saying the
+  same thing twice; the contact form itself works with zero JavaScript
+  (its `<form action>` posts directly), so there was never a functional
+  reason to keep a separate no-JS email fallback right beside it.
+- **Contribution graph's `loading="lazy"` dropped** — it's a small
+  (24 KB) asset and now sits inside a clickable link; eager loading
+  avoids any pop-in/partial-load state on an element a visitor might
+  click before it's finished lazy-loading.
+
+### 2026-09-13 — Contribution graph as dots + footer link grouping
+
+Prompted by comparing against reference portfolios again (Bryl Lim's
+800k.dev, Affaan Mustafa's site) — Gary's read was that the footer's
+contribution graph looked "lopsided and not full" next to Bryl's, and
+that the GitHub/LinkedIn links sat oddly on the same line as the stat
+block text.
+
+- **`scripts/generate-contributions.mjs`** — cells render as `<circle>`s
+  with radius encoding count (1.5px at zero → 5px at the top bucket),
+  not flat-colour `<rect>`s. A day with zero contributions used to fill
+  as `--color-rule` (#e2e2e2) against a #fbfbfb page — near-invisible,
+  so the ~91% empty days (PROJECT_FACTS.md "Contribution graph") read as
+  blank space and only the recent burst of activity was visible, giving
+  the lopsided look. Every day is now a visible dot regardless of value;
+  size plus colour both carry the signal, the same principle Bryl's
+  dot-matrix graph uses. Zero-count dots also darkened one step to
+  `#c7c7c7` (was `--color-rule` exactly) since a 1.5px dot at the
+  original tone was still too faint to read as a mark.
+- **GitHub/LinkedIn split across two placements, not grouped in one
+  spot** (revised once more the same day, after seeing Affaan's actual
+  layout: GitHub/LinkedIn sit right under his name at the top, and a
+  separate "Connect" row lives at the very bottom). `src/pages/index.astro`
+  now renders them directly under the `<h1>`/tagline, matching that
+  placement. `Footer.astro`'s "Get in touch" cluster goes back to just
+  the form + "Prefer email?" (no GitHub/LinkedIn crammed next to
+  `StatBlock` any more, which was the original complaint) — the ways to
+  reach Gary that used to share a line now sit in a new row below the
+  contribution graph, ordered LinkedIn → GitHub → the real email address
+  (not the generic "Email" label), per Gary's explicit order.
+- **Not regenerated locally** — `generate-contributions.mjs` needs
+  `CONTRIBUTIONS_TOKEN` (a real PAT), which only exists as a GitHub
+  Actions secret. The new dot rendering ships on the next scheduled run
+  (12h cron) or a manual `workflow_dispatch` of
+  `.github/workflows/update-contributions.yml`.
+
+### 2026-09-13 — Typography contrast + demo-video slot (placeholder)
+
+Prompted by comparing against reference portfolios (Bryl Lim, Affaan
+Mustafa) — their nav is visibly lighter than their much heavier/larger
+hero name, and their work list previews each project with a short clip.
+
+- **`src/styles/global.css`** — `--text-title` token widened
+  (`1.75rem`/inherited 600 → `2.25rem`/`700`/`-0.02em`), applying to
+  every page's `<h1>` (home, `/services`, `404`), not just the homepage.
+  `src/shared/components/Nav.astro`'s wordmark dropped to `font-normal`.
+  Together: a real weight/size split between chrome and content instead
+  of the previous same-weight, size-only difference.
+- **`src/content.config.ts`** — new optional `media.demoVideo` field,
+  same pre-declared-path convention as `cover`/`gallery`. No project sets
+  it yet (see PROJECT_FACTS.md "Media video decision reversed").
+- **`src/features/projects/components/ProjectMedia.astro`** (new) —
+  renders the clip once a project has one; today renders every card's
+  "coming soon" placeholder, an explicitly designed state rather than a
+  gap.
+- **`ProjectCard.astro`** — the project name is now itself the external
+  link (live URL, else repo), `target="_blank"`, opening in a new tab,
+  in addition to the existing "View live"/"View repo" line below.
+
 ### 2026-09-12 — ROADMAP 5d: real contact form + derived stat block
 
 The footer's remaining pieces. Web3Forms wired for real, and the stat

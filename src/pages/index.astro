@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { SITE } from '../lib/site';
+import { SITE, SOCIALS } from '../lib/site';
 import { getOrderedProjects } from '../features/projects/queries';
 import ProjectGrid from '../features/projects/components/ProjectGrid.astro';
 
@@ -15,9 +15,18 @@ import ProjectGrid from '../features/projects/components/ProjectGrid.astro';
  * section"). Swap it in as a plain edit to this block — no structural
  * change. The homepage never claims the AI-assisted build method
  * (docs/PRD.md §4 — that is /how-i-build's job).
+ *
+ * The internship line used to be the last clause of the About paragraph —
+ * same visual weight as "Cornerman was the first project I shipped," so a
+ * skimmer had no reason to notice it (/impeccable critique 2026-09-13,
+ * P1). Pulled onto its own line at `text-lede` size, with "reach out"
+ * as a real link to the footer's contact links, not a decorative phrase.
+ * Wording is Gary's own choice from a set of drafted options — a warmer
+ * nudge over a bare status line, but still one sentence, no pitch.
  */
 
 const projects = await getOrderedProjects();
+const profiles = SOCIALS.filter((s) => !s.href.startsWith('mailto:'));
 ---
 
 <BaseLayout title={SITE.name} description={SITE.description}>
@@ -28,6 +37,22 @@ const projects = await getOrderedProjects();
         Third-year Industrial Engineering student at De La Salle University. I ship production
         software.
       </p>
+      <ul class="gap-block mt-gutter flex flex-wrap">
+        {
+          profiles.map((social) => (
+            <li>
+              <a
+                href={social.href}
+                class="text-meta text-ink-muted hover:text-ink -my-tight py-tight underline underline-offset-4 hover:decoration-2"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {social.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
     </header>
 
     <hr class="my-section" />
@@ -36,7 +61,14 @@ const projects = await getOrderedProjects();
       <h2 class="sr-only">About</h2>
       <p class="max-w-column">
         I'm self-taught. Cornerman was the first project I shipped. Three of the four projects here
-        are built for real use; the fourth I built to learn. I'm open to startup internships.
+        are built for real use; the fourth I built to learn.
+      </p>
+      <p class="text-lede mt-gutter max-w-column">
+        Looking for a startup internship —{' '}
+        <a href="/#site-footer" class="underline underline-offset-4 hover:decoration-2">
+          reach out
+        </a>{' '}
+        if this looks like a fit.
       </p>
     </section>
 
