@@ -1,0 +1,42 @@
+---
+interface Props {
+  demoVideo?: string;
+  cover: string;
+  name: string;
+}
+
+const { demoVideo, cover, name } = Astro.props;
+
+/**
+ * Demo-clip slot in the work-list card. No project has a real clip yet
+ * (PROJECT_FACTS.md "Media video decision reversed") so every card renders
+ * the placeholder branch today — that state is designed on purpose, not a
+ * stopgap (CLAUDE.md "every state designed, not just the happy path").
+ * `aspect-video` reserves the box before any asset loads, same job explicit
+ * width/height does for the screenshot `<img>`s elsewhere. `preload="none"`
+ * keeps a future clip from competing with first paint.
+ */
+---
+
+{
+  demoVideo ? (
+    <video
+      src={demoVideo}
+      poster={cover}
+      controls
+      muted
+      preload="none"
+      class="border-rule aspect-video w-full border"
+    >
+      <track kind="captions" />
+    </video>
+  ) : (
+    <div
+      class="border-rule text-ink-muted flex aspect-video w-full items-center justify-center border"
+      role="img"
+      aria-label={`Demo video for ${name} — coming soon`}
+    >
+      <p class="text-meta">▶ Demo video — coming soon</p>
+    </div>
+  )
+}

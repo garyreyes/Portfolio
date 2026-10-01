@@ -14,12 +14,23 @@ import { SITE, NAV_LINKS } from '../../lib/site';
  * 320px, so the earlier below-`sm` vertical stack (a leftover from when
  * there were four links) is gone. When 5b/5c re-add Services + How I build,
  * that pass adds a mobile disclosure menu — four links, one long, won't fit.
+ *
+ * The wordmark gets `hover:underline`, matching its own row's nav links
+ * (hover-only, not the always-on underline the footer's body-text links
+ * use) — a real link with no hover affordance at all was the one exception
+ * to the site's own underline convention (/impeccable critique 2026-09-13).
  */
 ---
 
 <header class="bg-page px-gutter max-w-page sticky top-0 z-40 mx-auto">
   <div class="py-gutter gap-gutter flex items-center justify-between">
-    <a href="/" data-wordmark class="text-lede text-ink shrink-0 font-semibold">{SITE.name}</a>
+    <a
+      href="/"
+      data-wordmark
+      class="text-lede text-ink shrink-0 font-normal underline-offset-4 hover:underline"
+    >
+      {SITE.name}
+    </a>
     <nav class="gap-gutter flex shrink-0 items-center" aria-label="Site">
       {
         /* py-tight lifts the hit target to ~35px (WCAG 2.5.8); -my-tight

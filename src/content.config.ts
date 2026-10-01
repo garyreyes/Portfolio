@@ -59,6 +59,13 @@ const projects = defineCollection({
           }),
         )
         .optional(),
+      // Short silent demo clip for the work-list card (PROJECT_FACTS.md
+      // "Media video decision reversed"). Root-absolute under public/, e.g.
+      // /screenshots/<slug>/demo.mp4. Absent on every project today — no
+      // clips exist yet — so ProjectMedia renders a placeholder until one
+      // lands; adding the file plus this one field is the whole job, same
+      // convention as `cover`/`gallery` above.
+      demoVideo: z.string().optional(),
     }),
     // Controls work-section sequence.
     order: z.number(),

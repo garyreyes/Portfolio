@@ -88,11 +88,28 @@ const total = calendar.totalContributions;
  * more here than a perfectly calibrated scale.
  */
 function levelColor(count) {
-  if (count === 0) return '#e2e2e2'; // --color-rule
+  if (count === 0) return '#c7c7c7'; // one step darker than --color-rule — a flat #e2e2e2 dot at this radius nearly disappears against --color-page (#fbfbfb)
   if (count <= 2) return '#9f9f9f'; // midpoint: --color-rule / --color-ink-muted
   if (count <= 5) return '#5c5c5c'; // --color-ink-muted
   if (count <= 9) return '#3a3a3a'; // midpoint: --color-ink-muted / --color-ink
   return '#171717'; // --color-ink
+}
+
+/**
+ * Dot radius scales with count too, not just colour — a real day (even the
+ * 91% at zero) still reads as a distinct mark rather than nearly invisible
+ * flat colour. Sparse activity is a true fact about this account (see
+ * PROJECT_FACTS.md "Contribution graph"); size-encoding is what keeps a
+ * mostly-empty year from reading as a mostly-empty *graphic* — the same
+ * reason a reference dot-matrix contribution graph reads as full even when
+ * the underlying data isn't.
+ */
+function levelRadius(count) {
+  if (count === 0) return 1.5;
+  if (count <= 2) return 2.5;
+  if (count <= 5) return 3.5;
+  if (count <= 9) return 4.25;
+  return 5;
 }
 
 const CELL = 10;
@@ -119,7 +136,8 @@ for (const [wi, week] of weeks.entries()) {
     lastMonth = month;
   }
   for (const [di, day] of week.contributionDays.entries()) {
-    const y = MONTH_LABEL_HEIGHT + di * PITCH;
+    const cx = x + CELL / 2;
+    const cy = MONTH_LABEL_HEIGHT + di * PITCH + CELL / 2;
     // No per-cell <title> here (an earlier version had one per day): a
     // <title> inside an SVG loaded via <img src> is never exposed to
     // anything — not a screen reader, not a mouse tooltip — only inline
@@ -127,7 +145,7 @@ for (const [wi, week] of weeks.entries()) {
     // pure dead weight (caught in review). The real accessible text lives
     // in the <img alt>, read at Astro build time from this file's own
     // top-level <title> — see src/lib/contributions.ts.
-    cells += `<rect x="${x}" y="${y}" width="${CELL}" height="${CELL}" fill="${levelColor(day.contributionCount)}"/>`;
+    cells += `<circle cx="${cx}" cy="${cy}" r="${levelRadius(day.contributionCount)}" fill="${levelColor(day.contributionCount)}"/>`;
   }
 }
 
