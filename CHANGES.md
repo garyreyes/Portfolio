@@ -10,6 +10,16 @@ does that.
 
 ## Unreleased
 
+### 2026-10-02 — Force LF line endings repo-wide
+
+- **`.gitattributes`** gains `* text=auto eol=lf`. With the system Git
+  default `core.autocrlf=true`, any checkout on Windows (a branch switch,
+  a reset) rewrote working files to CRLF, and the pre-push
+  `prettier --check` then failed on code CI had already passed — it even
+  blocked a remote branch delete. The stored blobs were already LF
+  (`git add --renormalize .` changed nothing), so this only fixes
+  checkouts.
+
 ### 2026-10-01 — Contact form removed; media box spans the page frame
 
 - **Contact form removed** at Gary's call. The footer's "Get in touch"
